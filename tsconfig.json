@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "target": "es5",
+        "jsx": "react",
+        "jsxFactory": "tpl",
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
+    }
+}
