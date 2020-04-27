@@ -1,0 +1,9 @@
+[submodule "mvc.js"]
+	path = mvc.js
+	url = ./mvc.js/
+[submodule "glow.js"]
+	path = glow.js
+	url = ./glow.js/
+[submodule "mutabl.js"]
+	path = mutabl.js
+	url = ./mutabl.js/

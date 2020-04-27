@@ -1,5 +1,5 @@
-import { tpl, init, IDriver } from "glow.js";
-import { BrowserRouter, IActionContext, lazy } from "mvc.js";
+import { tpl, init, IDriver, render, disposeMany } from "glow.js";
+import { BrowserRouter, IActionContext, lazy, IAction } from "mvc.js";
 import { Fragment } from "glow.js/lib/fragment";
 import { RouterOutlet } from "mvc.js/layout/outlet";
 import { MDCRipple } from "@material/ripple";
@@ -7,6 +7,9 @@ import { MDCList } from "@material/list";
 import { MDCDrawer } from "@material/drawer";
 import { MDCTopAppBar } from "@material/top-app-bar";
 import { isDomNode } from "glow.js/lib/dom";
+import { Login } from "../login";
+import * as Rx from "rxjs";
+import * as Ro from "rxjs/operators";
 
 function TopBar() {
     return (
@@ -60,6 +63,19 @@ function Aside() {
             </div>
             <div class="mdc-drawer__content">
                 <nav class="mdc-list" tabindex="0">
+                    <a
+                        class="mdc-list-item router-link"
+                        href="/login"
+                        aria-current="page"
+                    >
+                        <i
+                            class="material-icons mdc-list-item__graphic"
+                            aria-hidden="true"
+                        >
+                            inbox
+                        </i>
+                        <span class="mdc-list-item__text">Login</span>
+                    </a>
                     <a
                         class="mdc-list-item router-link"
                         href="/"
@@ -116,7 +132,10 @@ export default function App() {
                 <main class="main-content mdc-top-app-bar--fixed-adjust">
                     <RouterOutlet
                         router={browserRouter}
-                        routes={{ test: lazy(test) }}
+                        routes={{
+                            test: lazy(test),
+                            login: lazy(login),
+                        }}
                     >
                         {(view) =>
                             init(
@@ -184,6 +203,18 @@ function removeClass(className: string) {
     };
 }
 
+function login() {
+    return {
+        execute() {
+            return (
+                <div>
+                    <Login click={() => {}} />
+                </div>
+            );
+        },
+    };
+}
+
 function test() {
     return {
         execute(context: IActionContext) {
@@ -212,12 +243,45 @@ function test() {
     };
 }
 
+function authorized(action: IAction<any>) {
+    return {
+        execute(context: IActionContext) {
+            const subject = new Rx.Subject();
+            return subject.pipe(
+                Ro.startWith(
+                    <div class="router-page__content">
+                        <Login click={onLogin} />
+                    </div>
+                )
+            );
+
+            function onLogin() {
+                subject.next(action.execute(context));
+            }
+        },
+        resolve: action.resolve,
+    };
+}
+
+function body(t: any) {
+    return {
+        render() {
+            const bindings = render(document.body, t);
+            return {
+                dispose() {
+                    disposeMany(bindings);
+                },
+            };
+        },
+    };
+}
+
 function bla() {
     return {
         execute(context: IActionContext) {
             return (
                 <div class="router-page__content">
-                    <header>bla</header>
+                    <header>ogin</header>
                     <main>
                         <a
                             class="router-link"

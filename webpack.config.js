@@ -3,7 +3,6 @@ const autoprefixer = require("autoprefixer");
 
 module.exports = (env, argv) => {
     const config = productionConfig();
-    console.log(argv);
     if (!argv.mode || argv.mode === "development") {
         return {
             ...config,
