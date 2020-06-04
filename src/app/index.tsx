@@ -1,7 +1,7 @@
-import { tpl, init, IDriver, render, disposeMany } from "glow.js";
-import { BrowserRouter, IActionContext, lazy, IAction } from "mvc.js";
+import { tpl, init, render, disposeMany } from "glow.js";
+import { IActionContext, IAction } from "mvc.js";
 import { Fragment } from "glow.js/lib/fragment";
-import { RouterOutlet } from "mvc.js/layout/outlet";
+import { RouterOutlet } from "mvc.js/outlet";
 import { MDCRipple } from "@material/ripple";
 import { MDCList } from "@material/list";
 import { MDCDrawer } from "@material/drawer";
@@ -10,6 +10,9 @@ import { isDomNode } from "glow.js/lib/dom";
 import { Login } from "../login";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
+import { LinkListener } from "mvc.js/router/link";
+import { createRouter, RouteInput, ViewContext } from "mvc.js/router";
+import "./style.scss";
 
 function TopBar() {
     return (
@@ -119,40 +122,35 @@ function Aside() {
     );
 }
 
-export default function App() {
-    const browserRouter = new BrowserRouter();
+function RouterPage() {
+    return (view: (context: ViewContext) => any, context: ViewContext) => (
+        <section class="router-page">
+            {view ? view(context) : notFound(context)}
+        </section>
+    );
+}
 
+export default function App() {
     return (
         <Fragment>
-            {browserRouter}
+            <LinkListener />
             <Aside />
             <div class="mdc-drawer-scrim"></div>
             <div class="mdc-drawer-app-content" style="height: 100%;">
                 <TopBar />
                 <main class="main-content mdc-top-app-bar--fixed-adjust">
                     <RouterOutlet
-                        router={browserRouter}
-                        routes={{
-                            test: lazy(test),
-                            login: lazy(login),
-                        }}
+                        routes={[{ path: ["test"], component: test }]}
                     >
-                        {(view) =>
-                            init(
-                                <section class="router-page router-page--loading">
-                                    {view}
-                                </section>,
-                                removeClass("router-page--loading")
-                            )
-                        }
+                        <RouterPage />
                     </RouterOutlet>
                 </main>
             </div>
-            {initDrawer}
+            <Drawer />
         </Fragment>
     );
 
-    function initDrawer() {
+    function Drawer() {
         return {
             attachTo(container: HTMLElement) {
                 const drawer = MDCDrawer.attachTo(
@@ -195,14 +193,6 @@ export default function App() {
     }
 }
 
-function removeClass(className: string) {
-    return (dom: HTMLElement) => {
-        setTimeout(function () {
-            dom.classList.remove(className);
-        }, 10);
-    };
-}
-
 function login() {
     return {
         execute() {
@@ -215,31 +205,42 @@ function login() {
     };
 }
 
-function test() {
+function notFound(context: ViewContext) {
+    return (
+        <div class="router-page__content">
+            <main style="color: red;">
+                NOT FOUND {context.url.path.join("/")}
+            </main>
+        </div>
+    );
+}
+
+function test(): Action {
     return {
-        execute(context: IActionContext) {
+        view(context: ViewContext) {
+            const { parent } = context.url;
             return (
                 <Fragment>
                     <div class="router-page__content">
                         <header>test action</header>
                         <main>
-                            <button
-                                click={context.url.relative("bla")}
-                                class="mdc-button mdc-button--raised"
+                            {parent && <div>{parent.route()}</div>}
+                            <a
+                                href={context.url.route("test")}
+                                // click={context.url.relative("bla")}
+                                class="mdc-button mdc-button--raised router-link"
                             >
                                 {MDCRipple}
                                 <div class="mdc-button__ripple"></div>
                                 <span class="mdc-button__label">Button</span>
-                            </button>
+                            </a>
                             <div style="height: 1000px"></div>
                         </main>
                     </div>
                 </Fragment>
             );
         },
-        resolve: {
-            bla: lazy(bla),
-        },
+        routes: [{ path: ["test"], component: test }],
     };
 }
 
@@ -293,8 +294,11 @@ function bla() {
                 </div>
             );
         },
-        resolve: {
-            bla: lazy(bla),
-        },
+        routes: [{ path: ["path"], component: bla }],
     };
+}
+
+interface Action {
+    view(context: ViewContext): any;
+    routes?: RouteInput<any>[];
 }
