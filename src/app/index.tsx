@@ -11,7 +11,7 @@ import { Login } from "../login";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 import { LinkListener } from "mvc.js/router/link";
-import { createRouter, RouteInput, ViewContext } from "mvc.js/router";
+import { RouteInput, ViewContext } from "mvc.js/router";
 import "./style.scss";
 
 function TopBar() {
@@ -261,40 +261,6 @@ function authorized(action: IAction<any>) {
             }
         },
         resolve: action.resolve,
-    };
-}
-
-function body(t: any) {
-    return {
-        render() {
-            const bindings = render(document.body, t);
-            return {
-                dispose() {
-                    disposeMany(bindings);
-                },
-            };
-        },
-    };
-}
-
-function bla() {
-    return {
-        execute(context: IActionContext) {
-            return (
-                <div class="router-page__content">
-                    <header>ogin</header>
-                    <main>
-                        <a
-                            class="router-link"
-                            href={context.url.relative("bla").toString()}
-                        >
-                            bla
-                        </a>
-                    </main>
-                </div>
-            );
-        },
-        routes: [{ path: ["path"], component: bla }],
     };
 }
 

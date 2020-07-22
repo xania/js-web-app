@@ -1,9 +1,9 @@
 [submodule "mvc.js"]
 	path = mvc.js
-	url = ./mvc.js/
+	url = https://github.com/xania/mvc.js.git
 [submodule "glow.js"]
 	path = glow.js
-	url = ./glow.js/
+	url = https://github.com/xania/glow.js.git
 [submodule "mutabl.js"]
 	path = mutabl.js
-	url = ./mutabl.js/
+	url = https://github.com/xania/mutabl.js.git
