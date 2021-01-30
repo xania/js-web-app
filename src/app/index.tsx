@@ -55,7 +55,7 @@ function Aside(props: AsideProps) {
         <aside
             class={[
                 "mdc-drawer mdc-drawer--modal mdc-top-app-bar--fixed-adjust",
-                "mdc-drawer--open",
+                props.open ? "mdc-drawer--open" : null,
             ]}
         >
             <div class="mdc-drawer__header">
@@ -88,7 +88,7 @@ export default function App() {
     return (
         <Fragment>
             <LinkListener />
-            <Aside open={true} />
+            <Aside open={location.pathname == "/"} />
             <div class="mdc-drawer-scrim"></div>
             <div class="mdc-drawer-app-content" style="height: 100%;">
                 <TopBar />
