@@ -22,7 +22,9 @@ function TopBar() {
                     <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">
                         menu
                     </button>
-                    <span class="mdc-top-app-bar__title">Xania</span>
+                    <span class="mdc-top-app-bar__title">
+                        Real-time Operation Management
+                    </span>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button
@@ -39,82 +41,34 @@ function TopBar() {
                     >
                         add
                     </button>
-                    <button
-                        class="mdc-button mdc-button--raised mdc-ripple-upgraded"
-                        style="--mdc-ripple-fg-size:55px; --mdc-ripple-fg-scale:1.97277; --mdc-ripple-fg-translate-start:11.2784px, -12.8835px; --mdc-ripple-fg-translate-end:18.3452px, -9.50284px; --mdc-theme-primary: #585"
-                    >
-                        <span class="mdc-button__label">22:59:35</span>
-                        <i
-                            class="material-icons mdc-button__icon"
-                            style="font-size: 18px;"
-                        >
-                            pause_circle_outline
-                        </i>
-                    </button>
                 </section>
             </div>
         </header>
     );
 }
 
-function Aside() {
+interface AsideProps {
+    open: boolean;
+}
+function Aside(props: AsideProps) {
     return (
-        <aside class="mdc-drawer mdc-drawer--modal mdc-top-app-bar--fixed-adjust">
+        <aside
+            class={[
+                "mdc-drawer mdc-drawer--modal mdc-top-app-bar--fixed-adjust",
+                "mdc-drawer--open",
+            ]}
+        >
             <div class="mdc-drawer__header">
                 <h3 class="mdc-drawer__title">Mail</h3>
                 <h6 class="mdc-drawer__subtitle">email@material.io</h6>
             </div>
             <div class="mdc-drawer__content">
                 <nav class="mdc-list" tabindex="0">
-                    <a
-                        class="mdc-list-item router-link"
-                        href="/login"
-                        aria-current="page"
-                    >
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            inbox
-                        </i>
-                        <span class="mdc-list-item__text">Login</span>
-                    </a>
-                    <a
-                        class="mdc-list-item router-link"
-                        href="/"
-                        aria-current="page"
-                    >
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            inbox
-                        </i>
-                        <span class="mdc-list-item__text">Inbox</span>
-                    </a>
-                    <a
-                        class="mdc-list-item router-link mdc-list-item--activated"
-                        href="/test"
-                    >
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            send
-                        </i>
-                        <span class="mdc-list-item__text">Outgoing</span>
-                    </a>
+                    <MainLink text="Login" url="/login" icon="inbox" />
+                    <MainLink text="Inbox" url="/" icon="inbox" />
                     <hr class="mdc-list-divider" />
                     <h6 class="mdc-list-group__subheader">Labels</h6>
-                    <a class="mdc-list-item" href="#">
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            bookmark
-                        </i>
-                        <span class="mdc-list-item__text">Family</span>
-                    </a>{" "}
+                    <MainLink text="Outgoing" url="/test" icon="send" />
                     {MDCList}
                 </nav>
             </div>
@@ -134,7 +88,7 @@ export default function App() {
     return (
         <Fragment>
             <LinkListener />
-            <Aside />
+            <Aside open={true} />
             <div class="mdc-drawer-scrim"></div>
             <div class="mdc-drawer-app-content" style="height: 100%;">
                 <TopBar />
@@ -224,6 +178,10 @@ function test(): Action {
                     <div class="router-page__content">
                         <header>test action</header>
                         <main>
+                            <div>
+                                asdfas asdf asdf asdf asdf asdf asdfas
+                                dfasdfasdfa sdf asdfasdfa sdfasdf
+                            </div>
                             {parent && <div>{parent.route()}</div>}
                             <a
                                 href={context.url.route("test")}
@@ -234,7 +192,6 @@ function test(): Action {
                                 <div class="mdc-button__ripple"></div>
                                 <span class="mdc-button__label">Button</span>
                             </a>
-                            <div style="height: 1000px"></div>
                         </main>
                     </div>
                 </Fragment>
@@ -267,4 +224,24 @@ function authorized(action: IAction<any>) {
 interface Action {
     view(context: ViewContext): any;
     routes?: RouteInput<any>[];
+}
+
+interface MainLinkProps {
+    text: string;
+    url: string;
+    icon: string;
+}
+function MainLink(props: MainLinkProps) {
+    return (
+        <a
+            class="mdc-list-item router-link"
+            href={props.url}
+            aria-current="page"
+        >
+            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">
+                {props.icon}
+            </i>
+            <span class="mdc-list-item__text">{props.text}</span>
+        </a>
+    );
 }
