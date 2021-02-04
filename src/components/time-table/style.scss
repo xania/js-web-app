@@ -1,0 +1,193 @@
+.rom-time-table-container {
+    height: 100%;
+    box-sizing: border-box;
+    max-height: 100%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 5px 10px #aaa;
+    background-color: rgba($color: #fff89827, $alpha: 0.1);
+    color: black;
+
+    .rom-time-table {
+        height: 100%;
+        overflow: auto;
+
+        display: flex;
+        flex-direction: row;
+        box-sizing: border-box;
+        align-items: flex-start;
+
+        &-column {
+            border-right: 1px solid #aaa;
+
+            &:first-child {
+                box-shadow: 7px 0 7px -7px #888;
+                border-right: none;
+
+                position: -webkit-sticky; /* Safari */
+                position: sticky;
+                left: 0;
+                z-index: 3;
+
+                background-color: white;
+            }
+
+            &:last-child {
+                border-right: none;
+            }
+
+            &__hour {
+                height: 24px;
+                line-height: 24px;
+                text-align: center;
+                color: #888;
+                font-size: 13px;
+
+                background-color: white;
+                position: -webkit-sticky; /* Safari */
+                position: sticky;
+                top: 0;
+
+                z-index: 2;
+            }
+            &__minutes {
+                height: 24px;
+                line-height: 24px;
+                display: flex;
+                flex-direction: row;
+                font-size: 10px;
+                color: #888;
+                text-align: center;
+                border-bottom: 1px solid rgb(221, 221, 221);
+
+                position: -webkit-sticky; /* Safari */
+                position: sticky;
+                top: 24px;
+
+                background-color: white;
+                box-shadow: 0 4px 4px -7px #888;
+
+                z-index: 2;
+
+                &__content {
+                    min-width: 40px;
+                    margin-left: -100%;
+                    box-sizing: border-box;
+                }
+            }
+        }
+
+        &-position {
+            line-height: 40px;
+            box-sizing: border-box;
+            height: 40px;
+            border-bottom: 1px solid rgb(221, 221, 221);
+            min-width: 200px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: rgba(209, 221, 211, 0.2);
+            }
+
+            &__header {
+                height: 48px;
+                line-height: 48px;
+                border-bottom: 1px solid rgb(221, 221, 221);
+                white-space: nowrap;
+                background-color: white;
+                min-width: 200px;
+
+                position: -webkit-sticky; /* Safari */
+                position: sticky;
+                top: 0;
+                z-index: 3;
+            }
+
+            &__content {
+                margin: 0 10px;
+                white-space: nowrap;
+                display: inline-flex;
+                pointer-events: none;
+            }
+        }
+
+        &-row {
+            display: flex;
+            text-align: center;
+            height: 40px;
+            background-image: url(./cell_border.png);
+            &:hover {
+                background-color: rgb(240, 240, 240);
+            }
+        }
+
+        &-cell {
+            line-height: 40px;
+            box-sizing: border-box;
+            height: 40px;
+            width: 40px;
+            overflow: hidden;
+            box-sizing: border-box;
+            cursor: pointer;
+
+            &:first-child {
+                border-left: none;
+            }
+
+            &__content {
+                box-sizing: border-box;
+                font-size: 12px;
+                white-space: nowrap;
+                pointer-events: none;
+                text-overflow: ellipsis;
+                width: 40px;
+            }
+
+            &--selected {
+                background-color: rgba(0, 113, 194, 0.445);
+            }
+        }
+
+        &__loader {
+            position: absolute;
+            height: 10px;
+            width: 100%;
+            z-index: 5;
+            left: 0;
+            top: 48px;
+            background-image: url(./loading.svg);
+            background-position: center;
+
+            &__content {
+                height: 5px;
+                background-position: center;
+                background-repeat: no-repeat;
+                pointer-events: none;
+            }
+        }
+
+        &--loading {
+            overflow: hidden;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    }
+
+    .menu {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 8px;
+        height: initial;
+        padding: 0.9rem 0;
+        text-align: left;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.54);
+        line-height: 24px;
+        font-weight: 500;
+        span {
+            font-size: 10px;
+            cursor: pointer;
+        }
+    }
+}

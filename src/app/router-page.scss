@@ -17,7 +17,7 @@
 
 @media only screen and (min-width: 600px) {
     .router-page {
-        background-color: #eee;
+        background-color: #f3f3f3;
 
         & > * {
             flex: 1;
@@ -48,7 +48,7 @@
                 }
             }
 
-            box-shadow: 0px 0px 4px #888888;
+            box-shadow: 0 2px 10px #bbb;
         }
     }
 }

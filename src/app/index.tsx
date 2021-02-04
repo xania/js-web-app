@@ -12,7 +12,18 @@ import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 import { LinkListener } from "mvc.js/router/link";
 import { RouteInput, ViewContext } from "mvc.js/router";
+// import {MDCTabBar} from '@material/tab-bar';
+
+// const tabBar = new MDCTabBar(document.querySelector('.mdc-tab-bar'));
+
 import "./style.scss";
+import TabBar from "../components/tab-bar";
+import TimeTable, {
+    hourColumns,
+    minuteColumns,
+    TimeTableRow,
+} from "../components/time-table";
+import Css from "glow.js/components/css";
 
 function TopBar() {
     return (
@@ -68,7 +79,11 @@ function Aside(props: AsideProps) {
                     <MainLink text="Inbox" url="/" icon="inbox" />
                     <hr class="mdc-list-divider" />
                     <h6 class="mdc-list-group__subheader">Labels</h6>
-                    <MainLink text="Outgoing" url="/test" icon="send" />
+                    <MainLink
+                        text="Agents Planning"
+                        url="/agents-plannig"
+                        icon="schedule"
+                    />
                     {MDCList}
                 </nav>
             </div>
@@ -94,7 +109,12 @@ export default function App() {
                 <TopBar />
                 <main class="main-content mdc-top-app-bar--fixed-adjust">
                     <RouterOutlet
-                        routes={[{ path: ["test"], component: test }]}
+                        routes={[
+                            {
+                                path: ["agents-plannig"],
+                                component: AgentsPlanning,
+                            },
+                        ]}
                     >
                         <RouterPage />
                     </RouterOutlet>
@@ -169,35 +189,35 @@ function notFound(context: ViewContext) {
     );
 }
 
-function test(): Action {
+function AgentsPlanning(): Action {
     return {
         view(context: ViewContext) {
-            const { parent } = context.url;
             return (
                 <Fragment>
                     <div class="router-page__content">
-                        <header>test action</header>
+                        <header style="max-width: 900px;">
+                            <TabBar />
+                        </header>
                         <main>
-                            <div>
-                                asdfas asdf asdf asdf asdf asdf asdfas
-                                dfasdfasdfa sdf asdfasdfa sdfasdf
-                            </div>
-                            {parent && <div>{parent.route()}</div>}
-                            <a
-                                href={context.url.route("test")}
-                                // click={context.url.relative("bla")}
-                                class="mdc-button mdc-button--raised router-link"
-                            >
-                                {MDCRipple}
-                                <div class="mdc-button__ripple"></div>
-                                <span class="mdc-button__label">Button</span>
-                            </a>
+                            <TimeTable
+                                rows={getRows()}
+                                cellContentTemplate={(row, h, m) => {
+                                    const value = row.value(h, m);
+                                    return (
+                                        <Fragment>
+                                            {value && value.demand}
+                                            <span class="rom-datatable-cell__content__delta">
+                                                {formatDelta(value)}
+                                            </span>
+                                        </Fragment>
+                                    );
+                                }}
+                            />
                         </main>
                     </div>
                 </Fragment>
             );
         },
-        routes: [{ path: ["test"], component: test }],
     };
 }
 
@@ -244,4 +264,129 @@ function MainLink(props: MainLinkProps) {
             <span class="mdc-list-item__text">{props.text}</span>
         </a>
     );
+}
+
+function input(name: string, value: string) {
+    return {
+        name,
+        value,
+        blur(e) {
+            console.log(e.target.value);
+        },
+    };
+}
+
+interface ControlProps {
+    name: string;
+    value: string;
+}
+function Control(props: ControlProps) {
+    return (
+        <input
+            style="border: 2px solid blue;"
+            {...input(props.name, props.value)}
+        >
+            box
+        </input>
+    );
+}
+
+interface ToggleButtonProps {}
+function ToggleButton(props: ToggleButtonProps) {
+    return <a class="mdc-button mdc-button--outline">toggle</a>;
+}
+
+function formatDelta(cell: DemandCell) {
+    if (!cell) {
+        return null;
+    }
+
+    const { demand, implicit } = cell;
+    if (!demand || !implicit) {
+        return null;
+    }
+
+    const delta = (cell.demand || 0) - (cell.implicit || 0);
+    return delta ? `(${delta})` : null;
+}
+
+interface DemandCell {
+    demand: number;
+    implicit?: number;
+}
+
+function bgColor(cell: DemandCell) {
+    const { demand, implicit } = cell;
+    if (demand) {
+        if (implicit) {
+            const delta = demand - implicit;
+            if (delta) {
+                return `rgba(255,0,0,${0.03 * Math.abs(delta)})`;
+            } else {
+                return "rgba(0,255,0,0.2)";
+            }
+        }
+        return "rgba(0,200,222,0.1)";
+    } else if (implicit) {
+        return `rgba(255,0,0,${0.03 * Math.abs(implicit)})`;
+    }
+
+    return null;
+}
+
+function getRows() {
+    const rows: TimeTableRow<DemandCell>[] = [];
+    for (let i = 0; i < 30; i++) {
+        const value = createValue();
+        rows.push({
+            identifier: i.toString(),
+            label: "Lane A (" + i + ")",
+            visible: true,
+            depth: 0,
+            mode: "leaf",
+            value,
+            bgColor(hour, minute) {
+                const cell = value(hour, minute);
+                if (!cell) {
+                    return null;
+                }
+                const { demand, implicit } = cell;
+                if (demand) {
+                    if (implicit) {
+                        const delta = demand - implicit;
+                        if (delta) {
+                            return `rgba(255,0,0,${0.03 * Math.abs(delta)})`;
+                        } else {
+                            return "rgba(0,255,0,0.2)";
+                        }
+                    }
+                    return "rgba(0,200,222,0.1)";
+                } else if (implicit) {
+                    return `rgba(255,0,0,${0.03 * Math.abs(implicit)})`;
+                }
+
+                return null;
+            },
+        });
+    }
+
+    return rows;
+
+    function createValue() {
+        const values: { [h: string]: { [m: string]: DemandCell } } = {};
+        for (const h of hourColumns) {
+            values[h] = {};
+            for (const m of minuteColumns) {
+                const random = Math.random();
+                if (random > 0.85) {
+                    values[h][m] = {
+                        demand: 100 - Math.ceil(100 * random),
+                    };
+                }
+            }
+        }
+        return function (hour, minute) {
+            return values[hour][minute];
+        };
+    }
 }
