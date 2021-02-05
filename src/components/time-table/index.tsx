@@ -1,12 +1,11 @@
 import tpl from "glow.js";
-import { createListSource, List } from "glow.js/components";
+import { List } from "glow.js/components";
 import If from "glow.js/components/if";
 import { Store } from "../../../mutabl.js";
+import { Expression } from "../../../mutabl.js/lib/observable.js";
 import "./style.scss";
-import * as Rx from "rxjs";
-import * as Ro from "rxjs/operators";
 
-const timeUnit = 5;
+const timeUnit = 15;
 
 export const hourColumns: number[] = new Array(24);
 for (let h = 0; h < hourColumns.length; h++) {
@@ -15,28 +14,32 @@ for (let h = 0; h < hourColumns.length; h++) {
 
 export const minuteColumns = getMinuteCells(timeUnit);
 
-export interface TimeTableRow<T> {
+export interface TimeTableData<T> {
     identifier: string;
     label: string;
-    mode: "collapsed" | "expanded" | "leaf";
-    visible: boolean;
-    depth: number;
-    value(hour: number, minute: number): T;
-    bgColor(hour: number, minute: number);
+    children: TimeTableData<T>[];
+    values(hour: number, minute: number): T;
+    bgColor(value: T);
 }
 
 interface TimeTableProps<T> {
-    cellContentTemplate(
-        data: TimeTableRow<T>,
-        hour: number,
-        minute: number
-    ): any;
-    rows: TimeTableRow<T>[];
+    cellContentTemplate(cell: T): any;
+    rows: TimeTableData<T>[];
+}
+
+interface TimeTableRow<T> {
+    data: TimeTableData<T>;
+    depth: number;
+    isLeaf: boolean;
+    visible: Expression<boolean>;
+    parent?: TimeTableRow<T>;
 }
 
 export default function TimeTable<T>(props: TimeTableProps<T>) {
-    const { cellContentTemplate, rows } = props;
-    const selection = new Store<TimeSelection>();
+    const { cellContentTemplate } = props;
+    const collapsed = new Store<TimeTableRow<T>[]>([]);
+    const rows = flatten(props.rows, collapsed);
+    const selection = new Store<TimeSelection>(null);
     return (
         <div class="rom-time-table-container">
             {selection.subscribe(console.log)}
@@ -58,13 +61,12 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                     </div>
                     <List source={rows}>
                         {(row: TimeTableRow<T>) => (
-                            <div
-                                class="rom-time-table-position"
-                                For="let row of dataRows; trackBy: row?.identifier"
-                                style_display="row.visible ? null : 'none'"
-                                attr_data_identifier="row.identifier"
-                            >
-                                <If condition={row.visible}>
+                            <If condition={row.visible}>
+                                <div
+                                    class="rom-time-table-position"
+                                    style_display="row.visible ? null : 'none'"
+                                    data-identifier={row.data.identifier}
+                                >
                                     <span
                                         class="rom-time-table-position__content"
                                         style={
@@ -73,22 +75,22 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                                             "px"
                                         }
                                     >
-                                        <If condition={row.mode !== "leaf"}>
+                                        <If condition={!row.isLeaf}>
                                             <i
                                                 class="material-icons"
                                                 style="margin: auto auto auto -24px;"
                                             >
-                                                {row.mode === "expanded"
-                                                    ? "keyboard_arrow_down"
-                                                    : row.mode === "collapsed"
-                                                    ? "keyboard_arrow_right"
-                                                    : null}
+                                                {collapsed.lift((l) =>
+                                                    l.includes(row)
+                                                        ? "keyboard_arrow_right"
+                                                        : "keyboard_arrow_down"
+                                                )}
                                             </i>
                                         </If>
-                                        {row.label}
+                                        {row.data.label}
                                     </span>
-                                </If>
-                            </div>
+                                </div>
+                            </If>
                         )}
                     </List>
                 </div>
@@ -130,15 +132,18 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                 selectCell(identifier, minuteOffset);
             } else if (target.classList.contains("rom-time-table-position")) {
                 const { identifier } = target.dataset;
-                const row = rows.find((n) => n.identifier === identifier);
+                const row = rows.find((n) => n.data.identifier === identifier);
                 if (row) {
-                    if (row.mode === "collapsed") {
-                        row.mode = "expanded";
-                    } else if (row.mode === "expanded") {
-                        row.mode = "collapsed";
-                    }
+                    collapsed.update((l) => {
+                        const idx = l.indexOf(row);
+                        if (idx >= 0) {
+                            l.splice(idx, 1);
+                        } else {
+                            l.push(row);
+                        }
+                    });
 
-                    const stack: TimeTableRow<T>[] = [row];
+                    const stack: TimeTableData<T>[] = [row.data];
                     while (stack.length) {
                         const curr = stack.pop();
                         // const { childrenIdentifiers } = curr;
@@ -229,30 +234,26 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
     }
     function Row(props: RowProps) {
         const { row, hour } = props;
+        const hv = hasValues(row, hour);
         return (
-            <div
-                data-hour={hour}
-                data-identifier={row.identifier}
-                style={row.visible ? null : "display: none"}
-                class={[
-                    "rom-time-table-row",
-                    row.visible ? null : "rom-time-table-row--hidden",
-                ]}
-            >
-                <If
-                    condition={isColumnSelected(row, hour).pipe(
-                        Ro.startWith(false),
-                        Ro.combineLatest(
-                            hasValues(row, hour),
-                            (hv, cs) => hv || cs
-                        )
-                    )}
+            <If condition={row.visible}>
+                <div
+                    data-hour={hour}
+                    data-identifier={row.data.identifier}
+                    // style={visible.lift((b) => b && "display: none")}
+                    class={["rom-time-table-row"]}
                 >
-                    <List source={minuteColumns}>
-                        {(minute) => <Cell {...props} minute={minute} />}
-                    </List>
-                </If>
-            </div>
+                    <If
+                        condition={isColumnSelected(row.data, hour).lift(
+                            (cs) => cs || hv
+                        )}
+                    >
+                        <List source={minuteColumns}>
+                            {(minute) => <Cell {...props} minute={minute} />}
+                        </List>
+                    </If>
+                </div>
+            </If>
             //     <ng-container
             //     If="
             //         row.visible &&
@@ -265,7 +266,7 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
         );
     }
 
-    function isColumnSelected(row: TimeTableRow<T>, hour: number) {
+    function isColumnSelected(row: TimeTableData<T>, hour: number) {
         const expr = selection.lift((sel) => {
             if (!sel) {
                 return false;
@@ -285,32 +286,32 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
             );
         });
 
-        return Rx.from(expr);
+        return expr;
     }
 
     function isCellSelected(
         row: TimeTableRow<T>,
         hour: number,
-        minute: number
+        minute: number,
+        sel: TimeSelection
     ) {
-        return (sel: TimeSelection) =>
-            row.identifier == sel.rowIdentifier &&
-            isTimeInSelection({ minuteOffset: hour * 60 + minute }, sel);
+        if (!sel) {
+            return null;
+        }
+
+        return (
+            row.data.identifier == sel.rowIdentifier &&
+            isTimeInSelection({ minuteOffset: hour * 60 + minute }, sel)
+        );
     }
 
-    function hasValues(
-        row: TimeTableRow<T>,
-        hour: number
-    ): Rx.Observable<boolean> {
-        // if (!column) {
-        //     return false;
-        // }
+    function hasValues(row: TimeTableRow<T>, hour: number): boolean {
         for (const m of minuteColumns) {
-            if (row.value(hour, m)) {
-                return Rx.of(true);
+            if (row.data.values(hour, m)) {
+                return true;
             }
         }
-        return Rx.of(false);
+        return false;
     }
 
     interface CellProps {
@@ -320,36 +321,32 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
     }
     function Cell(props: CellProps) {
         const { row, hour, minute } = props;
-        const isSelected = isCellSelected(row, hour, minute);
+        const isSelected = selection.lift((sel) =>
+            isCellSelected(row, hour, minute, sel)
+        );
+        const cell = row.data.values(hour, minute);
         return (
             <div
                 class={[
                     "rom-time-table-cell",
-                    selection.lift((sel) =>
-                        isSelected(sel) ? "rom-time-table-cell--selected" : null
+                    isSelected.lift(
+                        (b) => b && "rom-time-table-cell--selected"
                     ),
                 ]}
-                style={"background-color: " + row.bgColor(hour, minute)}
+                style={isSelected.lift((b) => {
+                    const bgColor = row.data.bgColor(cell);
+                    if (!bgColor) {
+                        return null;
+                    }
+                    if (b) {
+                        return "color: white";
+                    }
+                    return "background-color: " + bgColor;
+                })}
                 data-minute={minute}
-                style_background="
-    cellColor
-        | apply
-            : row[hour][minute]
-            : (isCellSelected
-                  | apply
-                      : selection
-                      : row.identifier
-                      : hour
-                      : minute)
-"
-                ngClass="{
-    'rom-time-table-cell--selected':
-        isCellSelected
-        | apply: selection:row.identifier:hour:minute
-}"
             >
                 <a class="rom-time-table-cell__content">
-                    {cellContentTemplate(row, hour, minute)}
+                    {cellContentTemplate(cell)}
                 </a>
             </div>
         );
@@ -366,81 +363,6 @@ function getMinuteCells(ptu: number): number[] {
 
 function prependZeros(value) {
     return ("00" + value).slice(-2);
-}
-
-{
-    /* 
-<ng-template #menuItemsTemplate let-timeUnit="timeUnit">
-    <div class="menu">
-        <span matMenuTriggerFor="menu"
-            >{ 'planning_time_unit_short' | locale }
-            <span If="timeUnit < 60"
-                >({ timeUnit }{ 'minutes_short_lc' | locale })</span
-            >
-            <span If="timeUnit === 60"
-                >(1{ 'hour_short_lc' | locale })</span
-            >
-        </span>
-    </div>
-    <mat-menu menu="matMenu">
-        <button mat-menu-item matMenuTriggerFor="timeUnitMenu">
-            <mat-icon>alarm</mat-icon>
-            <span>{ 'planning_time_unit' | locale }</span>
-        </button>
-        <button mat-menu-item click="onExpandAll()">
-            <mat-icon>expand_more</mat-icon>
-            <span>{ 'expand_all' | locale }</span>
-        </button>
-        <button mat-menu-item click="onCollapseAll()">
-            <mat-icon>expand_less</mat-icon>
-            <span>{ 'collapse_all' | locale }</span>
-        </button>
-    </mat-menu>
-    <mat-menu #timeUnitMenu="matMenu">
-        <button
-            mat-menu-item
-            class_active="timeUnit === 5"
-            click="setTimeUnit(5)"
-        >
-            5 { 'minutes_lc' | locale }
-        </button>
-        <button
-            mat-menu-item
-            class_active="timeUnit === 10"
-            click="setTimeUnit(10)"
-        >
-            10 { 'minutes_lc' | locale }
-        </button>
-        <button
-            mat-menu-item
-            class_active="timeUnit === 15"
-            click="setTimeUnit(15)"
-        >
-            15 { 'minutes_lc' | locale }
-        </button>
-        <button
-            mat-menu-item
-            class_active="timeUnit === 20"
-            click="setTimeUnit(20)"
-        >
-            20 { 'minutes_lc' | locale }
-        </button>
-        <button
-            mat-menu-item
-            class_active="timeUnit === 30"
-            click="setTimeUnit(30)"
-        >
-            30 { 'minutes_lc' | locale }
-        </button>
-        <button
-            mat-menu-item
-            class_active="timeUnit === 60"
-            click="setTimeUnit(60)"
-        >
-            1 { 'hour_lc' | locale }
-        </button>
-    </mat-menu>
-</ng-template> */
 }
 
 function TimeUnits() {
@@ -498,4 +420,44 @@ function isTimeInSelection(t1: Time, s1: TimeSelection) {
         return false;
     }
     return true;
+}
+
+function flatten<T>(
+    rows: TimeTableData<T>[],
+    collapsed: Store<TimeTableRow<T>[]>
+) {
+    const stack: [
+        number,
+        TimeTableData<T>,
+        TimeTableRow<T>?
+    ][] = rows.reverse().map((r) => [0, r, null]);
+    const result: TimeTableRow<T>[] = [];
+
+    while (stack.length > 0) {
+        const [depth, curr, parent] = stack.pop();
+        const { children } = curr;
+        const row: TimeTableRow<T> = {
+            depth,
+            isLeaf: !children || children.length == 0,
+            data: curr,
+            parent,
+            visible: collapsed.lift((col) => {
+                let p = parent;
+                while (p) {
+                    if (col.includes(p)) {
+                        return false;
+                    }
+                    p = p.parent;
+                }
+                return true;
+            }),
+        };
+        result.push(row);
+        if (children)
+            for (const child of children.reverse()) {
+                stack.push([depth + 1, child, row]);
+            }
+    }
+
+    return result;
 }

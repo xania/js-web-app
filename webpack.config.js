@@ -1,5 +1,4 @@
 const fspath = require("path");
-const autoprefixer = require("autoprefixer");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -25,6 +24,7 @@ function productionConfig(isDevelopment) {
         devServer: {
             contentBase: "./dist",
             historyApiFallback: true,
+            open: false,
         },
         module: {
             rules: [
@@ -50,9 +50,9 @@ function productionConfig(isDevelopment) {
                             options: {
                                 // you can specify a publicPath here
                                 // by default it uses publicPath in webpackOptions.output
-                                // publicPath: "../",
-                                esModule: true,
-                                hmr: true,
+                                publicPath: "./",
+                                // esModule: true,
+                                // hmr: true,
                             },
                         },
                         {
@@ -64,7 +64,9 @@ function productionConfig(isDevelopment) {
                         {
                             loader: "postcss-loader",
                             options: {
-                                plugins: () => [autoprefixer()],
+                                postcssOptions: {
+                                    plugins: [["autoprefixer"]],
+                                },
                             },
                         },
                         {

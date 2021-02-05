@@ -1,8 +1,7 @@
-import { tpl, init, render, disposeMany } from "glow.js";
+import { tpl } from "glow.js";
 import { IActionContext, IAction } from "mvc.js";
 import { Fragment } from "glow.js/lib/fragment";
 import { RouterOutlet } from "mvc.js/outlet";
-import { MDCRipple } from "@material/ripple";
 import { MDCList } from "@material/list";
 import { MDCDrawer } from "@material/drawer";
 import { MDCTopAppBar } from "@material/top-app-bar";
@@ -12,18 +11,15 @@ import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 import { LinkListener } from "mvc.js/router/link";
 import { RouteInput, ViewContext } from "mvc.js/router";
-// import {MDCTabBar} from '@material/tab-bar';
-
-// const tabBar = new MDCTabBar(document.querySelector('.mdc-tab-bar'));
 
 import "./style.scss";
 import TabBar from "../components/tab-bar";
 import TimeTable, {
     hourColumns,
     minuteColumns,
-    TimeTableRow,
+    TimeTableData,
 } from "../components/time-table";
-import Css from "glow.js/components/css";
+import { fetchJson } from "../data";
 
 function TopBar() {
     return (
@@ -112,7 +108,7 @@ export default function App() {
                         routes={[
                             {
                                 path: ["agents-plannig"],
-                                component: AgentsPlanning,
+                                component: AgentsPlanning1,
                             },
                         ]}
                     >
@@ -189,9 +185,9 @@ function notFound(context: ViewContext) {
     );
 }
 
-function AgentsPlanning(): Action {
+function AgentsPlanning1(): Action {
     return {
-        view(context: ViewContext) {
+        async view(context: ViewContext) {
             return (
                 <Fragment>
                     <div class="router-page__content">
@@ -200,14 +196,13 @@ function AgentsPlanning(): Action {
                         </header>
                         <main>
                             <TimeTable
-                                rows={getRows()}
-                                cellContentTemplate={(row, h, m) => {
-                                    const value = row.value(h, m);
+                                rows={await getRows()}
+                                cellContentTemplate={(cell) => {
                                     return (
                                         <Fragment>
-                                            {value && value.demand}
+                                            {cell && cell.demand}
                                             <span class="rom-datatable-cell__content__delta">
-                                                {formatDelta(value)}
+                                                {formatDelta(cell)}
                                             </span>
                                         </Fragment>
                                     );
@@ -334,19 +329,32 @@ function bgColor(cell: DemandCell) {
     return null;
 }
 
-function getRows() {
-    const rows: TimeTableRow<DemandCell>[] = [];
-    for (let i = 0; i < 30; i++) {
-        const value = createValue();
-        rows.push({
-            identifier: i.toString(),
-            label: "Lane A (" + i + ")",
-            visible: true,
-            depth: 0,
-            mode: "leaf",
-            value,
-            bgColor(hour, minute) {
-                const cell = value(hour, minute);
+interface Position {
+    id: string;
+    name: string;
+    children: Position[];
+}
+
+async function getRows() {
+    const positions: Position[] = await fetchJson(
+        "/planning/positions"
+    ).then((e) => e.json());
+    const rows: TimeTableData<DemandCell>[] = [];
+    for (let i = 0; i < positions.length; i++) {
+        const pos = positions[i];
+        rows.push(toRow(pos));
+    }
+
+    return rows;
+
+    function toRow(pos: Position): TimeTableData<DemandCell> {
+        const values = createValues();
+        return {
+            identifier: pos.id,
+            label: pos.name,
+            children: pos.children.map(toRow),
+            values,
+            bgColor(cell) {
                 if (!cell) {
                     return null;
                 }
@@ -367,21 +375,22 @@ function getRows() {
 
                 return null;
             },
-        });
+        };
     }
 
-    return rows;
-
-    function createValue() {
+    function createValues() {
         const values: { [h: string]: { [m: string]: DemandCell } } = {};
         for (const h of hourColumns) {
             values[h] = {};
             for (const m of minuteColumns) {
                 const random = Math.random();
                 if (random > 0.85) {
-                    values[h][m] = {
-                        demand: 100 - Math.ceil(100 * random),
-                    };
+                    const demand = 100 - Math.ceil(100 * random);
+                    if (demand) {
+                        values[h][m] = {
+                            demand,
+                        };
+                    }
                 }
             }
         }

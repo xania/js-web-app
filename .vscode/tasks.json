@@ -27,7 +27,7 @@
                     "regexp": "(.*?)"
                 },
                 "endsPattern": {
-                    "regexp": "Compiled |Failed to compile."
+                    "regexp": "compiled successfully |Failed to compile"
                 }
             }
         }
