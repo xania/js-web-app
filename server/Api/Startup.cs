@@ -38,8 +38,10 @@ namespace Api
             services.AddSignalR();
 
             // Add framework services.
-            services.AddDbContext<RomDbContext>(options =>
-                options.UseSqlServer("server=.;database=rom;Integrated Security=SSPI;MultipleActiveResultSets=True"));
+            services.AddDbContext<RomDbContext>(options => {
+                options.UseSqlServer("server=.;database=rom;Integrated Security=SSPI;MultipleActiveResultSets=True");
+                options.LogTo(Console.WriteLine);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -108,7 +108,7 @@ export default function App() {
                         routes={[
                             {
                                 path: ["agents-plannig"],
-                                component: AgentsPlanning1,
+                                component: AgentsPlanning,
                             },
                         ]}
                     >
@@ -185,7 +185,7 @@ function notFound(context: ViewContext) {
     );
 }
 
-function AgentsPlanning1(): Action {
+function AgentsPlanning(): Action {
     return {
         async view(context: ViewContext) {
             return (
@@ -193,6 +193,30 @@ function AgentsPlanning1(): Action {
                     <div class="router-page__content">
                         <header style="max-width: 900px;">
                             <TabBar />
+                        </header>
+                        <header style="display: flex; gap: 12px;">
+                            <input type="date" />
+                            <button
+                                class="mdc-button mdc-button--raised"
+                                style="--mdc-theme-primary: blue"
+                            >
+                                Set demand
+                            </button>
+                            <button
+                                class="mdc-button mdc-button--raised mdc-button--danger"
+                                style="--mdc-theme-primary: red"
+                            >
+                                <span class="mdc-button__ripple"></span>
+                                <i
+                                    class="material-icons mdc-button__icon"
+                                    aria-hidden="true"
+                                >
+                                    bookmark
+                                </i>
+                                <span class="mdc-button__label">
+                                    Upload file
+                                </span>
+                            </button>
                         </header>
                         <main>
                             <TimeTable
@@ -304,31 +328,15 @@ function formatDelta(cell: DemandCell) {
     const delta = (cell.demand || 0) - (cell.implicit || 0);
     return delta ? `(${delta})` : null;
 }
-
 interface DemandCell {
     demand: number;
     implicit?: number;
 }
 
-function bgColor(cell: DemandCell) {
-    const { demand, implicit } = cell;
-    if (demand) {
-        if (implicit) {
-            const delta = demand - implicit;
-            if (delta) {
-                return `rgba(255,0,0,${0.03 * Math.abs(delta)})`;
-            } else {
-                return "rgba(0,255,0,0.2)";
-            }
-        }
-        return "rgba(0,200,222,0.1)";
-    } else if (implicit) {
-        return `rgba(255,0,0,${0.03 * Math.abs(implicit)})`;
-    }
-
-    return null;
+interface DailyDemand {
+    positionId: string;
+    values: number[];
 }
-
 interface Position {
     id: string;
     name: string;
@@ -336,6 +344,9 @@ interface Position {
 }
 
 async function getRows() {
+    const demands: DailyDemand[] = await fetchJson(
+        "/planning/demands"
+    ).then((e) => e.json());
     const positions: Position[] = await fetchJson(
         "/planning/positions"
     ).then((e) => e.json());
@@ -348,12 +359,25 @@ async function getRows() {
     return rows;
 
     function toRow(pos: Position): TimeTableData<DemandCell> {
-        const values = createValues();
+        const demand = demands.find((e) => e.positionId === pos.id);
         return {
             identifier: pos.id,
             label: pos.name,
             children: pos.children.map(toRow),
-            values,
+            values(hour: number, minute: number) {
+                if (!demand) {
+                    return null;
+                }
+                const idx = Math.floor(hour * 12 + minute / 5);
+                const value = demand.values[idx] || 0;
+                if (!value) {
+                    return null;
+                }
+                return {
+                    demand: value,
+                    implicit: value - 1,
+                };
+            },
             bgColor(cell) {
                 if (!cell) {
                     return null;
@@ -375,27 +399,6 @@ async function getRows() {
 
                 return null;
             },
-        };
-    }
-
-    function createValues() {
-        const values: { [h: string]: { [m: string]: DemandCell } } = {};
-        for (const h of hourColumns) {
-            values[h] = {};
-            for (const m of minuteColumns) {
-                const random = Math.random();
-                if (random > 0.85) {
-                    const demand = 100 - Math.ceil(100 * random);
-                    if (demand) {
-                        values[h][m] = {
-                            demand,
-                        };
-                    }
-                }
-            }
-        }
-        return function (hour, minute) {
-            return values[hour][minute];
         };
     }
 }
