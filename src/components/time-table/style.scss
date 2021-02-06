@@ -119,6 +119,11 @@
             &:hover {
                 background-color: rgb(240, 240, 240);
             }
+
+            &--separator {
+                background-color: #eee;
+                height: 10px;
+            }
         }
 
         &-cell {

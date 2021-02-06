@@ -62,6 +62,9 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                     <List source={rows}>
                         {(row: TimeTableRow<T>) => (
                             <If condition={row.visible}>
+                                <If condition={row.depth === 0}>
+                                    <div class="rom-time-table-row--separator"></div>
+                                </If>
                                 <div
                                     class="rom-time-table-position"
                                     style_display="row.visible ? null : 'none'"
@@ -93,6 +96,7 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                             </If>
                         )}
                     </List>
+                    <div class="rom-time-table-row--separator"></div>
                 </div>
                 <List source={hourColumns}>
                     {(hour) => (
@@ -114,6 +118,7 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                             <List source={rows}>
                                 {(row) => <Row hour={hour} row={row} />}
                             </List>
+                            <div class="rom-time-table-row--separator"></div>
                         </div>
                     )}
                 </List>
@@ -237,6 +242,9 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
         const hv = hasValues(row, hour);
         return (
             <If condition={row.visible}>
+                <If condition={row.depth === 0}>
+                    <div class="rom-time-table-row--separator"></div>
+                </If>
                 <div
                     data-hour={hour}
                     data-identifier={row.data.identifier}
