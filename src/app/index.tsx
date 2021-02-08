@@ -10,7 +10,12 @@ import { Login } from "../login";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 import { LinkListener } from "mvc.js/router/link";
-import { RouteInput, ViewContext } from "mvc.js/router";
+import {
+    browserRoutes,
+    createRouter,
+    RouteInput,
+    ViewContext,
+} from "mvc.js/router";
 
 import "./style.scss";
 import TabBar from "../components/tab-bar";
@@ -20,6 +25,8 @@ import TimeTable, {
     TimeTableData,
 } from "../components/time-table";
 import { fetchJson } from "../data";
+import DemandPlanning from "./agents-planning/demands";
+import PlanningPerPosition from "./agents-planning/per-positions";
 
 function TopBar() {
     return (
@@ -87,15 +94,18 @@ function Aside(props: AsideProps) {
     );
 }
 
-function RouterPage() {
-    return (view: (context: ViewContext) => any, context: ViewContext) => (
-        <section class="router-page">
-            {view ? view(context) : notFound(context)}
-        </section>
-    );
+function RouterPage(props, children: any) {
+    return <section class="router-page">{children}</section>;
 }
 
 export default function App() {
+    const routes = browserRoutes([]);
+    const router = createRouter(routes, [
+        {
+            path: ["agents-plannig"],
+            component: AgentsPlanning,
+        },
+    ]);
     return (
         <Fragment>
             <LinkListener />
@@ -104,16 +114,7 @@ export default function App() {
             <div class="mdc-drawer-app-content" style="height: 100%;">
                 <TopBar />
                 <main class="main-content mdc-top-app-bar--fixed-adjust">
-                    <RouterOutlet
-                        routes={[
-                            {
-                                path: ["agents-plannig"],
-                                component: AgentsPlanning,
-                            },
-                        ]}
-                    >
-                        <RouterPage />
-                    </RouterOutlet>
+                    <RouterOutlet router={router} />
                 </main>
             </div>
             <Drawer />
@@ -187,54 +188,26 @@ function notFound(context: ViewContext) {
 
 function AgentsPlanning(): Action {
     return {
-        async view(context: ViewContext) {
+        view(context: ViewContext) {
+            const router = context.childRouter([
+                {
+                    path: ["demands"],
+                    component: <DemandPlanning />,
+                },
+                {
+                    path: ["per-position"],
+                    component: <PlanningPerPosition />,
+                },
+            ]);
             return (
-                <Fragment>
+                <RouterPage>
                     <div class="router-page__content">
                         <header style="max-width: 900px;">
                             <TabBar />
                         </header>
-                        <header style="display: flex; gap: 12px;">
-                            <input type="date" />
-                            <button
-                                class="mdc-button mdc-button--raised"
-                                style="--mdc-theme-primary: blue"
-                            >
-                                Set demand
-                            </button>
-                            <button
-                                class="mdc-button mdc-button--raised mdc-button--danger"
-                                style="--mdc-theme-primary: red"
-                            >
-                                <span class="mdc-button__ripple"></span>
-                                <i
-                                    class="material-icons mdc-button__icon"
-                                    aria-hidden="true"
-                                >
-                                    bookmark
-                                </i>
-                                <span class="mdc-button__label">
-                                    Upload file
-                                </span>
-                            </button>
-                        </header>
-                        <main>
-                            <TimeTable
-                                rows={await getRows()}
-                                cellContentTemplate={(cell) => {
-                                    return (
-                                        <Fragment>
-                                            {cell && cell.demand}
-                                            <span class="rom-datatable-cell__content__delta">
-                                                {formatDelta(cell)}
-                                            </span>
-                                        </Fragment>
-                                    );
-                                }}
-                            />
-                        </main>
+                        <RouterOutlet router={router} />
                     </div>
-                </Fragment>
+                </RouterPage>
             );
         },
     };
@@ -313,92 +286,4 @@ function Control(props: ControlProps) {
 interface ToggleButtonProps {}
 function ToggleButton(props: ToggleButtonProps) {
     return <a class="mdc-button mdc-button--outline">toggle</a>;
-}
-
-function formatDelta(cell: DemandCell) {
-    if (!cell) {
-        return null;
-    }
-
-    const { demand, implicit } = cell;
-    if (!demand || !implicit) {
-        return null;
-    }
-
-    const delta = (cell.demand || 0) - (cell.implicit || 0);
-    return delta ? `(${delta})` : null;
-}
-interface DemandCell {
-    demand: number;
-    implicit?: number;
-}
-
-interface DailyDemand {
-    positionId: string;
-    values: number[];
-}
-interface Position {
-    id: string;
-    name: string;
-    children: Position[];
-}
-
-async function getRows() {
-    const demands: DailyDemand[] = await fetchJson(
-        "/planning/demands"
-    ).then((e) => e.json());
-    const positions: Position[] = await fetchJson(
-        "/planning/positions"
-    ).then((e) => e.json());
-    const rows: TimeTableData<DemandCell>[] = [];
-    for (let i = 0; i < positions.length; i++) {
-        const pos = positions[i];
-        rows.push(toRow(pos));
-    }
-
-    return rows;
-
-    function toRow(pos: Position): TimeTableData<DemandCell> {
-        const demand = demands.find((e) => e.positionId === pos.id);
-        return {
-            identifier: pos.id,
-            label: pos.name,
-            children: pos.children.map(toRow),
-            values(hour: number, minute: number) {
-                if (!demand) {
-                    return null;
-                }
-                const idx = Math.floor(hour * 12 + minute / 5);
-                const value = demand.values[idx] || 0;
-                if (!value) {
-                    return null;
-                }
-                return {
-                    demand: value,
-                    implicit: value - 1,
-                };
-            },
-            bgColor(cell) {
-                if (!cell) {
-                    return null;
-                }
-                const { demand, implicit } = cell;
-                if (demand) {
-                    if (implicit) {
-                        const delta = demand - implicit;
-                        if (delta) {
-                            return `rgba(255,0,0,${0.03 * Math.abs(delta)})`;
-                        } else {
-                            return "rgba(0,255,0,0.2)";
-                        }
-                    }
-                    return "rgba(0,200,222,0.1)";
-                } else if (implicit) {
-                    return `rgba(255,0,0,${0.03 * Math.abs(implicit)})`;
-                }
-
-                return null;
-            },
-        };
-    }
 }

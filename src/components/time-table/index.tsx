@@ -5,7 +5,7 @@ import { Store } from "../../../mutabl.js";
 import { Expression } from "../../../mutabl.js/lib/observable.js";
 import "./style.scss";
 
-const timeUnit = 5;
+const timeUnit = 15;
 
 export const hourColumns: number[] = new Array(24);
 for (let h = 0; h < hourColumns.length; h++) {

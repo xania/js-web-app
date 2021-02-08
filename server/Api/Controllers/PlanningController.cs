@@ -58,8 +58,8 @@ namespace Api.Controllers
         [HttpGet("demands")] 
         public IEnumerable<DailyDemandVM> GetDemands()
         {
-            var start = ToServerTimeZone(DateTime.UtcNow - TimeSpan.FromDays(228)).Date;
-            // var end = start + TimeSpan.FromDays(200);
+            var start = new DateTimeOffset(2021, 01, 14, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
+            var end = start + TimeSpan.FromDays(1);
             var perPosition =
                 from pos in this.db.Positions
                 where pos.LifeTime.DeletedAt == null

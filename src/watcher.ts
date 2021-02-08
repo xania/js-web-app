@@ -7,7 +7,7 @@ connection.on("refresh", (data) => {
 connection
     .start()
     .then(function () {
-        console.log("connection started");
+        console.log("connection started!.");
     })
     .catch(function (err) {
         return console.error(err.toString());

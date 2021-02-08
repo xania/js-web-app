@@ -9,10 +9,23 @@ export default function TabBar() {
                     style="margin-bottom: 0px;"
                 >
                     <div class="mdc-tab-scroller__scroll-content">
-                        <Tab title="Planning By Employee" />
-                        <Tab title="Track Planning" />
-                        <Tab title="Planning By Position" />
-                        <Tab title="Demand Per Position" active={true} />
+                        <Tab
+                            title="Planning By Employee"
+                            url="/agents-plannig/by-employee"
+                        />
+                        <Tab
+                            title="Track Planning"
+                            url="/agents-plannig/tracks"
+                        />
+                        <Tab
+                            title="Planning By Position"
+                            url="/agents-plannig/per-position"
+                        />
+                        <Tab
+                            title="Demand Per Position"
+                            url="/agents-plannig/demands"
+                            active={true}
+                        />
                     </div>
                 </div>
             </div>
@@ -23,16 +36,18 @@ export default function TabBar() {
 interface TabProps {
     title: string;
     active?: boolean;
+    url?: string;
 }
 function Tab(props: TabProps) {
     var random = new Date().getTime();
     return (
-        <button
+        <a
             role="tab"
-            class="mdc-tab"
+            class="router-link mdc-tab"
             aria-selected="false"
             tabindex="-1"
             id={"tab_" + random}
+            href={props.url}
         >
             <span class="mdc-tab__content">
                 <span class="mdc-tab__text-label">{props.title}</span>
@@ -46,6 +61,6 @@ function Tab(props: TabProps) {
                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
             </span>
             <span class="mdc-tab__ripple mdc-ripple-upgraded"></span>
-        </button>
+        </a>
     );
 }
