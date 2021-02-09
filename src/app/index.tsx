@@ -192,11 +192,11 @@ function AgentsPlanning(): Action {
             const router = context.childRouter([
                 {
                     path: ["demands"],
-                    component: <DemandPlanning />,
+                    component: () => <DemandPlanning />,
                 },
                 {
                     path: ["per-position"],
-                    component: <PlanningPerPosition />,
+                    component: () => <PlanningPerPosition />,
                 },
             ]);
             return (

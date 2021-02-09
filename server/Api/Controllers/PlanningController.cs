@@ -1,9 +1,11 @@
 using Api.Domain;
+using Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Api.Controllers
 {
@@ -18,10 +20,45 @@ namespace Api.Controllers
             this.db = db;
         }
 
+        [HttpGet("position-supply")]
+        public IEnumerable<PositionSupplyVM> GetPositionSupply()
+        {
+            var start = new DateTimeOffset(2021, 01, 14, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
+            var end = start + TimeSpan.FromDays(1);
+
+            var entries =
+                from p in db.Plan
+                where p.StartTime < end &&
+                    p.EndTime > start &&
+                    p.EmployeeId.HasValue &&
+                    p.LifeTime.DeletedAt == null &&
+                    p.Position.LifeTime.DeletedAt == null
+                let pos = p.Position
+                select new
+                {
+                    PositionId = pos.Id,
+                    EmployeeId = p.EmployeeId.Value,
+                    p.StartTime,
+                    p.EndTime
+                };
+
+
+            var max = end - start;
+            return
+                from entry in entries.AsEnumerable()
+                select new PositionSupplyVM
+                {
+                    PositionId = entry.PositionId,
+                    EmployeeId = entry.EmployeeId,
+                    Start = entry.StartTime.Max(start) - start,
+                    End = entry.EndTime.Ceiling().Min(end) - start
+                };
+        }
+
         [HttpGet("positions")]
         public IEnumerable<PositionVM> GetPositions()
         {
-            var active = 
+            var active =
                 from p in this.db.Positions
                 where p.LifeTime.DeletedAt == null
                 select new
@@ -33,8 +70,8 @@ namespace Api.Controllers
 
             var childrenLookup = active.ToLookup(e => e.ParentId);
 
-            return ToVM(null);
-            IEnumerable<PositionVM> ToVM(Guid? parentId)
+            return ToTree(null);
+            IEnumerable<PositionVM> ToTree(Guid? parentId)
             {
                 foreach (var pos in childrenLookup[parentId].OrderBy(e => e.Name))
                 {
@@ -42,7 +79,7 @@ namespace Api.Controllers
                     {
                         Id = pos.Id,
                         Name = pos.Name,
-                        Children = ToVM(pos.Id)
+                        Children = ToTree(pos.Id)
                     };
                     yield return vm;
                 }
@@ -55,32 +92,32 @@ namespace Api.Controllers
             return TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZone);
         }
 
-        [HttpGet("demands")] 
+        [HttpGet("demands")]
         public IEnumerable<DailyDemandVM> GetDemands()
         {
             var start = new DateTimeOffset(2021, 01, 14, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
             var end = start + TimeSpan.FromDays(1);
             var perPosition =
-                from pos in this.db.Positions
+                from pos in db.Positions
                 where pos.LifeTime.DeletedAt == null
-                let demands = pos.Demands.Where(d => d.LifeTime.DeletedAt == null && d.Day >= start)
+                let demands = pos.Demands.Where(d => d.LifeTime.DeletedAt == null && d.Day >= start && d.Day < end)
                 where demands.Any()
                 select new
                 {
                     PositionId = pos.Id,
-                    Values = 
+                    Values =
                         from d in demands
                         select d.Value
                 };
 
-            foreach(var p in perPosition)
+            foreach (var p in perPosition)
             {
                 yield return DailyDemandVM.Create(p.PositionId, p.Values);
             };
         }
     }
-    
-    public class RomDbContext: DbContext
+
+    public class RomDbContext : DbContext
     {
         public RomDbContext(DbContextOptions<RomDbContext> options)
             : base(options)
@@ -94,9 +131,11 @@ namespace Api.Controllers
 
             modelBuilder.Entity<Position>(table => table.OwnsOne(t => t.LifeTime));
             modelBuilder.Entity<Demand>(table => table.OwnsOne(t => t.LifeTime));
+            modelBuilder.Entity<Plan>(table => table.OwnsOne(t => t.LifeTime));
         }
         public DbSet<Position> Positions { get; set; }
         public DbSet<Demand> Demands { get; set; }
+        public DbSet<Plan> Plan { get; set; }
     }
 
     public class PositionVM
@@ -128,7 +167,7 @@ namespace Api.Controllers
         {
             var result = new int[24 * 12];
             var sources = enumerable.Select(x => x.ToArray());
-            for(int i=0; i<result.Length; i++)
+            for (int i = 0; i < result.Length; i++)
             {
                 result[i] = sources.Select(x => GetValue(x, i)).Sum();
             }
@@ -142,4 +181,11 @@ namespace Api.Controllers
         }
     }
 
+    public class PositionSupplyVM
+    {
+        public Guid PositionId { get; internal set; }
+        public Guid EmployeeId { get; internal set; }
+        public TimeTableCell Start { get; internal set; }
+        public TimeTableCell End { get; internal set; }
+    }
 }

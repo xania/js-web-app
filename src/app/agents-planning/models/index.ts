@@ -3,3 +3,8 @@ export interface Position {
     name: string;
     children: Position[];
 }
+
+export interface DailyDemand {
+    positionId: string;
+    values: number[];
+}

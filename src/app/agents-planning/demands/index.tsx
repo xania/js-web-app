@@ -1,17 +1,15 @@
 import tpl from "glow.js";
 import { Fragment } from "glow.js/lib/fragment";
-import TimeTable, { TimeTableData } from "../../../components/time-table";
+import TimeTable, {
+    TimeTableData,
+    timeUnit,
+} from "../../../components/time-table";
 import { fetchJson } from "../../../data";
-import { Position } from "../models/Position";
+import { DailyDemand, Position } from "../models";
 
 interface DemandCell {
     demand: number;
     implicit?: number;
-}
-
-interface DailyDemand {
-    positionId: string;
-    values: number[];
 }
 
 export default async function DemandPlanning() {
@@ -83,7 +81,7 @@ async function getRows() {
                 if (!demand) {
                     return null;
                 }
-                const idx = Math.floor(hour * 12 + minute / 5);
+                const idx = Math.floor((hour * 60 + minute) / 5);
                 const value = demand.values[idx] || 0;
                 if (!value) {
                     return null;
