@@ -33,6 +33,7 @@ export default async function PlanningPerPosition() {
             </header>
             <main>
                 <TimeTable
+                    label="Position"
                     rows={await getRows()}
                     cellContentTemplate={(cell) => {
                         if (!cell) {

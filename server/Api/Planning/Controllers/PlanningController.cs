@@ -1,27 +1,24 @@
-using Api.Domain;
 using Api.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 
-namespace Api.Controllers
+namespace Api.Planning.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class PlanningController : ControllerBase
     {
-        private readonly RomDbContext db;
+        private readonly IPlanningDbContext db;
 
-        public PlanningController(RomDbContext db)
+        public PlanningController(IPlanningDbContext db)
         {
             this.db = db;
         }
 
         [HttpGet("position-supply")]
-        public IEnumerable<PositionSupplyVM> GetPositionSupply()
+        public IEnumerable<PositionSupplyModel> GetPositionSupply()
         {
             var start = new DateTimeOffset(2021, 01, 14, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
             var end = start + TimeSpan.FromDays(1);
@@ -46,7 +43,7 @@ namespace Api.Controllers
             var max = end - start;
             return
                 from entry in entries.AsEnumerable()
-                select new PositionSupplyVM
+                select new PositionSupplyModel
                 {
                     PositionId = entry.PositionId,
                     EmployeeId = entry.EmployeeId,
@@ -56,7 +53,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("positions")]
-        public IEnumerable<PositionVM> GetPositions()
+        public IEnumerable<PositionModel> GetPositions()
         {
             var active =
                 from p in this.db.Positions
@@ -71,11 +68,11 @@ namespace Api.Controllers
             var childrenLookup = active.ToLookup(e => e.ParentId);
 
             return ToTree(null);
-            IEnumerable<PositionVM> ToTree(Guid? parentId)
+            IEnumerable<PositionModel> ToTree(Guid? parentId)
             {
                 foreach (var pos in childrenLookup[parentId].OrderBy(e => e.Name))
                 {
-                    var vm = new PositionVM
+                    var vm = new PositionModel
                     {
                         Id = pos.Id,
                         Name = pos.Name,
@@ -93,7 +90,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("demands")]
-        public IEnumerable<DailyDemandVM> GetDemands()
+        public IEnumerable<DailyDemandModel> GetDemands()
         {
             var start = new DateTimeOffset(2021, 01, 14, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
             var end = start + TimeSpan.FromDays(1);
@@ -112,80 +109,8 @@ namespace Api.Controllers
 
             foreach (var p in perPosition)
             {
-                yield return DailyDemandVM.Create(p.PositionId, p.Values);
+                yield return DailyDemandModel.Create(p.PositionId, p.Values);
             };
         }
-    }
-
-    public class RomDbContext : DbContext
-    {
-        public RomDbContext(DbContextOptions<RomDbContext> options)
-            : base(options)
-        {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-
-            modelBuilder.Entity<Position>(table => table.OwnsOne(t => t.LifeTime));
-            modelBuilder.Entity<Demand>(table => table.OwnsOne(t => t.LifeTime));
-            modelBuilder.Entity<Plan>(table => table.OwnsOne(t => t.LifeTime));
-        }
-        public DbSet<Position> Positions { get; set; }
-        public DbSet<Demand> Demands { get; set; }
-        public DbSet<Plan> Plan { get; set; }
-    }
-
-    public class PositionVM
-    {
-        public Guid Id { get; set; }
-        public IEnumerable<PositionVM> Children { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class DailyDemandVM
-    {
-        public Guid PositionId { get; set; }
-        public IEnumerable<int> Values { get; private set; }
-        public static DailyDemandVM Create(Guid positionId, IEnumerable<string> input)
-        {
-            return new DailyDemandVM
-            {
-                PositionId = positionId,
-                Values = Merge(input.Select(Parse))
-            };
-
-            IEnumerable<int> Parse(string values)
-            {
-                return values.Split(",").Select(e => int.TryParse(e, out var x) ? x : 0);
-            }
-        }
-
-        private static IEnumerable<int> Merge(IEnumerable<IEnumerable<int>> enumerable)
-        {
-            var result = new int[24 * 12];
-            var sources = enumerable.Select(x => x.ToArray());
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = sources.Select(x => GetValue(x, i)).Sum();
-            }
-            return result;
-
-            int GetValue(int[] source, int idx)
-            {
-                var i = (idx * source.Length) / result.Length;
-                return source[i];
-            }
-        }
-    }
-
-    public class PositionSupplyVM
-    {
-        public Guid PositionId { get; internal set; }
-        public Guid EmployeeId { get; internal set; }
-        public TimeTableCell Start { get; internal set; }
-        public TimeTableCell End { get; internal set; }
     }
 }

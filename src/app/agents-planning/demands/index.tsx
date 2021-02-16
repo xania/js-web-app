@@ -39,6 +39,7 @@ export default async function DemandPlanning() {
             </header>
             <main>
                 <TimeTable
+                    label="Position"
                     rows={await getRows()}
                     cellContentTemplate={(cell) => {
                         return (

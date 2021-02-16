@@ -1,4 +1,5 @@
 using Api.Controllers;
+using Api.Planning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -42,6 +43,8 @@ namespace Api
                 options.UseSqlServer("server=.;database=rom;Integrated Security=SSPI;MultipleActiveResultSets=True");
                 options.LogTo(Console.WriteLine);
                 });
+
+            services.AddScoped<IPlanningDbContext, RomDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

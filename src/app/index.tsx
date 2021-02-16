@@ -18,15 +18,7 @@ import {
 } from "mvc.js/router";
 
 import "./style.scss";
-import TabBar from "../components/tab-bar";
-import TimeTable, {
-    hourColumns,
-    minuteColumns,
-    TimeTableData,
-} from "../components/time-table";
-import { fetchJson } from "../data";
-import DemandPlanning from "./agents-planning/demands";
-import PlanningPerPosition from "./agents-planning/per-positions";
+import { AgentsPlanning } from "./agents-planning";
 
 function TopBar() {
     return (
@@ -94,7 +86,7 @@ function Aside(props: AsideProps) {
     );
 }
 
-function RouterPage(props, children: any) {
+export function RouterPage(props, children: any) {
     return <section class="router-page">{children}</section>;
 }
 
@@ -184,33 +176,6 @@ function notFound(context: ViewContext) {
             </main>
         </div>
     );
-}
-
-function AgentsPlanning(): Action {
-    return {
-        view(context: ViewContext) {
-            const router = context.childRouter([
-                {
-                    path: ["demands"],
-                    component: () => <DemandPlanning />,
-                },
-                {
-                    path: ["per-position"],
-                    component: () => <PlanningPerPosition />,
-                },
-            ]);
-            return (
-                <RouterPage>
-                    <div class="router-page__content">
-                        <header style="max-width: 900px;">
-                            <TabBar />
-                        </header>
-                        <RouterOutlet router={router} />
-                    </div>
-                </RouterPage>
-            );
-        },
-    };
 }
 
 function authorized(action: IAction<any>) {

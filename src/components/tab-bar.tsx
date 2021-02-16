@@ -11,7 +11,7 @@ export default function TabBar() {
                     <div class="mdc-tab-scroller__scroll-content">
                         <Tab
                             title="Planning By Employee"
-                            url="/agents-plannig/by-employee"
+                            url="/agents-plannig"
                         />
                         <Tab
                             title="Track Planning"

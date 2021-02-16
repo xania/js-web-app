@@ -25,6 +25,7 @@ export interface TimeTableData<T> {
 interface TimeTableProps<T> {
     cellContentTemplate(cell: T): any;
     rows: TimeTableData<T>[];
+    label: string;
 }
 
 interface TimeTableRow<T> {
@@ -55,7 +56,7 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                 <div class="rom-time-table-column">
                     <div class="rom-time-table-position__header">
                         <span class="rom-time-table-position__content">
-                            Position ({rows.length})
+                            {props.label} ({rows.length})
                         </span>
                         <TimeUnits />
                     </div>
