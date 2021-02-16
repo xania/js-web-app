@@ -1,4 +1,5 @@
 import tpl from "glow.js";
+import { Fragment } from "glow.js/lib/fragment";
 import { Component } from "mvc.js/router";
 import TimeTable from "../../../components/time-table";
 
@@ -6,13 +7,16 @@ export function PlanningByAgents(): Component {
     return {
         view() {
             return (
-                <TimeTable
-                    label="Agent"
-                    rows={[]}
-                    cellContentTemplate={(cell: PlanCell) => (
-                        <div>test de test</div>
-                    )}
-                />
+                <Fragment>
+                    <header>Planning By Agents</header>
+                    <TimeTable
+                        label="Agent"
+                        rows={[]}
+                        cellContentTemplate={(cell: PlanCell) => (
+                            <div>test de test</div>
+                        )}
+                    />
+                </Fragment>
             );
         },
     };

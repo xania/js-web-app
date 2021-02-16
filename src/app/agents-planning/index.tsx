@@ -22,7 +22,7 @@ const nav = [
         component: () => <TracksPlanning />,
     },
     {
-        path: [""],
+        path: [],
         component: () => <PlanningByAgents />,
     },
 ];
