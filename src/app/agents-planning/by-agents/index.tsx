@@ -9,13 +9,15 @@ export function PlanningByAgents(): Component {
             return (
                 <Fragment>
                     <header>Planning By Agents</header>
-                    <TimeTable
-                        label="Agent"
-                        rows={[]}
-                        cellContentTemplate={(cell: PlanCell) => (
-                            <div>test de test</div>
-                        )}
-                    />
+                    <main>
+                        <TimeTable
+                            label="Agent"
+                            rows={[]}
+                            cellContentTemplate={(cell: PlanCell) => (
+                                <div>test de test</div>
+                            )}
+                        />
+                    </main>
                 </Fragment>
             );
         },

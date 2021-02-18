@@ -11,13 +11,15 @@ export function TracksPlanning(): Component {
                     <header style="display: flex; gap: 12px;">
                         Planning Per Track
                     </header>
-                    <TimeTable
-                        label="Agent"
-                        rows={[]}
-                        cellContentTemplate={(cell: PlanCell) => (
-                            <div>test de test</div>
-                        )}
-                    />
+                    <main>
+                        <TimeTable
+                            label="Agent"
+                            rows={[]}
+                            cellContentTemplate={(cell: PlanCell) => (
+                                <div>test de test</div>
+                            )}
+                        />
+                    </main>
                 </Fragment>
             );
         },

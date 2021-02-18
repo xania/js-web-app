@@ -43,7 +43,6 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
     const selection = new Store<TimeSelection>(null);
     return (
         <div class="rom-time-table-container">
-            {selection.subscribe(console.log)}
             {/* <div class="rom-time-table__loader" If="isLoading">
                 <div class="rom-time-table__loader__content"></div>
             </div> */}

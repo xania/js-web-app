@@ -227,9 +227,7 @@ function input(name: string, value: string) {
     return {
         name,
         value,
-        blur(e) {
-            console.log(e.target.value);
-        },
+        blur(e) {},
     };
 }
 

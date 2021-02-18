@@ -1,6 +1,12 @@
 import tpl from "glow.js";
+import * as Rx from "rxjs";
+import { Expression } from "../../mutabl.js/lib/observable";
 
-export default function TabBar() {
+interface TabBarProps {
+    selected: Expression<string[]>;
+}
+export default function TabBar(props: TabBarProps) {
+    const { selected } = props || {};
     return (
         <div class="mdc-tab-bar" role="tablist">
             <div class="mdc-tab-scroller">
@@ -8,23 +14,31 @@ export default function TabBar() {
                     class="mdc-tab-scroller__scroll-area mdc-tab-scroller__scroll-area--scroll"
                     style="margin-bottom: 0px;"
                 >
-                    <div class="mdc-tab-scroller__scroll-content">
+                    <div
+                        class="mdc-tab-scroller__scroll-content"
+                        style="padding: 10px;"
+                    >
                         <Tab
                             title="Planning By Employee"
                             url="/agents-plannig"
+                            active={selected.lift((s) => s.length === 0)}
                         />
                         <Tab
                             title="Track Planning"
                             url="/agents-plannig/tracks"
+                            active={selected.lift((s) => s[0] === "tracks")}
                         />
                         <Tab
                             title="Planning By Position"
                             url="/agents-plannig/per-position"
+                            active={selected.lift(
+                                (s) => s[0] === "per-position"
+                            )}
                         />
                         <Tab
                             title="Demand Per Position"
                             url="/agents-plannig/demands"
-                            active={true}
+                            active={selected.lift((s) => s[0] === "demands")}
                         />
                     </div>
                 </div>
@@ -35,7 +49,7 @@ export default function TabBar() {
 
 interface TabProps {
     title: string;
-    active?: boolean;
+    active?: Expression<boolean>;
     url?: string;
 }
 function Tab(props: TabProps) {
@@ -55,7 +69,11 @@ function Tab(props: TabProps) {
             <span
                 class={[
                     "mdc-tab-indicator",
-                    props.active ? "mdc-tab-indicator--active" : null,
+                    props.active
+                        ? props.active.lift(
+                              (b) => b && "mdc-tab-indicator--active"
+                          )
+                        : null,
                 ]}
             >
                 <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
