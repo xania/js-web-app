@@ -2,6 +2,7 @@ export interface Position {
     id: string;
     name: string;
     shorthand: string;
+    defaultColor: string;
     children: Position[];
 }
 

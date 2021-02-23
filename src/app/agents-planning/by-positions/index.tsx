@@ -15,7 +15,11 @@ interface PositionSupply {
     readonly endTime: number;
 }
 
-export default async function PlanningPerPosition() {
+interface PlanningProps {
+    positions: Position[];
+}
+
+export default async function PlanningPerPosition(props: PlanningProps) {
     return (
         <Fragment>
             <header style="display: flex; gap: 12px;">
@@ -24,7 +28,7 @@ export default async function PlanningPerPosition() {
             <main>
                 <TimeTable
                     label="Position"
-                    rows={await getRows()}
+                    rows={await getRows(props.positions)}
                     cellContentTemplate={(cell) => {
                         if (!cell) {
                             return null;
@@ -46,12 +50,9 @@ export default async function PlanningPerPosition() {
     );
 }
 
-async function getRows() {
+async function getRows(positions: Position[]) {
     const supply: PositionSupply[] = await fetchJson(
         "/planning/position-supply"
-    ).then((e) => e.json());
-    const positions: Position[] = await fetchJson(
-        "/planning/positions"
     ).then((e) => e.json());
     const demands: DailyDemand[] = await fetchJson(
         "/planning/demands"

@@ -7,21 +7,22 @@ import DemandPlanning from "./demands";
 import PlanningByPosition from "./by-positions";
 import { TracksPlanning } from "./tracks";
 import { PlanningByAgents } from "./by-agents";
-import * as Rx from "rxjs";
 import { Store } from "../../../mutabl.js";
+import { Position } from "./models";
+import { fetchJson } from "../../data";
 
-const nav = [
+const nav = (positions: Position[]) => [
     {
         path: ["demands"],
-        component: () => <DemandPlanning />,
+        component: () => <DemandPlanning positions={positions} />,
     },
     {
         path: ["per-position"],
-        component: () => <PlanningByPosition />,
+        component: () => <PlanningByPosition positions={positions} />,
     },
     {
         path: ["tracks"],
-        component: () => <TracksPlanning />,
+        component: () => <TracksPlanning positions={positions} />,
     },
     {
         path: [],
@@ -31,7 +32,11 @@ const nav = [
 
 export function AgentsPlanning(): Component {
     return {
-        view(context: ViewContext) {
+        async view(context: ViewContext) {
+            const positions: Position[] = await fetchJson(
+                "/planning/positions"
+            ).then((e) => e.json());
+
             const currentRoute = new Store<string[]>([]);
             return (
                 <RouterPage>
@@ -41,7 +46,7 @@ export function AgentsPlanning(): Component {
                         </header>
                         <RouterOutlet
                             onResolved={onResolved}
-                            router={context.childRouter(nav)}
+                            router={context.childRouter(nav(positions))}
                         />
                     </div>
                 </RouterPage>

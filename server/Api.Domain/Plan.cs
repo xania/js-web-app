@@ -21,13 +21,4 @@ namespace Api.Domain
 
         public Employee Employee { get; set; }
     }
-
-    public class Employee
-    {
-        public Guid Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
-        public LifeTime LifeTime { get; set; }
-    }
 }

@@ -62,7 +62,8 @@ namespace Api.Planning.Controllers
                     p.Id,
                     p.ParentId,
                     p.Name,
-                    p.Shorthand
+                    p.Shorthand,
+                    p.DefaultColor
                 };
 
             var childrenLookup = active.ToLookup(e => e.ParentId);
@@ -77,6 +78,7 @@ namespace Api.Planning.Controllers
                         Id = pos.Id,
                         Name = pos.Name,
                         Shorthand = pos.Shorthand,
+                        DefaultColor = pos.DefaultColor,
                         Children = ToTree(pos.Id)
                     };
                     yield return vm;
@@ -84,11 +86,6 @@ namespace Api.Planning.Controllers
             }
         }
 
-        private static DateTimeOffset ToServerTimeZone(DateTime dateTime)
-        {
-            var timeZone = TimeZoneInfo.Local;
-            return TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeZone);
-        }
 
         [HttpGet("demands")]
         public IEnumerable<DailyDemandModel> GetDemands()
@@ -122,12 +119,12 @@ namespace Api.Planning.Controllers
 
             var entries =
                 from p in this.db.Plan
-                where p.LifeTime.DeletedAt == null &&
+                where
+                    p.LifeTime.DeletedAt == null &&
                     p.StartTime < end &&
                     p.EndTime > start &&
-                    p.TrackGuid.HasValue &&
-                    (p.EmployeeId == null || p.Employee.LifeTime.DeletedAt == null)
-                select new SubTrackModel
+                    p.TrackGuid.HasValue
+                select new TrackModel
                 {
                     Id = p.Id,
                     TrackId = p.TrackId,
@@ -143,17 +140,7 @@ namespace Api.Planning.Controllers
                     }
                 };
 
-            var groups = from entry in entries.Take(100).AsEnumerable()
-                         group entry by entry.GroupingTrackId into g
-                         orderby g.Key
-                         select new
-                         {
-                             Id = g.Key,
-                             SubTracks = g.GroupBy(x => x.TrackId).ToDictionary(e => e.Key, e => e.OrderBy(e => e.TrackId).ToArray())
-                         };
-
-            //return groups;
-            return Json(groups, start);
+            return Json(entries, start);
         }
     }
 }

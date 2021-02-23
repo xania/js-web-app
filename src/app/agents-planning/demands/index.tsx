@@ -12,7 +12,11 @@ interface DemandCell {
     implicit?: number;
 }
 
-export default async function DemandPlanning() {
+interface PlanningProps {
+    positions: Position[];
+}
+
+export default async function DemandPlanning(props: PlanningProps) {
     return (
         <Fragment>
             <header style="display: flex; gap: 12px;">
@@ -40,7 +44,7 @@ export default async function DemandPlanning() {
             <main>
                 <TimeTable
                     label="Position"
-                    rows={await getRows()}
+                    rows={await getRows(props.positions)}
                     cellContentTemplate={(cell) => {
                         return (
                             <Fragment>
@@ -57,12 +61,9 @@ export default async function DemandPlanning() {
     );
 }
 
-async function getRows() {
+async function getRows(positions: Position[]) {
     const demands: DailyDemand[] = await fetchJson(
         "/planning/demands"
-    ).then((e) => e.json());
-    const positions: Position[] = await fetchJson(
-        "/planning/positions"
     ).then((e) => e.json());
     const rows: TimeTableData<DemandCell>[] = [];
     for (let i = 0; i < positions.length; i++) {

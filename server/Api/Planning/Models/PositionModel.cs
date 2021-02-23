@@ -9,5 +9,6 @@ namespace Api.Planning.Models
         public IEnumerable<PositionModel> Children { get; set; }
         public string Name { get; set; }
         public string Shorthand { get; internal set; }
+        public string DefaultColor { get; internal set; }
     }
 }

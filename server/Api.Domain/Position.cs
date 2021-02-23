@@ -9,6 +9,8 @@ namespace Api.Domain
         public string Name { get; set; }
         public string Shorthand { get; set; }
         public Guid? ParentId { get; set; }
+        public string DefaultColor { get; set; }
+
         public LifeTime LifeTime { get; set;  }
 
         public ICollection<Demand> Demands { get; set; }

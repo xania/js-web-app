@@ -23,7 +23,7 @@ export interface TimeTableData<T> {
 }
 
 interface TimeTableProps<T> {
-    cellContentTemplate(cell: T): any;
+    cellContentTemplate(cell: T, row: TimeTableData<T>): any;
     rows: TimeTableData<T>[];
     label: string;
 }
@@ -130,13 +130,19 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
     function timeTableClick(evt: MouseEvent) {
         const { target } = evt;
         if (isTag(target)) {
-            if (target.classList.contains("rom-time-table-cell")) {
-                const { hour, identifier } = target.parentElement.dataset;
-                const { minute } = target.dataset;
+            const cell: HTMLElement = target.closest(".rom-time-table-cell");
+            if (cell) {
+                const { hour, identifier } = cell.parentElement.dataset;
+                const { minute } = cell.dataset;
                 const minuteOffset = +hour * 60 + +minute;
                 selectCell(identifier, minuteOffset);
-            } else if (target.classList.contains("rom-time-table-position")) {
-                const { identifier } = target.dataset;
+                return;
+            }
+            const rowHeader: HTMLElement = target.closest(
+                ".rom-time-table-position"
+            );
+            if (rowHeader) {
+                const { identifier } = rowHeader.dataset;
                 const row = rows.find((n) => n.data.identifier === identifier);
                 if (row) {
                     collapsed.update((l) => {
@@ -163,8 +169,10 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                         // }
                     }
                 }
-            } else if (target.classList.contains("rom-time-table-row")) {
-                const { hour, identifier } = target.dataset;
+            }
+            const row: HTMLElement = target.closest(".rom-time-table-row");
+            if (row) {
+                const { hour, identifier } = row.dataset;
 
                 const { offsetX } = evt;
                 const columnIndex =
@@ -354,7 +362,7 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                 data-minute={minute}
             >
                 <a class="rom-time-table-cell__content">
-                    {cellContentTemplate(cell)}
+                    {cellContentTemplate(cell, row.data)}
                 </a>
             </div>
         );
