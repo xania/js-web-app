@@ -6,23 +6,13 @@ import TimeTable, {
     timeUnit,
 } from "../../../components/time-table";
 import { fetchJson } from "../../../data";
-import { DailyDemand, Position } from "../models";
-
-interface TimeTableCell {
-    hour: number;
-    minute: number;
-}
-
-interface PlanCell {
-    supply: number;
-    demand: number;
-}
+import { DailyDemand, PlanCell, Position } from "../models";
 
 interface PositionSupply {
     readonly positionId: string;
     readonly employeeId: string;
-    readonly start: TimeTableCell;
-    readonly end: TimeTableCell;
+    readonly startTime: number;
+    readonly endTime: number;
 }
 
 export default async function PlanningPerPosition() {
@@ -91,11 +81,8 @@ async function getRows() {
             label: pos.name,
             children,
             values(hour: number, minute: number) {
-                const start = { hour, minute };
-                const end = {
-                    hour,
-                    minute: minute + timeUnit,
-                };
+                const start = hour * 60 + minute;
+                const end = start + timeUnit;
 
                 const cell: PlanCell = {
                     supply: countSupplyInRange(positionSupply, start, end),
@@ -123,26 +110,15 @@ async function getRows() {
     }
 }
 
-function compareTime(x: TimeTableCell, y: TimeTableCell) {
-    if (x.hour == y.hour) {
-        if (x.minute == y.minute) return 0;
-        return x.minute > y.minute ? 1 : -1;
-    }
-    return x.hour > y.hour ? 1 : -1;
-}
-
 function countSupplyInRange(
     positionSupply: PositionSupply[],
-    start: TimeTableCell,
-    end: TimeTableCell
+    start: number,
+    end: number
 ) {
     let count = 0;
 
     for (const pl of positionSupply) {
-        if (compareTime(pl.start, end) >= 0) {
-            continue;
-        }
-        if (compareTime(pl.end, start) <= 0) {
+        if (pl.startTime >= end || pl.endTime <= start) {
             continue;
         }
         count++;
@@ -153,13 +129,13 @@ function countSupplyInRange(
 
 function countDemandInRange(
     demand: DailyDemand,
-    start: TimeTableCell,
-    end: TimeTableCell
+    startTime: number,
+    endTime: number
 ) {
     let result = 0;
     if (demand) {
-        const startIndex = timeToIndex(start);
-        const endIndex = timeToIndex(end);
+        const startIndex = timeToIndex(startTime);
+        const endIndex = timeToIndex(endTime);
         for (let i = startIndex; i < endIndex; i++) {
             const x = demand.values[(i * timeUnit) / 5];
             if (x > result) {
@@ -170,7 +146,7 @@ function countDemandInRange(
     return result;
 }
 
-function timeToIndex(t: TimeTableCell) {
-    const totalMinutes = t.hour * 60 + t.minute;
+function timeToIndex(t: number) {
+    const totalMinutes = t;
     return Math.floor(totalMinutes / timeUnit);
 }

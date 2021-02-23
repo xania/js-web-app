@@ -1,13 +1,13 @@
 using Api.Utils;
 using System;
 
-namespace Api.Planning.Controllers
+namespace Api.Planning.Models
 {
     public class PositionSupplyModel
     {
         public Guid PositionId { get; internal set; }
-        public Guid EmployeeId { get; internal set; }
-        public TimeTableCell Start { get; internal set; }
-        public TimeTableCell End { get; internal set; }
+        public Guid? EmployeeId { get; internal set; }
+        public DateTimeOffset StartTime { get; internal set; }
+        public DateTimeOffset EndTime { get; internal set; }
     }
 }

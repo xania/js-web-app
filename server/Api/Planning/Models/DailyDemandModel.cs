@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Api.Planning.Controllers
+namespace Api.Planning.Models
 {
     public class DailyDemandModel
     {

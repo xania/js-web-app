@@ -7,6 +7,7 @@ namespace Api.Domain
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string Shorthand { get; set; }
         public Guid? ParentId { get; set; }
         public LifeTime LifeTime { get; set;  }
 

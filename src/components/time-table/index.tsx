@@ -17,9 +17,9 @@ export const minuteColumns = getMinuteCells(timeUnit);
 export interface TimeTableData<T> {
     identifier: string;
     label: string;
-    children: TimeTableData<T>[];
+    children?: TimeTableData<T>[];
     values(hour: number, minute: number): T;
-    bgColor(value: T);
+    bgColor?(value: T);
 }
 
 interface TimeTableProps<T> {
@@ -342,7 +342,7 @@ export default function TimeTable<T>(props: TimeTableProps<T>) {
                     ),
                 ]}
                 style={isSelected.lift((b) => {
-                    const bgColor = row.data.bgColor(cell);
+                    const bgColor = row.data.bgColor && row.data.bgColor(cell);
                     if (!bgColor) {
                         return null;
                     }
