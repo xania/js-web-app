@@ -16,7 +16,7 @@ namespace Api.Planning.Models
                 Values = Merge(input.Select(Parse))
             };
 
-            IEnumerable<int> Parse(string values)
+            static IEnumerable<int> Parse(string values)
             {
                 return values.Split(",").Select(e => int.TryParse(e, out var x) ? x : 0);
             }

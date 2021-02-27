@@ -5,18 +5,17 @@ import TimeTable, {
     TimeTableData,
     timeUnit,
 } from "../../../components/time-table";
-import { fetchJson } from "../../../data";
-import { DailyDemand, PlanCell, Position } from "../models";
-
-interface PositionSupply {
-    readonly positionId: string;
-    readonly employeeId: string;
-    readonly startTime: number;
-    readonly endTime: number;
-}
+import {
+    DailyDemand,
+    fetchDemands,
+    fetchSupply,
+    isInRange,
+    Position,
+    PositionSupply,
+} from "../services/planning";
 
 interface PlanningProps {
-    positions: Position[];
+    positions: Promise<Position[]>;
 }
 
 export default async function PlanningPerPosition(props: PlanningProps) {
@@ -28,7 +27,7 @@ export default async function PlanningPerPosition(props: PlanningProps) {
             <main>
                 <TimeTable
                     label="Position"
-                    rows={await getRows(props.positions)}
+                    rows={await getRows(await props.positions)}
                     cellContentTemplate={(cell) => {
                         if (!cell) {
                             return null;
@@ -51,12 +50,8 @@ export default async function PlanningPerPosition(props: PlanningProps) {
 }
 
 async function getRows(positions: Position[]) {
-    const supply: PositionSupply[] = await fetchJson(
-        "/planning/position-supply"
-    ).then((e) => e.json());
-    const demands: DailyDemand[] = await fetchJson(
-        "/planning/demands"
-    ).then((e) => e.json());
+    const supply = await fetchSupply();
+    const demands = await fetchDemands();
     const rows: TimeTableData<PlanCell>[] = [];
 
     for (let i = 0; i < positions.length; i++) {
@@ -111,7 +106,7 @@ async function getRows(positions: Position[]) {
     }
 }
 
-function countSupplyInRange(
+export function countSupplyInRange(
     positionSupply: PositionSupply[],
     start: number,
     end: number
@@ -119,16 +114,14 @@ function countSupplyInRange(
     let count = 0;
 
     for (const pl of positionSupply) {
-        if (pl.startTime >= end || pl.endTime <= start) {
-            continue;
-        }
+        if (!isInRange(pl.timeLine, start, end)) continue;
         count++;
     }
 
     return count;
 }
 
-function countDemandInRange(
+export function countDemandInRange(
     demand: DailyDemand,
     startTime: number,
     endTime: number
@@ -150,4 +143,9 @@ function countDemandInRange(
 function timeToIndex(t: number) {
     const totalMinutes = t;
     return Math.floor(totalMinutes / timeUnit);
+}
+
+export interface PlanCell {
+    supply: number;
+    demand: number;
 }

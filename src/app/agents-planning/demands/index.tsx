@@ -1,11 +1,7 @@
 import tpl from "glow.js";
 import { Fragment } from "glow.js/lib/fragment";
-import TimeTable, {
-    TimeTableData,
-    timeUnit,
-} from "../../../components/time-table";
-import { fetchJson } from "../../../data";
-import { DailyDemand, Position } from "../models";
+import TimeTable, { TimeTableData } from "../../../components/time-table";
+import { fetchDemands, Position } from "../services/planning";
 
 interface DemandCell {
     demand: number;
@@ -13,7 +9,7 @@ interface DemandCell {
 }
 
 interface PlanningProps {
-    positions: Position[];
+    positions: Promise<Position[]>;
 }
 
 export default async function DemandPlanning(props: PlanningProps) {
@@ -44,7 +40,7 @@ export default async function DemandPlanning(props: PlanningProps) {
             <main>
                 <TimeTable
                     label="Position"
-                    rows={await getRows(props.positions)}
+                    rows={await getRows(await props.positions)}
                     cellContentTemplate={(cell) => {
                         return (
                             <Fragment>
@@ -62,9 +58,7 @@ export default async function DemandPlanning(props: PlanningProps) {
 }
 
 async function getRows(positions: Position[]) {
-    const demands: DailyDemand[] = await fetchJson(
-        "/planning/demands"
-    ).then((e) => e.json());
+    const demands = await fetchDemands();
     const rows: TimeTableData<DemandCell>[] = [];
     for (let i = 0; i < positions.length; i++) {
         const pos = positions[i];

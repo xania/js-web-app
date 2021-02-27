@@ -13,6 +13,6 @@ namespace Api.Domain
         public Guid EemployeeId { get; set; }
         public DateTimeOffset Date { get; set; }
 
-        public LifeTime LifeTime { get; set; }
+        public Maintenance Maintenance { get; set; }
     }
 }

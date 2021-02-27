@@ -3,6 +3,7 @@
     display: block;
 
     &::after {
-        content: "\a0";
+        color: #eee;
+        content: "\00a0 ";
     }
 }

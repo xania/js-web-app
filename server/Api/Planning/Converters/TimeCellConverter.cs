@@ -5,7 +5,7 @@ namespace Api.Planning.Converters
 {
     public class TimeCellConverter : System.Text.Json.Serialization.JsonConverter<DateTimeOffset>
     {
-        private DateTimeOffset anchor;
+        private readonly DateTimeOffset anchor;
 
         public TimeCellConverter(DateTimeOffset start)
         {

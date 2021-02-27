@@ -10,6 +10,6 @@ namespace Api.Domain
         public Guid PositionId { get; set; }
 
         public Position Position { get; set; }
-        public LifeTime LifeTime { get; set; }
+        public Maintenance Maintenance { get; set; }
     }
 }

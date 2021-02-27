@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Api.Domain
 {
     [ComplexType]
-    public class LifeTime
+    public class Maintenance
     {
         [Column("CreatedAt")]
         public DateTimeOffset CreatedAt { get; set; }

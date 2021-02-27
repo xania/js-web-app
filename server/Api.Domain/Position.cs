@@ -11,7 +11,7 @@ namespace Api.Domain
         public Guid? ParentId { get; set; }
         public string DefaultColor { get; set; }
 
-        public LifeTime LifeTime { get; set;  }
+        public Maintenance Maintenance { get; set;  }
 
         public ICollection<Demand> Demands { get; set; }
     }

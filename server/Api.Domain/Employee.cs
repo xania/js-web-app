@@ -1,4 +1,7 @@
-﻿using System;
+using Api.Domain.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Api.Domain
 {
@@ -8,6 +11,7 @@ namespace Api.Domain
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public LifeTime LifeTime { get; set; }
+        public Maintenance Maintenance { get; set; }
+        public ICollection<Shift> Shifts { get; set; }
     }
 }

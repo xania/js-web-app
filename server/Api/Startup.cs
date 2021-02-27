@@ -1,5 +1,5 @@
 using Api.Controllers;
-using Api.Planning;
+using Api.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,12 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Api
 {
@@ -44,7 +39,12 @@ namespace Api
                 options.LogTo(Console.WriteLine);
                 });
 
-            services.AddScoped<IPlanningDbContext, RomDbContext>();
+            foreach(var entityType in RomDbContext.GetEntityTypes())
+            {
+                var serviceType = typeof(IDataSource<>).MakeGenericType(entityType);
+                var concreteType = typeof(EFDataSource<>).MakeGenericType(entityType);
+                services.AddScoped(serviceType, sp => Activator.CreateInstance(concreteType, sp.GetRequiredService<RomDbContext>()));
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,15 +59,17 @@ namespace Api
             app.UseHttpsRedirection();
 
             var dist = Path.GetFullPath(Path.Combine(env.ContentRootPath, "../../dist"));
-            var watcher = new FileSystemWatcher();
-            watcher.IncludeSubdirectories = true;
-            watcher.Path = dist;
-            watcher.NotifyFilter = NotifyFilters.CreationTime
+            var watcher = new FileSystemWatcher
+            {
+                IncludeSubdirectories = true,
+                Path = dist,
+                NotifyFilter = NotifyFilters.CreationTime
                                  | NotifyFilters.LastAccess
                                  | NotifyFilters.LastWrite
                                  | NotifyFilters.FileName
-                                 | NotifyFilters.DirectoryName;
-            watcher.Filter = string.Empty;
+                                 | NotifyFilters.DirectoryName,
+                Filter = string.Empty
+            };
 
             watcher.Changed += OnChanged;
             watcher.Created += OnChanged;

@@ -8,14 +8,15 @@ import TimeTable, {
     timeUnit,
 } from "../../../components/time-table";
 import { fetchJson } from "../../../data";
-import { Position } from "../models";
+import groupBy, { Group } from "../../../data/group-by";
+import { Employee, fullName, Position, Track } from "../services/planning";
 import "./style.scss";
 
 interface PlanningProps {
-    positions: Position[];
+    positions: Promise<Position[]>;
 }
 
-export function TracksPlanning(props: PlanningProps): Component {
+export default function TracksPlanning(props: PlanningProps): Component {
     return {
         async view() {
             return (
@@ -26,7 +27,7 @@ export function TracksPlanning(props: PlanningProps): Component {
                     <main>
                         <TimeTable
                             label="Agent"
-                            rows={await getRows(props.positions)}
+                            rows={await getRows(await props.positions)}
                             cellContentTemplate={trackCellTemplate}
                         />
                     </main>
@@ -96,6 +97,7 @@ async function getRows(
         tracks,
         (e) => e.groupingTrackId
     );
+    trackGroups.sort((x, y) => x.key.localeCompare(y.key));
 
     for (const trackGroup of trackGroups) {
         const row = toRow(trackGroup);
@@ -110,9 +112,11 @@ async function getRows(
         const children: TimeTableData<TrackCell>[] = [];
 
         const subTracks = groupBy(
-            trackGroup.value,
+            trackGroup.items,
             (e) => fullName(e.employee) || e.trackId
         );
+
+        subTracks.sort((x, y) => x.key.localeCompare(y.key));
 
         for (const subTrack of subTracks) {
             children.push({
@@ -122,8 +126,11 @@ async function getRows(
                     const start = h * 60 + m;
                     const end = start + timeUnit;
 
-                    for (const sub of subTrack.value) {
-                        if (sub.startTime >= end || sub.endTime <= start) {
+                    for (const sub of subTrack.items) {
+                        if (
+                            sub.timeLine.startTime >= end ||
+                            sub.timeLine.endTime <= start
+                        ) {
                             continue;
                         }
                         const pos = positionMap[sub.positionId];
@@ -155,66 +162,12 @@ async function getRows(
     }
 }
 
-interface Employee {
-    firstName: string;
-    lastName: string;
-}
-
-interface Track {
-    groupingTrackId: string;
-    id: string;
-    trackId: string;
-    employee: Employee;
-    startTime: number;
-    endTime: number;
-    trackGuid: string;
-    positionId: string;
-}
-
 interface TrackCell {
     bgColor: string;
     substituted: boolean;
     shorthand: string;
     absent: boolean;
     remark?: string;
-}
-
-type Group<T> = { key: string; value: T[] };
-function groupBy<T>(arr: T[], selector: (item: T) => string): Group<T>[] {
-    const groups: Group<T>[] = [];
-
-    for (const item of arr) {
-        const key = selector(item);
-        const group = findGroup(key);
-        if (group) {
-            group.value.push(item);
-        } else {
-            groups.push({
-                key,
-                value: [item],
-            });
-        }
-    }
-
-    groups.sort((x, y) => x.key.localeCompare(y.key));
-    return groups;
-
-    function findGroup(key: string) {
-        for (const group of groups) {
-            if (group.key == key) {
-                return group;
-            }
-        }
-        return null;
-    }
-}
-
-function fullName(e: Employee) {
-    if (!e || !e.firstName || !e.lastName) {
-        return null;
-    }
-
-    return e.firstName + " " + e.lastName;
 }
 
 function randomColor() {

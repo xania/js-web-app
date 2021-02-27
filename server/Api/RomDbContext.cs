@@ -2,11 +2,13 @@ using Api.Domain;
 using Api.Planning;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text.Json;
 
 namespace Api.Controllers
 {
-    public class RomDbContext : DbContext, IPlanningDbContext
+    public class RomDbContext : DbContext
     {
         public RomDbContext(DbContextOptions<RomDbContext> options)
             : base(options)
@@ -18,17 +20,14 @@ namespace Api.Controllers
         public DbSet<Plan> Plan { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<PlanDetail> PlanDetails { get; set; }
+        public DbSet<Shift> Shifts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Position>(table => table.OwnsOne(t => t.LifeTime));
-            modelBuilder.Entity<Demand>(table => table.OwnsOne(t => t.LifeTime));
-            modelBuilder.Entity<Plan>(table => table.OwnsOne(t => t.LifeTime));
-            modelBuilder.Entity<Employee>(table => table.OwnsOne(t => t.LifeTime));
+            RegisterComplexTypes(modelBuilder);
 
-            modelBuilder.Entity<PlanDetail>(table => table.OwnsOne(t => t.LifeTime));
             modelBuilder.Entity<PlanDetail>()
                 .Property(x => x.Remark)
                 .HasConversion(
@@ -44,6 +43,34 @@ namespace Api.Controllers
                 .HasConversion(
                     x => SerializeObject(x),
                     x => Deserialize<ICollection<string>>(x));
+        }
+
+        private static void RegisterComplexTypes(ModelBuilder modelBuilder)
+        {
+            foreach (var entityType in GetEntityTypes())
+            {
+                var entity = modelBuilder.Entity(entityType);
+                foreach (var propertyInfo in entityType.GetProperties())
+                {
+                    var isComplexProperty = propertyInfo.PropertyType.CustomAttributes.Any(e => e.AttributeType == typeof(ComplexTypeAttribute));
+                    if (isComplexProperty)
+                    {
+                        entity.OwnsOne(propertyInfo.PropertyType, propertyInfo.Name);
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<System.Type> GetEntityTypes()
+        {
+            foreach (var prop in typeof(RomDbContext).GetProperties())
+            {
+                if (!prop.PropertyType.IsGenericType || prop.PropertyType.GetGenericTypeDefinition() != typeof(DbSet<>))
+                {
+                    continue;
+                }
+                yield return prop.PropertyType.GetGenericArguments()[0];
+            }
         }
 
         private static string SerializeObject<T>(T obj)

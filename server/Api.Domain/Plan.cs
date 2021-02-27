@@ -6,13 +6,11 @@ namespace Api.Domain
     {
         public Guid Id { get; set; }
 
-        public DateTimeOffset StartTime { get; set; }
-        public DateTimeOffset EndTime { get;  set; }
-
+        public TimeLine TimeLine { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? SubstituteEmployeeId { get; set; }
         public Guid PositionId { get; set; }
-        public LifeTime LifeTime { get; set; }
+        public Maintenance Maintenance { get; set; }
 
         public Position Position { get; set; }
         public string TrackId { get; set; }
