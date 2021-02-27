@@ -1,5 +1,7 @@
 using Api.Controllers;
 using Api.Data;
+using Api.Domain;
+using Api.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -41,8 +43,8 @@ namespace Api
 
             foreach(var entityType in RomDbContext.GetEntityTypes())
             {
-                var serviceType = typeof(IDataSource<>).MakeGenericType(entityType);
-                var concreteType = typeof(EFDataSource<>).MakeGenericType(entityType);
+                var serviceType = typeof(IRepository<>).MakeGenericType(entityType);
+                var concreteType = typeof(DbSetRepository<>).MakeGenericType(entityType);
                 services.AddScoped(serviceType, sp => Activator.CreateInstance(concreteType, sp.GetRequiredService<RomDbContext>()));
             }
         }

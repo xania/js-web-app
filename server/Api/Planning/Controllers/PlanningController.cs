@@ -28,7 +28,7 @@ namespace Api.Planning.Controllers
         public DateTimeOffset GetStart() => new DateTimeOffset(2021, 1, 4, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
 
         [HttpGet("position-supply")]
-        public JsonResult GetPositionSupply([FromServices] IDataSource<Plan> planDs)
+        public JsonResult GetPositionSupply([FromServices] IRepository<Plan> planDs)
         {
             var start = GetStart();
             var span = new DateTimeSpan(start, TimeSpan.FromDays(1));
@@ -51,7 +51,7 @@ namespace Api.Planning.Controllers
         }
 
         [HttpGet("employees")]
-        public JsonResult GetEmployees([FromServices] IDataSource<Employee> employeeDs)
+        public JsonResult GetEmployees([FromServices] IRepository<Employee> employeeDs)
         {
             var start = GetStart();
             var span = new DateTimeSpan(start, TimeSpan.FromDays(1));
@@ -96,7 +96,7 @@ namespace Api.Planning.Controllers
 
 
         [HttpGet("positions")]
-        public IEnumerable<PositionModel> GetPositions([FromServices] IDataSource<Position> positionDs)
+        public IEnumerable<PositionModel> GetPositions([FromServices] IRepository<Position> positionDs)
         {
             var active =
                 from p in positionDs.Query()
@@ -132,7 +132,7 @@ namespace Api.Planning.Controllers
 
 
         [HttpGet("demands")]
-        public IEnumerable<DailyDemandModel> GetDemands([FromServices] IDataSource<Position> positionDs)
+        public IEnumerable<DailyDemandModel> GetDemands([FromServices] IRepository<Position> positionDs)
         {
             var start = new DateTimeOffset(2021, 01, 14, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset);
             var end = start + TimeSpan.FromDays(1);
@@ -156,7 +156,7 @@ namespace Api.Planning.Controllers
         }
 
         [HttpGet("tracks")]
-        public object GetTracks([FromServices] IDataSource<Plan> planDs)
+        public object GetTracks([FromServices] IRepository<Plan> planDs)
         {
             var start = GetStart();
             var span = new DateTimeSpan(start, TimeSpan.FromDays(1));

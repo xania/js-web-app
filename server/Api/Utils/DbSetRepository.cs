@@ -1,16 +1,15 @@
+using Api.Data;
+using Api.Domain;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace Api.Data
+namespace Api.Utils
 {
-    public class EFDataSource<T> : IDataSource<T> where T: class
+    public class DbSetRepository<T> : IRepository<T> where T: class
     {
         private readonly DbContext db;
 
-        public EFDataSource(DbContext db)
+        public DbSetRepository(DbContext db)
         {
             this.db = db;
         }

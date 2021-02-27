@@ -1,8 +1,8 @@
 using System.Linq;
 
-namespace Api.Data
+namespace Api.Domain
 {
-    public interface IDataSource<T>
+    public interface IRepository<T>
     {
         IQueryable<T> Query();
     }
