@@ -442,11 +442,9 @@ function flatten<T>(
     rows: TimeTableData<T>[],
     collapsed: Store<TimeTableRow<T>[]>
 ) {
-    const stack: [
-        number,
-        TimeTableData<T>,
-        TimeTableRow<T>?
-    ][] = rows.reverse().map((r) => [0, r, null]);
+    const stack: [number, TimeTableData<T>, TimeTableRow<T>?][] = reverse(
+        rows
+    ).map((r) => [0, r, null]);
     const result: TimeTableRow<T>[] = [];
 
     while (stack.length > 0) {
@@ -470,9 +468,19 @@ function flatten<T>(
         };
         result.push(row);
         if (children)
-            for (const child of children.reverse()) {
+            for (const child of reverse(children)) {
                 stack.push([depth + 1, child, row]);
             }
+    }
+
+    return result;
+}
+
+function reverse<T>(arr: T[]): T[] {
+    const result: T[] = [];
+
+    for (let i = arr.length - 1; i >= 0; i--) {
+        result.push(arr[i]);
     }
 
     return result;
