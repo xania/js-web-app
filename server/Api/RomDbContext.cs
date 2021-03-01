@@ -1,3 +1,4 @@
+using Api.Data.EFCore;
 using Api.Domain;
 using Api.Planning;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace Api.Controllers
         {
             base.OnModelCreating(modelBuilder);
 
-            RegisterComplexTypes(modelBuilder);
+            modelBuilder.RegisterComplexTypes<RomDbContext>();
 
             modelBuilder.Entity<PlanDetail>()
                 .Property(x => x.Remark)
@@ -43,34 +44,6 @@ namespace Api.Controllers
                 .HasConversion(
                     x => SerializeObject(x),
                     x => Deserialize<ICollection<string>>(x));
-        }
-
-        private static void RegisterComplexTypes(ModelBuilder modelBuilder)
-        {
-            foreach (var entityType in GetEntityTypes())
-            {
-                var entity = modelBuilder.Entity(entityType);
-                foreach (var propertyInfo in entityType.GetProperties())
-                {
-                    var isComplexProperty = propertyInfo.PropertyType.CustomAttributes.Any(e => e.AttributeType == typeof(ComplexTypeAttribute));
-                    if (isComplexProperty)
-                    {
-                        entity.OwnsOne(propertyInfo.PropertyType, propertyInfo.Name);
-                    }
-                }
-            }
-        }
-
-        public static IEnumerable<System.Type> GetEntityTypes()
-        {
-            foreach (var prop in typeof(RomDbContext).GetProperties())
-            {
-                if (!prop.PropertyType.IsGenericType || prop.PropertyType.GetGenericTypeDefinition() != typeof(DbSet<>))
-                {
-                    continue;
-                }
-                yield return prop.PropertyType.GetGenericArguments()[0];
-            }
         }
 
         private static string SerializeObject<T>(T obj)

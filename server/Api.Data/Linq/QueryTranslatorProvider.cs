@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Api.Data
+namespace Api.Data.Linq
 {
 
     internal class QueryTranslatorProvider<T> : IQueryProvider

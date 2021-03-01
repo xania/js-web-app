@@ -1,9 +1,7 @@
-using Api.Data;
-using Api.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace Api.Utils
+namespace Api.Data.EFCore
 {
     public class DbSetRepository<T> : IRepository<T> where T: class
     {
@@ -16,7 +14,7 @@ namespace Api.Utils
 
         public IQueryable<T> Query()
         {
-            return new QueryTranslator<T>(this.db.Set<T>().AsNoTracking());
+            return new Data.Linq.QueryTranslator<T>(this.db.Set<T>().AsNoTracking());
         }
     }
 }

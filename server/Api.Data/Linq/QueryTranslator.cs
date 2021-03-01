@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Api.Data
+namespace Api.Data.Linq
 {
     public class QueryTranslator<T> : IQueryable<T>
     {

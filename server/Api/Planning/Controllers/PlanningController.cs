@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using Api.Domain;
 using Api.Data;
+using Api.Data.Linq;
 using System.Linq.Expressions;
 
 namespace Api.Planning.Controllers

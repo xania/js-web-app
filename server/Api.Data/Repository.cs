@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace Api.Domain
+namespace Api.Data
 {
     public interface IRepository<T>
     {

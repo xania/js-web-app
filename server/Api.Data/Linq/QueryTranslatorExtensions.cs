@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 
-namespace Api.Data
+namespace Api.Data.Linq
 {
     public static class QueryTranslatorExtensions
     {

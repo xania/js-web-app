@@ -1,5 +1,6 @@
 using Api.Controllers;
 using Api.Data;
+using Api.Data.EFCore;
 using Api.Domain;
 using Api.Utils;
 using Microsoft.AspNetCore.Builder;
@@ -41,12 +42,7 @@ namespace Api
                 options.LogTo(Console.WriteLine);
                 });
 
-            foreach(var entityType in RomDbContext.GetEntityTypes())
-            {
-                var serviceType = typeof(IRepository<>).MakeGenericType(entityType);
-                var concreteType = typeof(DbSetRepository<>).MakeGenericType(entityType);
-                services.AddScoped(serviceType, sp => Activator.CreateInstance(concreteType, sp.GetRequiredService<RomDbContext>()));
-            }
+            services.RegisterDbSetRepositories<RomDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
