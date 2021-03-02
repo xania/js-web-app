@@ -47,16 +47,32 @@ body {
     z-index: 7;
 }
 
+.mdc-drawer {
+    background-color: #eee;
+}
+
 @media only screen and (min-width: 600px) {
     .main-content {
         overflow: auto;
         height: 100%;
+        padding-left: 60px;
 
         &--aside {
             background-color: black;
             width: 200px;
             z-index: 10;
             white-space: nowrap;
+        }
+    }
+
+    .mdc-drawer--modal:not(.mdc-drawer--open) {
+        display: flex;
+        width: 60px;
+
+        .mdc-drawer--full {
+            white-space: nowrap;
+            overflow: hidden;
+            visibility: hidden;
         }
     }
 }

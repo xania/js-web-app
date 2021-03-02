@@ -1,8 +1,6 @@
 using Api.Controllers;
 using Api.Data;
 using Api.Data.EFCore;
-using Api.Domain;
-using Api.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

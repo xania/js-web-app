@@ -19,6 +19,7 @@ import {
 
 import "./style.scss";
 import { AgentsPlanning } from "./agents-planning";
+import { Employees } from "./employees";
 
 function TopBar() {
     return (
@@ -64,21 +65,39 @@ function Aside(props: AsideProps) {
                 props.open ? "mdc-drawer--open" : null,
             ]}
         >
-            <div class="mdc-drawer__header">
-                <h3 class="mdc-drawer__title">Mail</h3>
-                <h6 class="mdc-drawer__subtitle">email@material.io</h6>
-            </div>
             <div class="mdc-drawer__content">
                 <nav class="mdc-list" tabindex="0">
-                    <MainLink text="Login" url="/login" icon="inbox" />
-                    <MainLink text="Inbox" url="/" icon="inbox" />
                     <hr class="mdc-list-divider" />
-                    <h6 class="mdc-list-group__subheader">Labels</h6>
+                    <MainLink
+                        text="Employees"
+                        url="/employees"
+                        icon="group"
+                        color="darkgreen"
+                    />
+                    <MainLink
+                        text="Daily shifts"
+                        url="/daily-shifts"
+                        icon="date_range"
+                    />
                     <MainLink
                         text="Agents Planning"
                         url="/agents-plannig"
                         icon="schedule"
+                        color="black"
                     />
+                    <MainLink
+                        text="Assign card to agent"
+                        url="/card-assignment"
+                        icon="credit_card"
+                    />
+                    <MainLink text="Settings" url="/settings" icon="settings" />
+                    <MainLink
+                        text="Administration"
+                        url="/admin"
+                        icon="security"
+                        color="red"
+                    />
+                    <hr class="mdc-list-divider" />
                     {MDCList}
                 </nav>
             </div>
@@ -96,6 +115,10 @@ export default function App() {
         {
             path: ["agents-plannig"],
             component: AgentsPlanning,
+        },
+        {
+            path: ["employees"],
+            component: Employees,
         },
     ]);
     return (
@@ -207,6 +230,7 @@ interface MainLinkProps {
     text: string;
     url: string;
     icon: string;
+    color?: string;
 }
 function MainLink(props: MainLinkProps) {
     return (
@@ -215,7 +239,11 @@ function MainLink(props: MainLinkProps) {
             href={props.url}
             aria-current="page"
         >
-            <i class="material-icons mdc-list-item__graphic" aria-hidden="true">
+            <i
+                class="material-icons mdc-list-item__graphic"
+                style={props.color && "color: " + props.color}
+                aria-hidden="true"
+            >
                 {props.icon}
             </i>
             <span class="mdc-list-item__text">{props.text}</span>
