@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Utils
+namespace Api.Helpers
 {
     public static class DateTimeExtensions
     {
