@@ -7,8 +7,8 @@ import TimeTable, {
     TimeTableData,
     timeUnit,
 } from "../../../components/time-table";
-import { fetchJson } from "../../../data";
-import groupBy, { Group } from "../../../data/group-by";
+import { fetchJson } from "../../../core";
+import groupBy, { Group } from "../../../core/group-by";
 import { Employee, fullName, Position, Track } from "../services/planning";
 import "./style.scss";
 

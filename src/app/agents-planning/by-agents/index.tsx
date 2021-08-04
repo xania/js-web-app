@@ -5,7 +5,7 @@ import TimeTable, {
     TimeTableData,
     timeUnit,
 } from "../../../components/time-table";
-import groupBy from "../../../data/group-by";
+import groupBy from "../../../core/group-by";
 import {
     Employee,
     fetchSupply,

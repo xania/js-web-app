@@ -1,4 +1,4 @@
-import { fetchJson } from "../../../data";
+import { fetchJson } from "../../../core";
 
 export interface PositionSupply {
     readonly positionId: string;

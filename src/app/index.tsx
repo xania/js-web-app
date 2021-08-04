@@ -20,6 +20,7 @@ import {
 import "./style.scss";
 import { AgentsPlanning } from "./agents-planning";
 import { Employees } from "./employees";
+import { Invoices } from "./invoices/index";
 
 function TopBar() {
     return (
@@ -74,11 +75,7 @@ function Aside(props: AsideProps) {
                         icon="group"
                         color="darkgreen"
                     />
-                    <MainLink
-                        text="Daily shifts"
-                        url="/daily-shifts"
-                        icon="date_range"
-                    />
+                    <MainLink text="Invoices" url="/invoices" icon="domain" />
                     <MainLink
                         text="Agents Planning"
                         url="/agents-plannig"
@@ -119,6 +116,10 @@ export default function App() {
         {
             path: ["employees"],
             component: Employees,
+        },
+        {
+            path: ["invoices"],
+            component: Invoices,
         },
     ]);
     return (

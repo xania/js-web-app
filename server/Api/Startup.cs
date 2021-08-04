@@ -1,6 +1,7 @@
 using Api.Controllers;
 using Api.Data;
 using Api.Data.EFCore;
+using Api.WebData.Store;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,7 @@ namespace Api
         {
             services.AddControllers();
             services.AddSignalR();
+            services.AddSingleton(new DataStoreProvider(Configuration["DATA_DIR"] ?? Environment.GetEnvironmentVariable("DATA_DIR") ?? "webdata"));
 
             // Add framework services.
             services.AddDbContext<RomDbContext>(options => {
@@ -41,11 +43,17 @@ namespace Api
                 });
 
             services.RegisterDbSetRepositories<RomDbContext>();
+            services.AddHostedService<WebData.Store.Background.StoreBackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime)
         {
+            applicationLifetime.ApplicationStopping.Register(() =>
+            {
+                app.ApplicationServices.GetRequiredService<DataStoreProvider>().Flush();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
