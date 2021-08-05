@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Api.Finance
 {
     public class Invoice
@@ -7,5 +9,12 @@ namespace Api.Finance
         public string Owner { get; set; }
         public string Company { get; set; }
         public string Date { get; set; }
+
+        public ICollection<InvoiceLine> Lines { get; set; }
+    }
+
+    public class InvoiceLine
+    {
+        public string Description { get; set; }
     }
 }

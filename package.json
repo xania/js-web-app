@@ -27,7 +27,7 @@
         "style-loader": "^2.0.0",
         "ts-jest": "^26.5.0",
         "ts-loader": "^8.0.14",
-        "typescript": "^4.1.3",
+        "typescript": "^4.3.5",
         "webpack": "^5.20.1",
         "webpack-cli": "^4.5.0",
         "webpack-dev-server": "^3.11.2"
@@ -69,7 +69,7 @@
         "@material/top-app-bar": "^10.0.0",
         "@microsoft/signalr": "^5.0.2",
         "glow.js": "file:glow.js",
-        "mutable.js": "file:mutabl.js",
+        "mutabl.js": "file:mutabl.js",
         "mvc.js": "file:mvc.js"
     }
 }

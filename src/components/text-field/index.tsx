@@ -1,6 +1,7 @@
 import tpl from "glow.js";
 import "./style.scss";
 import { MDCTextField } from "@material/textfield";
+import { State } from "../../../mutabl.js";
 
 interface TransformStreamDefaultControllerCallback<O> {
     (controller: TransformStreamDefaultController<O>): void | PromiseLike<void>;
@@ -20,7 +21,7 @@ interface InputEvents {
 
 interface TextFieldProps {
     label: string;
-    value?: any;
+    value?: string | State<unknown>;
     readonly?: boolean;
     autofocus?: boolean;
     type?: "date" | "password";
@@ -29,6 +30,7 @@ interface TextFieldProps {
 }
 
 export default function TextField(props: TextFieldProps) {
+    const { value } = props;
     return (
         <label
             class="mdc-text-field mdc-text-field--fullwidth mdc-text-field--filled mdc-text-field--with-trailing-icon"
@@ -44,6 +46,9 @@ export default function TextField(props: TextFieldProps) {
                 aria-labelledby="label"
                 class="mdc-text-field__input"
                 type={props.type || "text"}
+                value={value}
+                keyup={update}
+                change={update}
             />
 
             {props.icon && (
@@ -56,6 +61,12 @@ export default function TextField(props: TextFieldProps) {
             {MDCTextField}
         </label>
     );
+
+    function update(e) {
+        if (typeof value === "object" && "update" in value) {
+            value.update(e.target.value);
+        }
+    }
 }
 
 // export function Input(props: InputProps) {

@@ -13,7 +13,7 @@ export function Employees(): Component {
                         <header>Users</header>
                         <main>
                             <form class="form-group">
-                                <TextField label="Text" value="" />
+                                <TextField label="Text" />
                             </form>
                             <DatePicker label="End date" />
                         </main>

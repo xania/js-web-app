@@ -6,3 +6,5 @@ server/.vs/*/**
 bin/
 obj/
 server/.vs/*/**
+server/packages/
+server/Api/webdata/

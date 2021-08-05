@@ -14,3 +14,17 @@ const defaultRequestInit: RequestInit = {
 export function fetchJson(url: string, init: RequestInit = {}) {
     return fetch(url, { ...defaultRequestInit, ...init });
 }
+
+export function putJson(url: string, data, init: RequestInit = {}) {
+    let body = JSON.stringify(data);
+    return fetch(url, { ...defaultRequestInit, ...init, method: "PUT", body });
+}
+
+export function postJson(url: string, data, init: RequestInit = {}) {
+    let body = JSON.stringify(data);
+    return fetch(url, { ...defaultRequestInit, ...init, method: "POST", body });
+}
+
+export function deleteJson(url: string, init: RequestInit = {}) {
+    return fetch(url, { ...defaultRequestInit, ...init, method: "DELETE" });
+}
