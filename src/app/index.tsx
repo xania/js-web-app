@@ -1,8 +1,7 @@
-import { tpl, init, render, disposeMany } from "glow.js";
+import { tpl } from "glow.js";
 import { IActionContext, IAction } from "mvc.js";
 import { Fragment } from "glow.js/lib/fragment";
 import { RouterOutlet } from "mvc.js/outlet";
-import { MDCRipple } from "@material/ripple";
 import { MDCList } from "@material/list";
 import { MDCDrawer } from "@material/drawer";
 import { MDCTopAppBar } from "@material/top-app-bar";
@@ -11,8 +10,17 @@ import { Login } from "../login";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 import { LinkListener } from "mvc.js/router/link";
-import { RouteInput, ViewContext } from "mvc.js/router";
+import {
+    browserRoutes,
+    createRouter,
+    RouteInput,
+    ViewContext,
+} from "mvc.js/router";
+
 import "./style.scss";
+import { AgentsPlanning } from "./agents-planning";
+import { Employees } from "./employees";
+import { Invoices } from "./invoices/index";
 
 function TopBar() {
     return (
@@ -22,7 +30,9 @@ function TopBar() {
                     <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button">
                         menu
                     </button>
-                    <span class="mdc-top-app-bar__title">Xania</span>
+                    <span class="mdc-top-app-bar__title">
+                        Real-time Operation Management
+                    </span>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button
@@ -39,82 +49,52 @@ function TopBar() {
                     >
                         add
                     </button>
-                    <button
-                        class="mdc-button mdc-button--raised mdc-ripple-upgraded"
-                        style="--mdc-ripple-fg-size:55px; --mdc-ripple-fg-scale:1.97277; --mdc-ripple-fg-translate-start:11.2784px, -12.8835px; --mdc-ripple-fg-translate-end:18.3452px, -9.50284px; --mdc-theme-primary: #585"
-                    >
-                        <span class="mdc-button__label">22:59:35</span>
-                        <i
-                            class="material-icons mdc-button__icon"
-                            style="font-size: 18px;"
-                        >
-                            pause_circle_outline
-                        </i>
-                    </button>
                 </section>
             </div>
         </header>
     );
 }
 
-function Aside() {
+interface AsideProps {
+    open: boolean;
+}
+function Aside(props: AsideProps) {
     return (
-        <aside class="mdc-drawer mdc-drawer--modal mdc-top-app-bar--fixed-adjust">
-            <div class="mdc-drawer__header">
-                <h3 class="mdc-drawer__title">Mail</h3>
-                <h6 class="mdc-drawer__subtitle">email@material.io</h6>
-            </div>
+        <aside
+            class={[
+                "mdc-drawer mdc-drawer--modal mdc-top-app-bar--fixed-adjust",
+                props.open ? "mdc-drawer--open" : null,
+            ]}
+        >
             <div class="mdc-drawer__content">
                 <nav class="mdc-list" tabindex="0">
-                    <a
-                        class="mdc-list-item router-link"
-                        href="/login"
-                        aria-current="page"
-                    >
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            inbox
-                        </i>
-                        <span class="mdc-list-item__text">Login</span>
-                    </a>
-                    <a
-                        class="mdc-list-item router-link"
-                        href="/"
-                        aria-current="page"
-                    >
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            inbox
-                        </i>
-                        <span class="mdc-list-item__text">Inbox</span>
-                    </a>
-                    <a
-                        class="mdc-list-item router-link mdc-list-item--activated"
-                        href="/test"
-                    >
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            send
-                        </i>
-                        <span class="mdc-list-item__text">Outgoing</span>
-                    </a>
                     <hr class="mdc-list-divider" />
-                    <h6 class="mdc-list-group__subheader">Labels</h6>
-                    <a class="mdc-list-item" href="#">
-                        <i
-                            class="material-icons mdc-list-item__graphic"
-                            aria-hidden="true"
-                        >
-                            bookmark
-                        </i>
-                        <span class="mdc-list-item__text">Family</span>
-                    </a>{" "}
+                    <MainLink
+                        text="Employees"
+                        url="/employees"
+                        icon="group"
+                        color="darkgreen"
+                    />
+                    <MainLink text="Invoices" url="/invoices" icon="domain" />
+                    <MainLink
+                        text="Agents Planning"
+                        url="/agents-plannig"
+                        icon="schedule"
+                        color="black"
+                    />
+                    <MainLink
+                        text="Assign card to agent"
+                        url="/card-assignment"
+                        icon="credit_card"
+                    />
+                    <MainLink text="Settings" url="/settings" icon="settings" />
+                    <MainLink
+                        text="Administration"
+                        url="/admin"
+                        icon="security"
+                        color="red"
+                    />
+                    <hr class="mdc-list-divider" />
                     {MDCList}
                 </nav>
             </div>
@@ -122,28 +102,35 @@ function Aside() {
     );
 }
 
-function RouterPage() {
-    return (view: (context: ViewContext) => any, context: ViewContext) => (
-        <section class="router-page">
-            {view ? view(context) : notFound(context)}
-        </section>
-    );
+export function RouterPage(props, children: any) {
+    return <section class="router-page">{children}</section>;
 }
 
 export default function App() {
+    const routes = browserRoutes([]);
+    const router = createRouter(routes, [
+        {
+            path: ["agents-plannig"],
+            component: AgentsPlanning,
+        },
+        {
+            path: ["employees"],
+            component: Employees,
+        },
+        {
+            path: ["invoices"],
+            component: Invoices,
+        },
+    ]);
     return (
         <Fragment>
             <LinkListener />
-            <Aside />
+            <Aside open={location.pathname == "/"} />
             <div class="mdc-drawer-scrim"></div>
             <div class="mdc-drawer-app-content" style="height: 100%;">
                 <TopBar />
                 <main class="main-content mdc-top-app-bar--fixed-adjust">
-                    <RouterOutlet
-                        routes={[{ path: ["test"], component: test }]}
-                    >
-                        <RouterPage />
-                    </RouterOutlet>
+                    <RouterOutlet router={router} />
                 </main>
             </div>
             <Drawer />
@@ -215,35 +202,6 @@ function notFound(context: ViewContext) {
     );
 }
 
-function test(): Action {
-    return {
-        view(context: ViewContext) {
-            const { parent } = context.url;
-            return (
-                <Fragment>
-                    <div class="router-page__content">
-                        <header>test action</header>
-                        <main>
-                            {parent && <div>{parent.route()}</div>}
-                            <a
-                                href={context.url.route("test")}
-                                // click={context.url.relative("bla")}
-                                class="mdc-button mdc-button--raised router-link"
-                            >
-                                {MDCRipple}
-                                <div class="mdc-button__ripple"></div>
-                                <span class="mdc-button__label">Button</span>
-                            </a>
-                            <div style="height: 1000px"></div>
-                        </main>
-                    </div>
-                </Fragment>
-            );
-        },
-        routes: [{ path: ["test"], component: test }],
-    };
-}
-
 function authorized(action: IAction<any>) {
     return {
         execute(context: IActionContext) {
@@ -267,4 +225,57 @@ function authorized(action: IAction<any>) {
 interface Action {
     view(context: ViewContext): any;
     routes?: RouteInput<any>[];
+}
+
+interface MainLinkProps {
+    text: string;
+    url: string;
+    icon: string;
+    color?: string;
+}
+function MainLink(props: MainLinkProps) {
+    return (
+        <a
+            class="mdc-list-item router-link"
+            href={props.url}
+            aria-current="page"
+        >
+            <i
+                class="material-icons mdc-list-item__graphic"
+                style={props.color && "color: " + props.color}
+                aria-hidden="true"
+            >
+                {props.icon}
+            </i>
+            <span class="mdc-list-item__text">{props.text}</span>
+        </a>
+    );
+}
+
+function input(name: string, value: string) {
+    return {
+        name,
+        value,
+        blur(e) {},
+    };
+}
+
+interface ControlProps {
+    name: string;
+    value: string;
+}
+function Control(props: ControlProps) {
+    return (
+        <input
+            style="border: 2px solid blue;"
+            {...input(props.name, props.value)}
+        >
+            box
+        </input>
+    );
+}
+
+interface ToggleButtonProps {}
+function ToggleButton(props: ToggleButtonProps) {
+    return <a class="mdc-button mdc-button--outline">toggle</a>;
 }

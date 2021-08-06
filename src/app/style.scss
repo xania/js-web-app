@@ -1,5 +1,5 @@
 @use "@material/theme" with (
-  $primary: #4959bb,
+  $primary: #494b58,
   $secondary: #737fcf,
 );
 
@@ -13,6 +13,11 @@
 @use "@material/icon-button/mdc-icon-button";
 
 @use "@material/form-field/mdc-form-field";
+
+@use "@material/tab-bar/mdc-tab-bar";
+@use "@material/tab-scroller/mdc-tab-scroller";
+@use "@material/tab-indicator/mdc-tab-indicator";
+@use "@material/tab/mdc-tab";
 
 @import "@material/typography/mdc-typography";
 
@@ -42,16 +47,37 @@ body {
     z-index: 7;
 }
 
+.mdc-drawer {
+    background-color: #eee;
+}
+
+.main-content {
+    min-height: 100%;
+}
+
 @media only screen and (min-width: 600px) {
     .main-content {
         overflow: auto;
         height: 100%;
+        min-height: max-content;
+        padding-left: 60px;
 
         &--aside {
             background-color: black;
             width: 200px;
             z-index: 10;
             white-space: nowrap;
+        }
+    }
+
+    .mdc-drawer--modal:not(.mdc-drawer--open) {
+        display: flex;
+        width: 60px;
+
+        .mdc-drawer--full {
+            white-space: nowrap;
+            overflow: hidden;
+            visibility: hidden;
         }
     }
 }

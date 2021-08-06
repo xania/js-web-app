@@ -1,0 +1,11 @@
+.loader-spinner {
+    background-image: url(./spinner.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #00003310;
+    background-size: 20%;
+
+    text-align: center;
+    height: 100%;
+    display: absolute;
+}

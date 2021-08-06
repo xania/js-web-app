@@ -1,0 +1,9 @@
+.grouping-track {
+    background-color: #eee;
+    display: block;
+
+    &::after {
+        color: #eee;
+        content: "\00a0 ";
+    }
+}
