@@ -22,7 +22,7 @@ export function Invoices(): Component {
                 "/api/invoice/4b95543d-080a-4da2-979b-0b958deff264"
             );
 
-            const lines = asListSource(entity.values.lines);
+            const lines = asListSource(entity.values.declarations);
 
             return (
                 <RouterPage>
@@ -34,6 +34,7 @@ export function Invoices(): Component {
                                 click={() =>
                                     lines.add(
                                         pushItem({
+                                            hours: lines.length,
                                             description: `invoice line ${lines.length +
                                                 1}`,
                                         })
@@ -77,7 +78,7 @@ export function Invoices(): Component {
                                 <Select
                                     options={[r2group, rider, alfa, partech]}
                                     label="Company"
-                                    value={entity.values.company}
+                                    value={entity.values.companyId}
                                 ></Select>
                             </div>
                             <div>
@@ -117,7 +118,12 @@ interface Invoice {
     invoiceNumber: string;
     description: string;
     owner: string;
-    company: string;
+    companyId: string;
     date: string;
-    lines: InvoiceLine[];
+    declarations: HourDeclaration[];
+}
+
+interface HourDeclaration {
+    hours: number;
+    description: string;
 }

@@ -139,5 +139,62 @@ namespace Api.WebData.Store.Entities
 
     }
 
+    public unsafe readonly struct Entity<T> : IEntity<T>
+    {
+        internal readonly Record* record;
+
+        public Entity(Record* record)
+        {
+            this.record = record;
+        }
+
+        public RecordHandle Handle => new RecordHandle(record);
+
+        public readonly Guid Id => Entity.GetId(record);
+
+        public readonly long Version => Entity.GetVersion(record);
+
+        public T Content => Entity.GetContent<T>(ContentSpan);
+
+        public ReadOnlySpan<byte> ContentSpan
+        {
+            get
+            {
+                var contentLength = record->Length - Entity.ContentOffset;
+                var memory = (byte*)record - contentLength;
+                return new ReadOnlySpan<byte>(memory, contentLength);
+            }
+        }
+
+        public bool IsEmpty => record->Length <= Entity.ContentOffset;
+
+        public IEntity<U> Cast<U>()
+        {
+            return new Entity<U>(this.record);
+        }
+
+        public bool Contains(ref byte utf8Text, int length)
+        {
+            var contentLength = record->Length - Entity.ContentOffset;
+            var memory = ((byte*)record) - contentLength;
+
+            if (RecordHelpers.IndexOf(ref memory[0], contentLength, ref utf8Text, length) >= 0)
+            {
+                var reader = new Utf8JsonReader(new ReadOnlySpan<byte>(memory, contentLength));
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonTokenType.String)
+                    {
+                        var value = reader.ValueSpan.ToArray();
+                        if (RecordHelpers.IndexOf(ref value[0], value.Length, ref utf8Text, length) >= 0)
+                            return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public IEntity<T> Pin() => this;
+    }
 
 }

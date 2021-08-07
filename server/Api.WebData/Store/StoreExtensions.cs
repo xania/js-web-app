@@ -17,21 +17,5 @@ namespace Api.WebData.Store
         {
             return new EntitySet<T>(store);
         }
-
-        public static IEntity<T> FirstOrDefault<T>(this IEntityEnumerator<T> enumerator, EntityFunc<T, bool> predicate)
-        {
-            try
-            {
-                if (enumerator.TryMoveNext(predicate))
-                    return enumerator.Current;
-
-                return default;
-            }
-            finally
-            {
-                enumerator.Dispose();
-            }
-        }
-
     }
 }

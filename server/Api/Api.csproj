@@ -5,6 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Finance\Pdf\blue.PNG" />
+    <None Remove="Finance\Pdf\logo.PNG" />
+    <None Remove="Finance\Pdf\roboto.regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Finance\Pdf\blue.PNG" />
+    <EmbeddedResource Include="Finance\Pdf\logo.PNG" />
+    <EmbeddedResource Include="Finance\Pdf\roboto.regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="itext7" Version="7.1.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
