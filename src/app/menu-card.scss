@@ -1,0 +1,62 @@
+@import "https://fonts.googleapis.com/css?family=Langar";
+@import "https://fonts.googleapis.com/css?family=Tangerine";
+@import "https://fonts.googleapis.com/css?family=Bungee";
+  
+section {
+    padding: 20px;
+}
+div {
+    margin: 10px 0;
+}
+
+.tangerine {
+    font-family: Tangerine;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.langar {
+    font-family: Langar;
+    font-size: 40px;
+    font-weight: normal;
+}
+
+.bungee {
+    font-family: "Bungee"
+}
+
+body {
+    background-color: rgb(70, 69, 67);
+    color: white;
+}
+
+h1 {
+    font-family: 'Langar', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0;
+    color: rgb(190, 113, 12);
+}
+
+.topbar {
+    border-bottom: 1px solid white;
+    font-size: 50px;
+    padding-left: 100px;
+}
+
+.menu-card {
+    & > div {
+        padding: 0 10px;
+    }
+}
+
+span {
+    white-space: nowrap;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.call-out {
+    border: 12px solid #FFFFFF88;
+    padding: 20px;
+}
