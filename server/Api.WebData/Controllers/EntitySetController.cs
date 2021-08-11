@@ -35,24 +35,24 @@ namespace Api.WebData.Controllers
 
         protected DataStoreProvider StoreProvider { get; }
 
-        //[HttpGet]
-        //[RequestAccepts("application/json")]
-        //public IEnumerable<object> List()
-        //{
-        //    Response.ContentType = "application/json";
+        [HttpGet]
+//        [RequestAccepts("application/json")]
+        public IEnumerable<object> List()
+        {
+            Response.ContentType = "application/json";
 
-        //    using var entityEnumerator = Collection.Take(50);
-        //    while (entityEnumerator.TryMoveNext(null))
-        //    {
-        //        var entity = entityEnumerator.Current;
-        //        yield return new
-        //        {
-        //            id = entity.Id,
-        //            version = entity.Version.ToString(CultureInfo.InvariantCulture),
-        //            values = entity.Content,
-        //        };
-        //    }
-        //}
+            using var entityEnumerator = Collection.Take(50);
+            while (entityEnumerator.TryMoveNext(null))
+            {
+                var entity = entityEnumerator.Current;
+                yield return new
+                {
+                    id = entity.Id,
+                    version = entity.Version.ToString(CultureInfo.InvariantCulture),
+                    values = entity.Content,
+                };
+            }
+        }
 
         //[HttpGet("{term}")]
         //[RequestAccepts("application/json")]

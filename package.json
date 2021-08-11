@@ -12,6 +12,9 @@
     "keywords": [],
     "author": "xania",
     "license": "ISC",
+    "prettier": {
+        "tabWidth": 2
+    },
     "devDependencies": {
         "@types/jest": "^26.0.20",
         "autoprefixer": "^10.2.4",
@@ -22,6 +25,7 @@
         "jest": "^26.6.3",
         "mini-css-extract-plugin": "^1.3.5",
         "postcss-loader": "^5.0.0",
+        "prettier": "^2.3.2",
         "sass": "^1.32.6",
         "sass-loader": "^10.1.1",
         "style-loader": "^2.0.0",

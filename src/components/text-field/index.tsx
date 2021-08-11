@@ -4,69 +4,72 @@ import { MDCTextField } from "@material/textfield";
 import { State } from "../../../mutabl.js";
 
 interface TransformStreamDefaultControllerCallback<O> {
-    (controller: TransformStreamDefaultController<O>): void | PromiseLike<void>;
+  (controller: TransformStreamDefaultController<O>): void | PromiseLike<void>;
 }
 
 interface KeyboardEventHandler {
-    (ev: KeyboardEvent): void;
+  (ev: KeyboardEvent): void;
 }
 interface MouseEventHandler {
-    (ev: MouseEvent): void;
+  (ev: MouseEvent): void;
 }
 
 interface InputEvents {
-    keyup: KeyboardEventHandler;
-    mouseup: MouseEventHandler;
+  keyup: KeyboardEventHandler;
+  mouseup: MouseEventHandler;
 }
 
 interface TextFieldProps {
-    label: string;
-    value?: string | State<unknown>;
-    readonly?: boolean;
-    autofocus?: boolean;
-    type?: "date" | "password";
-    events?: Partial<InputEvents>;
-    icon?: string;
+  label: string;
+  value?: string | State<unknown>;
+  readonly?: boolean;
+  autofocus?: boolean;
+  type?: "date" | "password";
+  events?: Partial<InputEvents>;
+  icon?: string;
+  parse?(value: unknown);
 }
 
 export default function TextField(props: TextFieldProps) {
-    const { value } = props;
-    return (
-        <label
-            class="mdc-text-field mdc-text-field--fullwidth mdc-text-field--filled mdc-text-field--with-trailing-icon"
-            {...props.events}
-        >
-            <span class="mdc-text-field__ripple"></span>
+  const { value, parse } = props;
+  return (
+    <label
+      class="mdc-text-field mdc-text-field--fullwidth mdc-text-field--filled mdc-text-field--with-trailing-icon"
+      {...props.events}
+    >
+      <span class="mdc-text-field__ripple"></span>
 
-            <span id="label" class="mdc-floating-label">
-                {props.label}
-            </span>
+      <span id="label" class="mdc-floating-label">
+        {props.label}
+      </span>
 
-            <input
-                aria-labelledby="label"
-                class="mdc-text-field__input"
-                type={props.type || "text"}
-                value={value}
-                keyup={update}
-                change={update}
-            />
+      <input
+        aria-labelledby="label"
+        class="mdc-text-field__input"
+        type={props.type || "text"}
+        value={value}
+        keyup={defaultUpdate}
+        change={defaultUpdate}
+      />
 
-            {props.icon && (
-                <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing">
-                    event
-                </i>
-            )}
+      {props.icon && (
+        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing">
+          event
+        </i>
+      )}
 
-            <span class="mdc-line-ripple"></span>
-            {MDCTextField}
-        </label>
-    );
+      <span class="mdc-line-ripple"></span>
+      {MDCTextField}
+    </label>
+  );
 
-    function update(e) {
-        if (typeof value === "object" && "update" in value) {
-            value.update(e.target.value);
-        }
+  function defaultUpdate(e) {
+    if (typeof value === "object" && "update" in value) {
+      value.update(
+        typeof parse === "function" ? parse(e.target.value) : e.target.value
+      );
     }
+  }
 }
 
 // export function Input(props: InputProps) {

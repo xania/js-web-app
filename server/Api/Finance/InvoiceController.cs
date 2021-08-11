@@ -23,7 +23,7 @@ namespace Api.Finance
             if (reportData == null) return NotFound();
 
             var generateFunc = InvoiceReportGenerator.Generate(reportData);
-            return new FuncActionResult(generateFunc, $"Fact { reportData.Invoice.InvoiceNumber } Xania.pdf");
+            return new FuncActionResult(generateFunc, $"Fact { reportData.Invoice.InvoiceNumber } - {reportData.Company.Name}.pdf");
         }
 
         private InvoiceReportDataTO CreateReportData(Guid id)
@@ -85,10 +85,14 @@ namespace Api.Finance
 
             return new Company
             {
-                Address = new Address { City = "Amsterdam", Street = "Damrak", ZipCode = "1001AB" },
-                Contact = "Me",
-                Name = "Your Company",
-                HourlyRate = 80
+                Address = new Address { 
+                    City = "Amsterdam",
+                    Street = "Aert van Nesstraat 45", 
+                    ZipCode = "3012 CA" 
+                },
+                Contact = "Rick van Eeden",
+                Name = "R2 Group",
+                HourlyRate = 85
             };
         }
 

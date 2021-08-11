@@ -42,6 +42,10 @@ namespace Api.WebData.Store
 
             var length = Meta.Length;
             var bytes = new byte[length];
+            if (length == 0)
+            {
+                return new RecordEnumerator((byte*)IntPtr.Zero, 0);
+            }
             if (File.Exists(filePath))
             {
                 using var ds = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096);
@@ -49,6 +53,7 @@ namespace Api.WebData.Store
             }
             var pendingLength = bytes.Length - Meta.CommittedLength;
             buffer.CopyTo(bytes, Meta.CommittedLength, pendingLength);
+
             return new RecordEnumerator((byte*)Unsafe.AsPointer(ref bytes[0]), length);
         }
 

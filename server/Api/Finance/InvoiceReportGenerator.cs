@@ -30,7 +30,7 @@ namespace Api.Finance
 
                 var document = new Document(pdf, PageSize.A4, true);
 
-                var robotoFont = PdfFontFactory.CreateFont(GetResource("roboto.regular.ttf").ReadAllBytes(), false);
+                var robotoFont = PdfFontFactory.CreateFont(GetResource("roboto.regular.ttf").ReadAllBytes(), PdfFontFactory.EmbeddingStrategy.PREFER_NOT_EMBEDDED);
                 document.SetFont(robotoFont);
 
                 document.Add(GetImage("logo.PNG", 15));
