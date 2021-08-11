@@ -7,6 +7,7 @@ import TextField from "../../components/text-field";
 import { activeEntity, Entity } from "./active-entity";
 import { List } from "glow.js/components";
 import { fetchJson } from "../../core";
+import { UrlHelper } from "../../../mvc.js/router/url-helper";
 
 const rider = { label: "Rider International", value: "rider" };
 const alfa = { label: "Alfa Pro IT", value: "alfa" };
@@ -21,7 +22,7 @@ export function Invoices(): Component {
         component: InvoiceComponent,
       },
     ],
-    async view() {
+    async view(context: ViewContext) {
       const invoices: Entity<Invoice>[] = await fetchJson("/api/invoice").then(
         (e) => e.json()
       );
@@ -30,7 +31,7 @@ export function Invoices(): Component {
           <div class="router-page__content">
             <header>Invoices</header>
             <main>
-              <List source={invoices}>{invoiceListItem}</List>
+              <List source={invoices}>{invoiceListItem(context.url)}</List>
             </main>
           </div>
         </RouterPage>
@@ -38,10 +39,10 @@ export function Invoices(): Component {
     },
   };
 
-  function invoiceListItem(invoice: Entity<Invoice>) {
-    return (
+  function invoiceListItem(url: UrlHelper) {
+    return (invoice: Entity<Invoice>) => (
       <div>
-        <a class="router-link" href={`/invoices/${invoice.id}`}>
+        <a class="router-link" href={url.stringify(invoice.id)}>
           {invoice.values.description}
         </a>
       </div>
