@@ -22,6 +22,7 @@ import { AgentsPlanning } from "./agents-planning";
 import { Employees } from "./employees";
 import { Invoices } from "./invoices/index";
 import { UrlHelper } from "../../mvc.js/router/url-helper";
+import Css from "glow.js/components/css";
 import { MenuCard } from "./menu-card";
 
 function TopBar() {
@@ -159,7 +160,7 @@ function AdminComponent() {
           <div class="mdc-drawer-scrim"></div>
           <div class="mdc-drawer-app-content" style="height: 100%;">
             <TopBar />
-            <main class="main-content mdc-top-app-bar--fixed-adjust">
+            <main class="main-content mdc-top-app-bar--fixed-adjust router-outlet-container">
               <RouterOutlet router={context.childRouter(adminRoutes())} />
             </main>
           </div>

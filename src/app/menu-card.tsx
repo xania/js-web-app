@@ -1,11 +1,16 @@
 import { tpl } from "glow.js";
 import { Fragment } from "glow.js/lib/fragment";
+import Css from "../../glow.js/components/css";
 import "./menu-card.scss";
 
 export function MenuCard() {
   return (
     <Fragment>
-      <div class="topbar">Restaurant & Cafe Jennah</div>
+      <Css value="jennah" />
+      <div class="topbar">
+        Restaurant & Cafe Jennah
+        <span class="halal">100% Halal</span>
+      </div>
       <div class="menu-card" style="display: flex;">
         <div style="flex: 1">
           <Starters />
@@ -67,7 +72,7 @@ function HotDrinks() {
 
 function CourseMeal() {
   return (
-    <section class="call-out">
+    <section class="call-out call-out-traditioneel">
       <h1>Traditioneel</h1>
       <div>
         <h2>Starters</h2>

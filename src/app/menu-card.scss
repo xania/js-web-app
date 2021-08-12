@@ -1,62 +1,87 @@
 @import "https://fonts.googleapis.com/css?family=Langar";
 @import "https://fonts.googleapis.com/css?family=Tangerine";
 @import "https://fonts.googleapis.com/css?family=Bungee";
-  
-section {
-    padding: 20px;
-}
-div {
-    margin: 10px 0;
-}
 
-.tangerine {
+body.jennah {
+  background-color: rgb(53, 52, 51);
+  color: white;
+  font-size: 20px;
+  line-height: 20px;
+
+  section {
+    padding: 20px;
+  }
+  div {
+    margin: 10px 0;
+  }
+
+  .tangerine {
     font-family: Tangerine;
     font-size: 40px;
     font-weight: bold;
-}
+  }
 
-.langar {
+  .langar {
     font-family: Langar;
     font-size: 40px;
     font-weight: normal;
-}
+  }
 
-.bungee {
-    font-family: "Bungee"
-}
+  .bungee {
+    font-family: "Bungee";
+  }
 
-body {
-    background-color: rgb(70, 69, 67);
-    color: white;
-}
-
-h1 {
-    font-family: 'Langar', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  h1 {
+    font-family: "Langar", "Franklin Gothic Medium", "Arial Narrow", Arial,
+      sans-serif;
     margin: 0;
     color: rgb(190, 113, 12);
-}
+    line-height: 20px;
+  }
 
-.topbar {
-    border-bottom: 1px solid white;
+  h2 {
+    line-height: 20px;
+    margin: 40px 0 0 0;
+    font-size: 26px;
+  }
+
+  .topbar {
+    border-bottom: 4px solid white;
     font-size: 50px;
     padding-left: 100px;
-}
-
-.menu-card {
-    & > div {
-        padding: 0 10px;
+    line-height: 70px;
+    .halal {
+      margin: 0 0 0 auto;
+      font-size: 18px;
+      vertical-align: text-top;
+      margin: auto 0 0 30px;
+      font-style: italic;
     }
-}
+  }
 
-span {
+  .menu-card {
+    & > div {
+      padding: 0 10px;
+    }
+  }
+
+  span {
     white-space: nowrap;
-}
+  }
 
-.nowrap {
+  .nowrap {
     white-space: nowrap;
-}
+  }
 
-.call-out {
-    border: 12px solid #FFFFFF88;
+  .call-out {
+    border: 12px solid #ffffff88;
     padding: 20px;
+    &-traditioneel {
+      background-image: url(jennah/noun_tajine_263283.svg);
+      background-repeat: no-repeat;
+      background-position: top right;
+      background-position-y: 30px;
+      background-blend-mode: color-burn;
+    }
+  }
 }
