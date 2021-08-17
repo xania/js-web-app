@@ -1,32 +1,46 @@
 import { tpl } from "glow.js";
 import { Fragment } from "glow.js/lib/fragment";
-import Css from "../../glow.js/components/css";
+import Css from "glow.js/components/css";
 import "./menu-card.scss";
 
-export function MenuCard() {
+export function MainMenuCard() {
   return (
     <Fragment>
       <Css value="jennah" />
       <div class="topbar">
         Restaurant & Cafe Jennah
         <span class="halal">100% Halal</span>
+        <span class="topbar-wifi">
+          <span class="material-icons">rss_feed</span>
+          Jennah2021 |
+          <span class="material-icons" style="color: #128C7E">
+            whatsapp
+          </span>
+          +31 6 87120348
+        </span>
       </div>
       <div class="menu-card" style="display: flex;">
-        <div style="flex: 1">
+        <div style="flex: 1;">
           <Starters />
           <Sandwich />
           <Burgers />
         </div>
-        <div style="flex: 1">
+        <div style="flex: 1;">
           <Salad />
           <CourseMeal />
           <Pasta />
         </div>
-        <div style="flex: 1">
+        <div style="flex: 1;">
           <Grill />
           <Tajine />
           <Couscous />
         </div>
+        <div style="flex: 1; height: 100%; background-color: #111111EE">
+          <Desserts />
+        </div>
+        {/* <div style="flex: 1; display: inline-flex">
+          <img style="width: 100%; margin: auto 0 0 0" src={burgerSrc} />
+        </div> */}
       </div>
     </Fragment>
   );
@@ -53,19 +67,6 @@ function Starters() {
       <div>Harira 4.5</div>
       <div>Bisara 4.5</div>
       <div>Nacho's 7.5</div>
-    </section>
-  );
-}
-
-function HotDrinks() {
-  return (
-    <section>
-      <h1>Hot drinks</h1>
-      <div>Pickwich thee 2.5</div>
-      <div>Marokkaanse munt thee (glas 2.5, kleine pot 4, grote pot 5)</div>
-      <div>Warme chocolademelk 3</div>
-      <div>Espresso, Cappuccino 2.5</div>
-      <div>Caffe Latte Macchiato 3.5</div>
     </section>
   );
 }
@@ -118,21 +119,7 @@ function Smoothies() {
 }
 
 function ColdDrink() {
-  return (
-    <section>
-      <h1>Cold drinks</h1>
-      <div>
-        <span>Cola (zero, light)</span>, <span>Fanta</span>, <span>Sprite</span>
-        , <span>Bitter lemon</span>, <span>Spa (rood, blauw)</span>,{" "}
-        <span>Gingerale</span>, <span>Tonic</span>,{" "}
-        <span>Ice Tea (Lemon, Green, Peach)</span>,{" "}
-        <span>Fernandes (Geel, Groen, Blauw of rood)</span>,{" "}
-        <span>Appelsap</span>, <span>Chocomel</span>, <span>Fristi</span>,{" "}
-        <span>Hawai</span>, <span>Poms</span> 2.5
-      </div>
-      <div>Red Bull 3</div>
-    </section>
-  );
+  return <section></section>;
 }
 
 function Tajine() {
@@ -159,6 +146,34 @@ function Couscous() {
       </div>
       <hr />
       <i>Met keuze uit zoete uien / rozijnen en kikkererwten</i>
+    </section>
+  );
+}
+
+function Desserts() {
+  return (
+    <section style="height: 100%;">
+      <h1 class="Tangerine">Desserts</h1>
+      <div class="nowrap">Cheese cakes</div>
+      <div class="nowrap">Redvelvet</div>
+      <div class="nowrap">Worteltaart</div>
+      <h1>Hot drinks</h1>
+      <div>Pickwick thee 2.5</div>
+      <div>Marokkaanse munt thee (glas 2.5, kleine pot 4, grote pot 5)</div>
+      <div>Warme chocolademelk 3</div>
+      <div>Espresso, Cappuccino 2.5</div>
+      <div>Caffe Latte Macchiato 3.5</div>
+      <h1>Cold drinks</h1>
+      <div>
+        <span>Cola (zero, light)</span>, <span>Fanta</span>, <span>Sprite</span>
+        , <span>Bitter lemon</span>, <span>Spa (rood, blauw)</span>,{" "}
+        <span>Gingerale</span>, <span>Tonic</span>,{" "}
+        <span>Ice Tea (Lemon, Green, Peach)</span>,{" "}
+        <span>Fernandes (Geel, Groen, Blauw of rood)</span>,{" "}
+        <span>Appelsap</span>, <span>Chocomel</span>, <span>Fristi</span>,{" "}
+        <span>Hawai</span>, <span>Poms</span> 2.5
+      </div>
+      <div>Red Bull 3</div>
     </section>
   );
 }

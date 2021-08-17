@@ -2,17 +2,23 @@
 @import "https://fonts.googleapis.com/css?family=Tangerine";
 @import "https://fonts.googleapis.com/css?family=Bungee";
 
+html,
+body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
 body.jennah {
   background-color: rgb(53, 52, 51);
   color: white;
   font-size: 20px;
   line-height: 20px;
+  display: flex;
+  flex-direction: column;
 
   section {
-    padding: 20px;
-  }
-  div {
-    margin: 10px 0;
+    padding: 30px 40px;
   }
 
   .tangerine {
@@ -34,9 +40,13 @@ body.jennah {
   h1 {
     font-family: "Langar", "Franklin Gothic Medium", "Arial Narrow", Arial,
       sans-serif;
-    margin: 0;
+    margin: 10px 0 0 0;
     color: rgb(190, 113, 12);
-    line-height: 20px;
+    line-height: 40px;
+  }
+
+  hr {
+    color: rgb(190, 113, 12);
   }
 
   h2 {
@@ -48,8 +58,21 @@ body.jennah {
   .topbar {
     border-bottom: 4px solid white;
     font-size: 50px;
-    padding-left: 100px;
+    padding: 0 50px;
     line-height: 70px;
+    background-color: #00000055;
+    display: inline-flex;
+    &-wifi {
+      font-size: 22px;
+      padding: 0 40px;
+      background-position: right center;
+      margin: 0 10px 0 auto;
+      .material-icons {
+        margin: 0 10px 4px 10px;
+        line-height: 30px;
+        vertical-align: middle;
+      }
+    }
     .halal {
       margin: 0 0 0 auto;
       font-size: 18px;
@@ -60,8 +83,17 @@ body.jennah {
   }
 
   .menu-card {
+    flex: auto;
+    background-image: url(../food-doodle.png);
+    background-size: cover;
+    background-blend-mode: color-burns;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-blend-mode: color-burn;
+
     & > div {
-      padding: 0 10px;
+      height: 100%;
+      background-color: #00000055;
     }
   }
 
@@ -77,11 +109,11 @@ body.jennah {
     border: 12px solid #ffffff88;
     padding: 20px;
     &-traditioneel {
-      background-image: url(jennah/noun_tajine_263283.svg);
+      background-image: url(../noun_tajine_263283.svg);
       background-repeat: no-repeat;
       background-position: top right;
       background-position-y: 30px;
-      background-blend-mode: color-burn;
+      background-color: #000000aa;
     }
   }
 }

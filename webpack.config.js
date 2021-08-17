@@ -109,7 +109,7 @@ function productionConfig(isDevelopment) {
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
                 // all options are optional
-                filename: "[name].css",
+                filename: "[name].[chunkhash:8].css",
                 chunkFilename: "[id].css",
                 ignoreOrder: false, // Enable to remove warnings about conflicting order
             }),

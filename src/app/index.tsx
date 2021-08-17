@@ -22,8 +22,8 @@ import { AgentsPlanning } from "./agents-planning";
 import { Employees } from "./employees";
 import { Invoices } from "./invoices/index";
 import { UrlHelper } from "../../mvc.js/router/url-helper";
-import Css from "glow.js/components/css";
-import { MenuCard } from "./menu-card";
+import { MainMenuCard } from "./jennah/menu-card/main";
+import DemoComponent from "./jennah/demo";
 
 function TopBar() {
   return (
@@ -140,7 +140,8 @@ export default function App() {
   const routes = browserRoutes([]);
   const router = createRouter(routes, [
     { path: ["admin"], component: AdminComponent },
-    { path: ["jennah"], component: MenuCard },
+    { path: ["jennah", "demo"], component: DemoComponent },
+    { path: ["jennah"], component: MainMenuCard },
   ]);
   return (
     <Fragment>
