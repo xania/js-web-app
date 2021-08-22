@@ -29,7 +29,7 @@ namespace Api.Finance
 
     public class HourDeclaration
     {
-        public float Hours { get; set; }
+        public float Hours { get; set; }    
         public string Description { get; set; }
     }
 }
