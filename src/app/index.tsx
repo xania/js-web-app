@@ -11,7 +11,7 @@ import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 import { LinkListener } from "mvc.js/router/link";
 import {
-  browserRoutes,
+  createBrowser,
   createRouter,
   RouteInput,
   ViewContext,
@@ -135,10 +135,10 @@ function adminRoutes() {
     },
   ];
 }
-
+``;
 export default function App() {
-  const routes = browserRoutes([]);
-  const router = createRouter(routes, [
+  const browser = createBrowser([]);
+  const router = createRouter(browser, browser.routes, [
     { path: ["admin"], component: AdminComponent },
     { path: ["jennah", "demo"], component: DemoComponent },
     { path: ["jennah"], component: MainMenuCard },

@@ -1,5 +1,5 @@
 import tpl from "glow.js";
-import { Component, ViewContext } from "mvc.js/router";
+import { RouterComponent, ViewContext } from "mvc.js/router";
 import { RouterPage } from "..";
 import { Store, asListStore as asListStore, pushItem, State } from "mutabl.js";
 import Select from "../../components/select";
@@ -14,7 +14,7 @@ const alfa = { label: "Alfa Pro IT", value: "alfa" };
 const partech = { label: "Partech IT BV", value: "partech" };
 const r2group = { label: "R2 Group B.V.", value: "r2group" };
 
-export function Invoices(): Component {
+export function Invoices(): RouterComponent {
   return {
     routes: [
       {
@@ -49,13 +49,13 @@ export function Invoices(): Component {
     );
   }
 }
-export function InvoiceComponent(): Component {
+export function InvoiceComponent(): RouterComponent {
   return {
     async view(context: ViewContext) {
       const { id } = context.params;
       var entity = await activeEntity<Invoice>("/api/invoice/" + id);
 
-      const lines = asListStore(entity.values.declarations);
+      const lines = asListStore<HourDeclaration>(entity.values.declarations);
 
       return (
         <RouterPage>

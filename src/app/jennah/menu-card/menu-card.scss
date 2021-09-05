@@ -7,13 +7,18 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
+  display: relative;
 }
 
 body.jennah {
   background-color: rgb(53, 52, 51);
+  background-image: url(../food-doodle.png);
+  background-size: cover;
   color: white;
   font-size: 16px;
   font-family: Roboto;
+  display: flex;
+  flex-direction: column;
 
   section {
     .mdc-list {
@@ -24,6 +29,22 @@ body.jennah {
       padding: 0 16px;
       line-height: 40px;
       font-family: Roboto;
+
+      &.product__tiles {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        .list-item {
+          display: block;
+          white-space: nowrap;
+          padding: 0 6px;
+          border: 1px solid rgba(67, 67, 67, 0.55);
+          background-color: rgba(26, 26, 26, 0.55);
+          margin: 2px;
+          color: rgb(255, 255, 255);
+        }
+      }
     }
 
     .mdc-list-item {
@@ -61,8 +82,16 @@ body.jennah {
     padding: 0 16px;
   }
 
+  section > i {
+    margin: 0 20px;
+    color: rgb(172, 113, 37);
+    display: inline-block;
+  }
+
   hr {
+    display: none;
     color: rgb(190, 113, 12);
+    margin: 0 20px;
   }
 
   .topbar {
@@ -89,15 +118,60 @@ body.jennah {
   }
 
   .menu-card {
-    background-image: url(../food-doodle.png);
-    background-size: cover;
-    background-blend-mode: color-burns;
     background-repeat: no-repeat;
     background-position: center;
     background-blend-mode: color-burn;
+    position: relative;
+    flex: 1;
+    overflow: auto;
+    padding-bottom: 40px;
 
     & > div {
       background-color: #00000055;
+    }
+
+    &__order {
+      display: block;
+      color: black;
+      width: 100%;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px 10px 0 0;
+      padding: 20px;
+
+      &-option {
+        color: gray;
+        font-style: italic;
+        padding: 0 40px;
+      }
+
+      &-item {
+        font-weight: bold;
+        display: inline-flex;
+        width: 100%;
+        line-height: 26px;
+        &__count {
+          color: rgb(172, 114, 37);
+          width: 20px;
+          display: inline-block;
+          text-align: right;
+          padding-right: 4px;
+
+          ::after {
+            content: "&times;";
+          }
+        }
+        &__text {
+          padding-left: 4px;
+        }
+        &__button {
+          margin: 0 0 0 auto;
+          color: rgb(123, 2, 2);
+          display: block;
+          padding: 0 4px;
+          font-size: 20px;
+        }
+      }
     }
   }
 
@@ -106,9 +180,48 @@ body.jennah {
       display: none;
     }
   }
+
+  .product-detail {
+    position: absolute;
+    top: 0;
+    background-color: rgba(119, 119, 119, 0.826);
+    color: rgb(255, 255, 255);
+    width: calc(100% - 40px);
+    text-align: center;
+    z-index: 100;
+    margin: 80px 20px 20px 20px;
+    box-sizing: border-box;
+
+    border-radius: 4px;
+
+    &__content {
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.405);
+      border-radius: 4px;
+      color: rgb(53, 52, 51);
+    }
+
+    header {
+      line-height: 36px;
+      height: 36px;
+      position: relative;
+      .close-button {
+        border-radius: 4px;
+        font-weight: bold;
+        width: 40px;
+        color: gray;
+        border: 0;
+        font-size: 20px;
+        background-color: none;
+        position: absolute;
+        right: 0;
+        text-decoration: none;
+      }
+    }
+  }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 9900px) {
   body.jennah {
     display: flex;
     flex-direction: column;
