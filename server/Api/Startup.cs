@@ -63,24 +63,6 @@ namespace Api
             app.UseHttpsRedirection();
 
             var dist = Path.GetFullPath(Path.Combine(env.ContentRootPath, "../../dist"));
-            var watcher = new FileSystemWatcher
-            {
-                IncludeSubdirectories = true,
-                Path = dist,
-                NotifyFilter = NotifyFilters.CreationTime
-                                 | NotifyFilters.LastAccess
-                                 | NotifyFilters.LastWrite
-                                 | NotifyFilters.FileName
-                                 | NotifyFilters.DirectoryName,
-                Filter = string.Empty
-            };
-
-            watcher.Changed += OnChanged;
-            watcher.Created += OnChanged;
-            watcher.Deleted += OnChanged;
-            watcher.Renamed += OnRenamed;
-
-            watcher.EnableRaisingEvents = true;
 
             var distFileProvider = new PhysicalFileProvider(dist);
             app.UseStaticFiles(new StaticFileOptions
@@ -105,22 +87,14 @@ namespace Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<Development.WatchHub>("/watch");
+                if (env.IsDevelopment())
+                {
+                    endpoints.MapHub<Development.WatchHub>("/watch");
+                }
             });
 
             UseSpaDefaults(app, distFileProvider);
-
-            void OnChanged(object source, FileSystemEventArgs e)
-            {
-                // Specify what is done when a file is changed, created, or deleted.
-                Console.WriteLine($"File: {e.FullPath} {e.ChangeType}");
-                var  hubContext = app.ApplicationServices.GetRequiredService<IHubContext<Development.WatchHub>>();
-                hubContext.Clients.All.SendAsync("refresh");
-            }
         }
-        private static void OnRenamed(object source, RenamedEventArgs e) =>
-            // Specify what is done when a file is renamed.
-            Console.WriteLine($"File: {e.OldFullPath} renamed to {e.FullPath}");
 
         static IEnumerable<TAccumulate> Scan<TSource, TAccumulate>(IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func)
         {

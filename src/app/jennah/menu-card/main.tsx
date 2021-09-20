@@ -2,7 +2,7 @@ import { tpl } from "glow.js";
 import { Fragment } from "glow.js/lib/fragment";
 import Css from "glow.js/components/css";
 import "./menu-card.scss";
-import { RouterComponent, ViewContext } from "mvc.js/router";
+import { ViewContext } from "mvc.js/router";
 import {
   asListStore,
   pushItem,
@@ -189,7 +189,7 @@ const dummyOrder: Order = {
   options: [{ title: "Cola", price: 1 }],
 };
 
-export function MainMenuCard(): RouterComponent {
+export function MainMenuCard() {
   const store = new Store<{ orders: Order[] }>({
     orders: [dummyOrder],
   });
@@ -220,9 +220,14 @@ export function MainMenuCard(): RouterComponent {
     }
   }
 
-  function deleteOrder(order: Order, index: number) {
-    if (order.count > 1) orderStore.add(updateItem(index, (c) => c.count--));
+  function decrementOrder(order: Order, index: number) {
+    if (order.count > 1)
+      orderStore.add(updateItem(index, (c) => (c.count -= 1)));
     else orderStore.add(removeItem(index));
+  }
+
+  function incrementOrder(order: Order, index: number) {
+    orderStore.add(updateItem(index, (c) => (c.count += 1)));
   }
 
   return {
@@ -285,16 +290,23 @@ export function MainMenuCard(): RouterComponent {
                     <span class="menu-card__order-item__text">
                       {order.title}
                     </span>
-                    <a
-                      click={() => deleteOrder(order, index())}
-                      class="menu-card__order-item__button"
-                    >
-                      &times;
-                    </a>
+                    <span class="menu-card__order-item__buttons">
+                      <a click={() => incrementOrder(order, index())}>
+                        <span class="mdi mdi-chevron-up"></span>
+                      </a>
+                      <a
+                        click={() => decrementOrder(order, index())}
+                        class="button"
+                      >
+                        <span class="mdi mdi-chevron-down"></span>
+                      </a>
+                    </span>
                   </div>
                   {order.options.peek((options) => (
                     <div class="menu-card__order-option">
-                      {options.map((entry) => entry.title)}
+                      {options.map((entry) => (
+                        <span style="margin: 0 2px;">{entry.title}</span>
+                      ))}
                     </div>
                   ))}
                 </Fragment>

@@ -78,8 +78,9 @@ body.jennah {
       sans-serif;
     margin: 0 0 0 0;
     color: rgb(190, 113, 12);
-    line-height: 40px;
+    line-height: 30px;
     padding: 0 16px;
+    font-size: 20px;
   }
 
   section > i {
@@ -96,7 +97,7 @@ body.jennah {
 
   .topbar {
     text-align: center;
-    line-height: 50px;
+    line-height: 40px;
     position: sticky;
     top: 0;
     background-color: #000000bb;
@@ -105,8 +106,8 @@ body.jennah {
     font-weight: bold;
     // box-shadow: 0 8px 6px -6px black;
     h1 {
-      font-size: 30px;
-      line-height: 80px;
+      font-size: 20px;
+      line-height: 50px;
       color: white;
     }
     .halal {
@@ -123,21 +124,21 @@ body.jennah {
     background-blend-mode: color-burn;
     position: relative;
     flex: 1;
-    overflow: auto;
-    padding-bottom: 40px;
+    padding-bottom: 80px;
 
     & > div {
       background-color: #00000055;
     }
 
     &__order {
-      display: block;
       color: black;
       width: 100%;
       bottom: 0;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 246, 0.9);
       border-radius: 10px 10px 0 0;
       padding: 20px;
+      font-size: 20px;
+      position: sticky;
 
       &-option {
         color: gray;
@@ -149,7 +150,7 @@ body.jennah {
         font-weight: bold;
         display: inline-flex;
         width: 100%;
-        line-height: 26px;
+        line-height: 36px;
         &__count {
           color: rgb(172, 114, 37);
           width: 20px;
@@ -164,12 +165,34 @@ body.jennah {
         &__text {
           padding-left: 4px;
         }
-        &__button {
+        &__buttons {
           margin: 0 0 0 auto;
-          color: rgb(123, 2, 2);
+          color: rgb(84, 84, 84);
           display: block;
-          padding: 0 4px;
-          font-size: 20px;
+          font-size: 36px;
+          white-space: nowrap;
+
+          a {
+            border-radius: 4px;
+            border: 2px solid rgb(167, 167, 167);
+            display: inline-flex;
+            width: 36px;
+            height: 36px;
+            margin: 0 2px;
+            line-height: 36px;
+            text-align: center;
+            cursor: pointer;
+
+            &:hover {
+              border-color: rgb(144, 141, 165);
+            }
+
+            &:active {
+              border-color: rgb(230, 227, 255);
+              color: rgb(238, 236, 255);
+              background-color: rgba(103, 94, 161, 0.219);
+            }
+          }
         }
       }
     }
@@ -182,7 +205,7 @@ body.jennah {
   }
 
   .product-detail {
-    position: absolute;
+    position: fixed;
     top: 0;
     background-color: rgba(119, 119, 119, 0.826);
     color: rgb(255, 255, 255);

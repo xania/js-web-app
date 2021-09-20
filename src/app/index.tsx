@@ -139,9 +139,9 @@ function adminRoutes() {
 export default function App() {
   const browser = createBrowser([]);
   const router = createRouter(browser, browser.routes, [
+    { path: [], component: MainMenuCard },
     { path: ["admin"], component: AdminComponent },
     { path: ["jennah", "demo"], component: DemoComponent },
-    { path: ["jennah"], component: MainMenuCard },
   ]);
   return (
     <Fragment>
