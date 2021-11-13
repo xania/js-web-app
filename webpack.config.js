@@ -19,14 +19,19 @@ module.exports = (env, argv) => {
 function buildConfig(isDevelopment) {
   return {
     target: "web",
-    entry: isDevelopment
-      ? ["./src/index.ts", "./src/watcher.ts"]
-      : ["./src/index.ts"],
+    entry: ["./src/index.ts"],
     mode: isDevelopment ? "development" : "production",
     devServer: {
       contentBase: "./dist",
       historyApiFallback: true,
       open: false,
+      proxy: {
+        "/api": {
+          target: "https://localhost:44369/",
+          secure: false,
+          changeOrigin: true,
+        },
+      },
     },
     module: {
       rules: [

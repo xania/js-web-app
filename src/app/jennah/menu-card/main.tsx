@@ -12,6 +12,10 @@ import {
   updateItem,
 } from "mutabl.js";
 import { List } from "glow.js/components/list";
+import TextField from "../../../components/text-field";
+import { Order, OrderOption } from "./order";
+import { checkout } from "./checkout";
+import { ShoppingCartSummary } from "./shopping-cart-summary";
 
 function option(title: string): ProductOption {
   return {
@@ -48,40 +52,119 @@ const colddrinks = [
   { title: "Ice Tea", price: 2.5 },
   { title: "Red bull", price: 3 },
 ];
+
+const hotdrinks = {
+  pickwick: { title: "Pickwick thee", price: 2.5 },
+  munt: {
+    glas: { title: "Theeglas", price: 2.5 },
+    kleinpot: { title: "Klein theepot", price: 3.5 },
+    grootpot: { title: "Theepot", price: 4.5 },
+  },
+  chocomel: { title: "Chocomel", price: 2.5 },
+  koffie: { title: "Koffie", price: 2.5 },
+  cappuccino: { title: "Cappuccino", price: 3 },
+  verkeerd: { title: "Koffieverkeerd", price: 3 },
+  espresso: { title: "Espresso", price: 2.5 },
+  latte: { title: "Cafe Late", price: 3 },
+  machiatto: { title: "Cafe Machiatto", price: 3 },
+};
+
 const products = {
   starters: [
-    { title: "Harira", price: 4.5 },
-    { title: "Bisara", price: 4.5 },
+    {
+      title: "Harira",
+      price: 4.5,
+      options: [],
+      description: "Dadels, stukjes broodjes en citroen",
+    },
+    {
+      title: "Bisara",
+      price: 4.5,
+      description: "gereserveerd met brood",
+    },
     { title: "Loempia", price: 3.5 },
-    { title: "Tortilla", price: 5.0 },
-    { title: "Nacho's", price: 7.5 },
+    {
+      title: "Tortilla",
+      price: 5.0,
+      description: "spaanse tortilla met aardappelen en eieren",
+    },
+    // { title: "Nacho's", price: 7.5 },
+  ],
+  paninis: [
+    {
+      title: "Kip",
+      price: 4.5,
+    },
+    {
+      title: "Tuna",
+      price: 4.5,
+      options: [option("Olijven")],
+    },
+    {
+      title: "Grillworst",
+      price: 4.5,
+    },
+    {
+      title: "Garnalen",
+      price: 5,
+    },
   ],
   sandwiches: [
     {
       title: "Kip (of hete kip)",
       price: 6.5,
       options: [
-        option("Heet"),
+        option("Heet kip"),
         choice("Drank", discount(colddrinks, 1)),
-        choice("Friet", [friet, huisfriet]),
+        choice("Friet", discount([friet, huisfriet], 1)),
       ],
     },
-    { title: "Kefta", price: 6.5 },
-    { title: "Kip tenders (van de grill)", price: 7.5 },
-    { title: "Sausage / Merquez", price: 7 },
+    { title: "Kefta", price: 6.5, description: "kalfsgehakt" },
+    // { title: "Kip tenders (van de grill)", price: 7.5 },
+    { title: "Sossit / Merquez", price: 7 },
     { title: "Garnalen", price: 7.5 },
   ],
   burgers: [
-    { title: "Jennah Burger", price: 10.5, description: "bla" },
-    { title: "Cheese Burger", price: 9 },
-    { title: "Kipfilet Burger", price: 8 },
-    { title: "Kipgehakt Burger", price: 8 },
+    {
+      title: "Jennah Burger",
+      price: 10.5,
+      description:
+        "kalfsgehakt, cheddar kaas, spiegel-ei, gekarameliseerde uien en augurken",
+    },
+    {
+      title: "Classic Cheese Burger",
+      price: 9,
+      description: "180g kalfsgehakt, cheddar kaas en gekarameliseerde uien",
+    },
+    {
+      title: "Double Cheese Burger",
+      price: 12.5,
+      description: "360g kalfsgehakt, cheddar kaas en gekarameliseerde uien",
+    },
+    {
+      title: "Kipfilet Burger",
+      price: 8,
+      description: "met kipfilet van de grill",
+    },
+    {
+      title: "Kipgehakt Burger",
+      price: 8,
+      description: "kipgehakt, cheddar kaas en gekarameliseerde uien",
+    },
   ],
   salads: [
-    { title: "Tonijn Salade", price: 8 },
-    { title: "Ceasar Salade", price: 9 },
-    { title: "Zalm Salade", price: 9 },
-    { title: "Garnalen Slade", price: 9 },
+    {
+      title: "Tonijn Salade",
+      price: 8,
+      description: "met tonijn, olijven en mais",
+    },
+    {
+      title: "Ceasar Salade",
+      price: 9,
+      description: "met kip van de grill, yoghurt dressing en parmezaanse kaas",
+    },
+    { title: "Zalm Salade", price: 9, description: "met zalm van de grill" },
+    { title: "Garnalen Salade", price: 9 },
   ],
   colddrinks,
   tajines: [
@@ -94,7 +177,11 @@ const products = {
     { title: "Vegie", price: 10 },
     { title: "Kip", price: 12 },
     { title: "Vlees", price: 13 },
-    { title: "Royaal", price: 14.5 },
+    {
+      title: "Royaal",
+      price: 16.5,
+      description: "met vlees en stukje kip, uien, rozijnen en kikkerwerten",
+    },
   ],
   desserts: [
     {
@@ -137,7 +224,7 @@ function productViewFactory(product: Product, onSelect: PushOrderEventHandler) {
         <div class="product-detail">
           <header>
             {product.title}
-            <a href="/jennah" class="router-link close-button">
+            <a href="/" class="router-link close-button">
               &times;
             </a>
           </header>
@@ -183,17 +270,12 @@ function productViewFactory(product: Product, onSelect: PushOrderEventHandler) {
   }
 }
 
-const dummyOrder: Order = {
-  title: "Dummy order",
-  count: 3,
-  options: [{ title: "Cola", price: 1 }],
-};
-
 export function MainMenuCard() {
   const store = new Store<{ orders: Order[] }>({
-    orders: [dummyOrder],
+    orders: [],
   });
-  const orderStore = asListStore<Order>(store.property("orders"));
+  const orders = store.property("orders");
+  const orderStore = asListStore<Order>(orders);
   const allProducts: Product[] = [];
   for (const cat in products) {
     allProducts.push.apply(allProducts, products[cat]);
@@ -238,7 +320,7 @@ export function MainMenuCard() {
     view(context: ViewContext) {
       const events: ProductEvents = {
         onSelect(product: Product) {
-          if (product.options) {
+          if (hasAny(product.options)) {
             context.url.navigate(...productPath(product));
           } else {
             pushOrder(product, []);
@@ -261,9 +343,13 @@ export function MainMenuCard() {
               +31 6 87120348
             </span>
           </div>
+          <div class="order_cart">
+            <ShoppingCartSummary orders={orders} />
+          </div>
           <div class="menu-card">
             <Starters {...events} />
             <Sandwich {...events} />
+            <Paninis {...events} />
             <Burgers {...events} />
             <Salad {...events} />
             <Traditional />
@@ -272,13 +358,16 @@ export function MainMenuCard() {
             <Tajine {...events} />
             <Couscous {...events} />
             <Desserts {...events} />
-            <HotDrinks {...events} />
             <ColdDrinks {...events} />
+            <HotDrinks {...events} />
             {/* <div style="flex: 1; display: inline-flex">
           <img style="width: 100%; margin: auto 0 0 0" src={burgerSrc} />
         </div> */}
           </div>
           <div class="menu-card__order">
+            <div style="text-align: center">
+              <TextField label="Uw naam" />
+            </div>
             <List source={orderStore}>
               {(order: State<Order>, { index }) => (
                 <Fragment>
@@ -312,6 +401,17 @@ export function MainMenuCard() {
                 </Fragment>
               )}
             </List>
+
+            <div style="text-align: center">
+              <button
+                click={(_) =>
+                  checkout({ orders: orderStore.peek((e) => e), name: "klant" })
+                }
+                class="mdc-button"
+              >
+                Verzenden
+              </button>
+            </div>
           </div>
         </Fragment>
       );
@@ -432,11 +532,6 @@ interface Product {
 
 type ProductAddendum = ProductOption | ProductChoice;
 
-interface OrderOption {
-  title: string;
-  price: number;
-}
-
 function Starters(events: ProductEvents) {
   return (
     <section>
@@ -491,21 +586,36 @@ function Smoothies() {
   );
 }
 
-function HotDrinks() {
+function HotDrinks(events: ProductEvents) {
   return (
     <section>
       <h1>Hot drinks</h1>
-      <div class="section__content">Pickwick thee 2.5</div>
+      <ProductList
+        products={[hotdrinks.koffie, hotdrinks.pickwick]}
+        {...events}
+      />
       <div class="section__content">
-        Marokkaanse munt thee (<span class="nowrap">glas 2.5</span>,{" "}
-        <span class="nowrap">kleine pot 4</span>,{" "}
-        <span class="nowrap">grote pot 5</span>)
+        Marokkaanse munt thee
+        <Tile {...events} product={hotdrinks.munt.glas} title="Glas" />
+        <Tile {...events} product={hotdrinks.munt.kleinpot} title="Klein" />
+        <Tile {...events} product={hotdrinks.munt.grootpot} title="Groot" />
       </div>
-      <div class="section__content">Warme chocolademelk 3</div>
-      <div class="section__content">Espresso, Cappuccino 2.5</div>
-      <div class="section__content">Caffe Latte Macchiato 3.5</div>
+      <ProductList
+        products={[
+          hotdrinks.espresso,
+          hotdrinks.cappuccino,
+          hotdrinks.latte,
+          hotdrinks.machiatto,
+          hotdrinks.chocomel,
+        ]}
+        {...events}
+      />
     </section>
   );
+
+  function text(product: Product) {
+    return `${product.title} ${product.price}`;
+  }
 }
 
 function ColdDrinks(options: MenuCallbacks) {
@@ -514,7 +624,7 @@ function ColdDrinks(options: MenuCallbacks) {
       <h1>Cold drinks</h1>
       <div class="section__content product__tiles">
         {products.colddrinks.map((p: Product) => (
-          <a click={() => options.onSelect(p)} class="list-item">
+          <a click={() => options.onSelect(p)} class="list-item product-tile">
             {p.title}
           </a>
         ))}
@@ -574,7 +684,7 @@ function Desserts(events: ProductEvents) {
   return (
     <section>
       <h1>Desserts</h1>
-      <ProductList products={products.desserts} {...events} />;
+      <ProductList products={products.desserts} {...events} />
     </section>
   );
 }
@@ -595,6 +705,15 @@ function Sandwich(events: ProductEvents) {
       <h1>Sandwich (broodjes)</h1>
       <i>In combinatie met friet en een drankje vanaf 9</i>
       <ProductList products={products.sandwiches} {...events} />
+    </section>
+  );
+}
+
+function Paninis(events: ProductEvents) {
+  return (
+    <section>
+      <h1>Paninis</h1>
+      <ProductList products={products.paninis} {...events} />
     </section>
   );
 }
@@ -622,12 +741,6 @@ function Pasta(events: ProductEvents) {
 
 function productPath(product: Product) {
   return [product.title.replace(/(\s|[^\w])+/gi, "-").toLocaleLowerCase()];
-}
-
-interface Order {
-  title: string;
-  count: number;
-  options: OrderOption[];
 }
 
 function discount(products: Product[], discount: number) {
@@ -658,4 +771,21 @@ function equalOrderOptions(o1: OrderOption[], o2: OrderOption[]) {
     if (!o1.find((x) => x.title == entry.title)) return false;
   }
   return true;
+}
+
+interface TileOptions {
+  product: Product;
+  title?: string;
+}
+function Tile(options: TileOptions & ProductEvents) {
+  const { product, title } = options;
+  return (
+    <a click={(_) => options.onSelect(product)} class="product-tile">
+      {title || product.title} {product.price}
+    </a>
+  );
+}
+
+function hasAny(arr?: unknown[]) {
+  return Array.isArray(arr) && arr.length > 0;
 }

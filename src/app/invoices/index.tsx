@@ -80,7 +80,7 @@ export function InvoiceComponent(): RouterComponent {
                 click={() =>
                   lines.add({
                     type: "remove",
-                    predicate: lines.length - 1,
+                    index: lines.length - 1,
                   })
                 }
               >
