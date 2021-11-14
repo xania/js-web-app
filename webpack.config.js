@@ -22,9 +22,9 @@ function buildConfig(isDevelopment) {
     entry: ["./src/index.ts"],
     mode: isDevelopment ? "development" : "production",
     devServer: {
-      contentBase: "./dist",
       historyApiFallback: true,
       open: false,
+      port: 8080,
       proxy: {
         "/api": {
           target: "https://localhost:44369/",

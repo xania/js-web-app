@@ -1,11 +1,8 @@
-@use "@material/theme" with (
-  $primary: #494b58,
-  $secondary: #737fcf,
-);
+@use "@material/theme" with ($primary: #494b58, $secondary: #737fcf);
 
 @use "@material/textfield/mdc-text-field";
-@use '@material/button/mdc-button';
-@use '@material/button';
+@use "@material/button/mdc-button";
+@use "@material/button";
 @use "@material/drawer/mdc-drawer";
 @use "@material/list/mdc-list";
 
@@ -74,6 +71,10 @@ body.router-outlet-container {
   .mdc-drawer--modal:not(.mdc-drawer--open) {
     display: flex;
     width: 60px;
+
+    .mdc-list-item__text {
+      display: none;
+    }
 
     .mdc-drawer--full {
       white-space: nowrap;
