@@ -4,7 +4,6 @@ import If from "glow.js/components/if";
 import { Store } from "mutabl.js";
 import { Expression } from "mutabl.js/lib/observable.js";
 import "./style.scss";
-import * as Rx from "rxjs";
 
 export const timeUnit = 15;
 

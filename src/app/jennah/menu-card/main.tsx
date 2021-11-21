@@ -3,19 +3,13 @@ import { Fragment } from "glow.js/lib/fragment";
 import Css from "glow.js/components/css";
 import "./menu-card.scss";
 import { ViewContext } from "mvc.js/router";
-import {
-  asListStore,
-  pushItem,
-  removeItem,
-  State,
-  Store,
-  updateItem,
-} from "mutabl.js";
-import { List } from "glow.js/components/list";
+import { createList } from "glow.js/components";
 import TextField from "../../../components/text-field";
 import { Order, OrderOption } from "./order";
 import { checkout } from "./checkout";
 import { ShoppingCartSummary } from "./shopping-cart-summary";
+import { pushItem, removeItem } from "glow.js/components/list/list-mutation";
+import { State, Store } from "mutabl.js";
 
 function option(title: string): ProductOption {
   return {
@@ -275,7 +269,7 @@ export function MainMenuCard() {
     orders: [],
   });
   const orders = store.property("orders");
-  const orderStore = asListStore<Order>(orders);
+  const ordersList = createList<Order>(orders);
   const allProducts: Product[] = [];
   for (const cat in products) {
     allProducts.push.apply(allProducts, products[cat]);
@@ -284,15 +278,16 @@ export function MainMenuCard() {
   function pushOrder(product: Product, options: OrderOption[]) {
     const { title } = product;
 
-    const index = orderStore.peek((orders) =>
-      orders.findIndex(
-        (o) => o.title === title && equalOrderOptions(o.options, options)
-      )
+    const item = ordersList.find(
+      (o) => o.title === title && equalOrderOptions(o.options, options)
     );
-    if (index >= 0) {
-      orderStore.add(updateItem(index, (c) => c.count++));
+
+    if (item) {
+      item.update((order) => {
+        order.count++;
+      });
     } else {
-      orderStore.add(
+      ordersList.add(
         pushItem<Order>({
           title: title,
           count: 1,
@@ -302,14 +297,14 @@ export function MainMenuCard() {
     }
   }
 
-  function decrementOrder(order: Order, index: number) {
-    if (order.count > 1)
-      orderStore.add(updateItem(index, (c) => (c.count -= 1)));
-    else orderStore.add(removeItem(index));
+  function decrementOrder(order: State<Order>, index: () => number) {
+    if (order.count > 1) {
+      order.count.update((c) => c - 1);
+    } else ordersList.add(removeItem(index()));
   }
 
-  function incrementOrder(order: Order, index: number) {
-    orderStore.add(updateItem(index, (c) => (c.count += 1)));
+  function incrementOrder(order: State<Order>) {
+    order.count.update((c) => c + 1);
   }
 
   return {
@@ -368,45 +363,39 @@ export function MainMenuCard() {
             <div style="text-align: center">
               <TextField label="Uw naam" />
             </div>
-            <List source={orderStore}>
-              {(order: State<Order>, { index }) => (
-                <Fragment>
-                  <div class="menu-card__order-item">
-                    <span class="menu-card__order-item__count">
-                      {order.count}
-                    </span>
-                    &nbsp;
-                    <span class="menu-card__order-item__text">
-                      {order.title}
-                    </span>
-                    <span class="menu-card__order-item__buttons">
-                      <a click={() => incrementOrder(order, index())}>
-                        <span class="mdi mdi-chevron-up"></span>
-                      </a>
-                      <a
-                        click={() => decrementOrder(order, index())}
-                        class="button"
-                      >
-                        <span class="mdi mdi-chevron-down"></span>
-                      </a>
-                    </span>
+            {ordersList.map((order, { index }) => (
+              <Fragment>
+                <div class="menu-card__order-item">
+                  <span class="menu-card__order-item__count">
+                    {order.count}
+                  </span>
+                  &nbsp;
+                  <span class="menu-card__order-item__text">{order.title}</span>
+                  <span class="menu-card__order-item__buttons">
+                    <a click={() => incrementOrder(order)}>
+                      <span class="mdi mdi-chevron-up"></span>
+                    </a>
+                    <a
+                      click={() => decrementOrder(order, index)}
+                      class="button"
+                    >
+                      <span class="mdi mdi-chevron-down"></span>
+                    </a>
+                  </span>
+                </div>
+                {order.peek((o) => (
+                  <div class="menu-card__order-option">
+                    {o.options.map((entry) => (
+                      <span style="margin: 0 2px;">{entry.title}</span>
+                    ))}
                   </div>
-                  {order.options.peek((options) => (
-                    <div class="menu-card__order-option">
-                      {options.map((entry) => (
-                        <span style="margin: 0 2px;">{entry.title}</span>
-                      ))}
-                    </div>
-                  ))}
-                </Fragment>
-              )}
-            </List>
+                ))}
+              </Fragment>
+            ))}
 
             <div style="text-align: center">
               <button
-                click={(_) =>
-                  checkout({ orders: orderStore.peek((e) => e), name: "klant" })
-                }
+                click={(_) => checkout({ orders: [], name: "klant" })}
                 class="mdc-button"
               >
                 Verzenden
@@ -417,43 +406,6 @@ export function MainMenuCard() {
       );
     },
   };
-}
-
-function AdhocProduct(events: ProductEvents) {
-  const store = new Store({
-    title: "",
-    price: 2,
-  });
-  return (
-    <div>
-      <input
-        type="text"
-        value={store.property("title")}
-        blur={onTitleChange}
-        change={onTitleChange}
-      />
-      <input
-        type="number"
-        value={store.property("price")}
-        blur={onPriceChange}
-        change={onPriceChange}
-      />
-      <button click={onSubmit}>+</button>
-    </div>
-  );
-
-  function onTitleChange(e) {
-    store.property("title").update(e.target.value);
-  }
-
-  function onPriceChange(e) {
-    store.property("price").update(parseFloat(e.target.value));
-  }
-
-  function onSubmit() {
-    store.peek(events.onSelect);
-    store.update(null);
-  }
 }
 
 function Salad(events: ProductEvents) {

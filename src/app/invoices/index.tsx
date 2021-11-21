@@ -1,13 +1,17 @@
 import tpl from "glow.js";
 import { RouterComponent, ViewContext } from "mvc.js/router";
 import { RouterPage } from "..";
-import { Store, asListStore as asListStore, pushItem, State } from "mutabl.js";
 import Select from "../../components/select";
 import TextField from "../../components/text-field";
 import { activeEntity, Entity } from "./active-entity";
-import { List } from "glow.js/components";
+import { createList, List } from "glow.js/components";
 import { fetchJson } from "../../core";
 import { UrlHelper } from "../../../mvc.js/router/url-helper";
+import {
+  ListMutationType,
+  pushItem,
+} from "glow.js/components/list/list-mutation";
+import { State } from "mutabl.js";
 
 const rider = { label: "Rider International", value: "rider" };
 const alfa = { label: "Alfa Pro IT", value: "alfa" };
@@ -40,10 +44,10 @@ export function Invoices(): RouterComponent {
   };
 
   function invoiceListItem(url: UrlHelper) {
-    return (invoice: Entity<Invoice>) => (
+    return (invoice: State<Entity<Invoice>>) => (
       <div>
         <a class="router-link" href={url.stringify(invoice.id)}>
-          {invoice.values.description}
+          {invoice.values.lift((v) => v.description || v.invoiceNumber)}
         </a>
       </div>
     );
@@ -55,7 +59,7 @@ export function InvoiceComponent(): RouterComponent {
       const { id } = context.params;
       var entity = await activeEntity<Invoice>("/api/invoice/" + id);
 
-      const lines = asListStore<HourDeclaration>(entity.values.declarations);
+      const lines = createList(entity.values.declarations);
 
       return (
         <RouterPage>
@@ -79,7 +83,7 @@ export function InvoiceComponent(): RouterComponent {
               <button
                 click={() =>
                   lines.add({
-                    type: "remove",
+                    type: ListMutationType.REMOVE,
                     index: lines.length - 1,
                   })
                 }
@@ -122,7 +126,7 @@ export function InvoiceComponent(): RouterComponent {
                 />
               </div>
               <hr />
-              <List source={lines}>{invoiceLineView}</List>
+              {lines.map(invoiceLineView)}
             </main>
           </div>
         </RouterPage>
@@ -130,7 +134,7 @@ export function InvoiceComponent(): RouterComponent {
     },
   };
 
-  function invoiceLineView(e: InvoiceLine) {
+  function invoiceLineView(e: HourDeclaration) {
     return (
       <div>
         <TextField label="Description" value={e.description} />
@@ -140,10 +144,6 @@ export function InvoiceComponent(): RouterComponent {
   }
 }
 
-interface InvoiceLine {
-  description: string;
-  hours: string;
-}
 interface Invoice {
   invoiceNumber: string;
   description: string;

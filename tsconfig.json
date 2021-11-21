@@ -12,6 +12,8 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "declaration": true,
+    "declarationDir": "./dist/types"
   }
 }

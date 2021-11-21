@@ -1,5 +1,5 @@
 import { IDriver } from "glow.js";
-import { Expression, ListMutation } from "mutabl.js";
+import { Expression } from "mutabl.js";
 import { Order } from "./order";
 
 interface SummaryOptions {
@@ -15,7 +15,6 @@ export function ShoppingCartSummary(options: SummaryOptions) {
         next(orders: Order[]) {
           let count = orders.reduce((prev, next) => next.count + prev, 0);
           binding.next(count);
-          console.log(count);
         },
       });
 

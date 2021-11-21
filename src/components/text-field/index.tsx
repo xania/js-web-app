@@ -21,7 +21,7 @@ interface InputEvents {
 
 interface TextFieldProps {
   label: string;
-  value?: string | State<unknown>;
+  value?: number | string | State<unknown>;
   readonly?: boolean;
   autofocus?: boolean;
   type?: "date" | "password";
