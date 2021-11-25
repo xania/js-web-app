@@ -6,8 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-/// <reference types="rxjs" />
-
 import { Subject, Subscription } from "rxjs";
 
 /**
@@ -62,139 +60,139 @@ import { Subject, Subscription } from "rxjs";
  * @publicApi
  */
 export interface EventEmitter<T> extends Subject<T> {
-    /**
-     * @internal
-     */
-    __isAsync: boolean;
+  /**
+   * @internal
+   */
+  __isAsync: boolean;
 
-    /**
-     * Creates an instance of this class that can
-     * deliver events synchronously or asynchronously.
-     *
-     * @param [isAsync=false] When true, deliver events asynchronously.
-     *
-     */
-    new (isAsync?: boolean): EventEmitter<T>;
+  /**
+   * Creates an instance of this class that can
+   * deliver events synchronously or asynchronously.
+   *
+   * @param [isAsync=false] When true, deliver events asynchronously.
+   *
+   */
+  new (isAsync?: boolean): EventEmitter<T>;
 
-    /**
-     * Emits an event containing a given value.
-     * @param value The value to emit.
-     */
-    emit(value?: T): void;
+  /**
+   * Emits an event containing a given value.
+   * @param value The value to emit.
+   */
+  emit(value?: T): void;
 
-    /**
-     * Registers handlers for events emitted by this instance.
-     * @param next When supplied, a custom handler for emitted events.
-     * @param error When supplied, a custom handler for an error notification from this emitter.
-     * @param complete When supplied, a custom handler for a completion notification from this
-     *     emitter.
-     */
-    subscribe(
-        next?: (value: T) => void,
-        error?: (error: any) => void,
-        complete?: () => void
-    ): Subscription;
-    /**
-     * Registers handlers for events emitted by this instance.
-     * @param observerOrNext When supplied, a custom handler for emitted events, or an observer
-     *     object.
-     * @param error When supplied, a custom handler for an error notification from this emitter.
-     * @param complete When supplied, a custom handler for a completion notification from this
-     *     emitter.
-     */
-    subscribe(observerOrNext?: any, error?: any, complete?: any): Subscription;
+  /**
+   * Registers handlers for events emitted by this instance.
+   * @param next When supplied, a custom handler for emitted events.
+   * @param error When supplied, a custom handler for an error notification from this emitter.
+   * @param complete When supplied, a custom handler for a completion notification from this
+   *     emitter.
+   */
+  subscribe(
+    next?: (value: T) => void,
+    error?: (error: any) => void,
+    complete?: () => void
+  ): Subscription;
+  /**
+   * Registers handlers for events emitted by this instance.
+   * @param observerOrNext When supplied, a custom handler for emitted events, or an observer
+   *     object.
+   * @param error When supplied, a custom handler for an error notification from this emitter.
+   * @param complete When supplied, a custom handler for a completion notification from this
+   *     emitter.
+   */
+  subscribe(observerOrNext?: any, error?: any, complete?: any): Subscription;
 }
 
 class EventEmitter_ extends Subject<any> {
-    __isAsync: boolean; // tslint:disable-line
+  __isAsync: boolean; // tslint:disable-line
 
-    constructor(isAsync: boolean = false) {
-        super();
-        this.__isAsync = isAsync;
+  constructor(isAsync: boolean = false) {
+    super();
+    this.__isAsync = isAsync;
+  }
+
+  emit(value?: any) {
+    super.next(value);
+  }
+
+  subscribe(observerOrNext?: any, error?: any, complete?: any): Subscription {
+    let schedulerFn: (t: any) => any;
+    let errorFn = (err: any): any => null;
+    let completeFn = (): any => null;
+
+    if (observerOrNext && typeof observerOrNext === "object") {
+      schedulerFn = this.__isAsync
+        ? (value: any) => {
+            setTimeout(() => observerOrNext.next(value));
+          }
+        : (value: any) => {
+            observerOrNext.next(value);
+          };
+
+      if (observerOrNext.error) {
+        errorFn = this.__isAsync
+          ? (err) => {
+              setTimeout(() => observerOrNext.error(err));
+            }
+          : (err) => {
+              observerOrNext.error(err);
+            };
+      }
+
+      if (observerOrNext.complete) {
+        completeFn = this.__isAsync
+          ? () => {
+              setTimeout(() => observerOrNext.complete());
+            }
+          : () => {
+              observerOrNext.complete();
+            };
+      }
+    } else {
+      schedulerFn = this.__isAsync
+        ? (value: any) => {
+            setTimeout(() => observerOrNext(value));
+          }
+        : (value: any) => {
+            observerOrNext(value);
+          };
+
+      if (error) {
+        errorFn = this.__isAsync
+          ? (err) => {
+              setTimeout(() => error(err));
+            }
+          : (err) => {
+              error(err);
+            };
+      }
+
+      if (complete) {
+        completeFn = this.__isAsync
+          ? () => {
+              setTimeout(() => complete());
+            }
+          : () => {
+              complete();
+            };
+      }
     }
 
-    emit(value?: any) {
-        super.next(value);
+    const sink = super.subscribe(schedulerFn, errorFn, completeFn);
+
+    if (observerOrNext instanceof Subscription) {
+      observerOrNext.add(sink);
     }
 
-    subscribe(observerOrNext?: any, error?: any, complete?: any): Subscription {
-        let schedulerFn: (t: any) => any;
-        let errorFn = (err: any): any => null;
-        let completeFn = (): any => null;
-
-        if (observerOrNext && typeof observerOrNext === "object") {
-            schedulerFn = this.__isAsync
-                ? (value: any) => {
-                      setTimeout(() => observerOrNext.next(value));
-                  }
-                : (value: any) => {
-                      observerOrNext.next(value);
-                  };
-
-            if (observerOrNext.error) {
-                errorFn = this.__isAsync
-                    ? (err) => {
-                          setTimeout(() => observerOrNext.error(err));
-                      }
-                    : (err) => {
-                          observerOrNext.error(err);
-                      };
-            }
-
-            if (observerOrNext.complete) {
-                completeFn = this.__isAsync
-                    ? () => {
-                          setTimeout(() => observerOrNext.complete());
-                      }
-                    : () => {
-                          observerOrNext.complete();
-                      };
-            }
-        } else {
-            schedulerFn = this.__isAsync
-                ? (value: any) => {
-                      setTimeout(() => observerOrNext(value));
-                  }
-                : (value: any) => {
-                      observerOrNext(value);
-                  };
-
-            if (error) {
-                errorFn = this.__isAsync
-                    ? (err) => {
-                          setTimeout(() => error(err));
-                      }
-                    : (err) => {
-                          error(err);
-                      };
-            }
-
-            if (complete) {
-                completeFn = this.__isAsync
-                    ? () => {
-                          setTimeout(() => complete());
-                      }
-                    : () => {
-                          complete();
-                      };
-            }
-        }
-
-        const sink = super.subscribe(schedulerFn, errorFn, completeFn);
-
-        if (observerOrNext instanceof Subscription) {
-            observerOrNext.add(sink);
-        }
-
-        return sink;
-    }
+    return sink;
+  }
 }
 
 /**
  * @publicApi
  */
 export const EventEmitter: {
-    new (isAsync?: boolean): EventEmitter<any>;
-    new <T>(isAsync?: boolean): EventEmitter<T>;
-    readonly prototype: EventEmitter<any>;
+  new (isAsync?: boolean): EventEmitter<any>;
+  new <T>(isAsync?: boolean): EventEmitter<T>;
+  readonly prototype: EventEmitter<any>;
 } = EventEmitter_ as any;

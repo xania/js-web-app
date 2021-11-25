@@ -1,5 +1,5 @@
 import { postJson, deleteJson, putJson, fetchJson } from "../../core";
-import { Store, State } from "mutabl.js";
+import { Store, State } from "@xania/mutabl.js";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
 

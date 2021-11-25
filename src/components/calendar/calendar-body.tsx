@@ -7,16 +7,16 @@
 //  */
 
 // import { Store } from "../../../mutabl.js";
-// import If from "glow.js/components/if";
+// import If from "@xania/glow.js/components/if";
 
-// import tpl from "glow.js";
+// import tpl from "@xania/glow.js";
 // import {
 //     Blur,
 //     Event,
 //     Focus,
 //     MouseEnter,
 //     MouseLeave,
-// } from "glow.js/components/event";
+// } from "@xania/glow.js/components/event";
 // import { EventEmitter } from "../core";
 
 // type SimpleChanges = any;

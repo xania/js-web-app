@@ -1,6 +1,6 @@
-import tpl from "glow.js";
-import { RouterOutlet } from "mvc.js/outlet";
-import { RouterComponent, ViewContext } from "mvc.js/router";
+import tpl from "@xania/glow.js";
+import { RouterOutlet } from "@xania/mvc.js/outlet";
+import { RouterComponent, ViewContext } from "@xania/mvc.js/router";
 import { RouterPage } from "..";
 import TabBar from "../../components/tab-bar";
 import PlanningByAgents from "./by-agents";

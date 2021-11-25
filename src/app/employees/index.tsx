@@ -1,5 +1,5 @@
-import tpl from "glow.js";
-import { RouterComponent, ViewContext } from "mvc.js/router";
+import tpl from "@xania/glow.js";
+import { RouterComponent, ViewContext } from "@xania/mvc.js/router";
 import { RouterPage } from "..";
 import DatePicker from "../../components/date-picker";
 import TextField from "../../components/text-field";

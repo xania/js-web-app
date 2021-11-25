@@ -1,4 +1,4 @@
-// import tpl from "glow.js";
+// import tpl from "@xania/glow.js";
 // import { Store } from "../../../mutabl.js";
 // import { Property } from "../../../mutabl.js/lib/observable";
 // import { DateAdapter } from "../core/date-time/date-adapter.js";

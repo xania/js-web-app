@@ -1,17 +1,17 @@
-import tpl from "glow.js";
-import { RouterComponent, ViewContext } from "mvc.js/router";
+import tpl from "@xania/glow.js";
+import { RouterComponent, ViewContext } from "@xania/mvc.js/router";
 import { RouterPage } from "..";
 import Select from "../../components/select";
 import TextField from "../../components/text-field";
 import { activeEntity, Entity } from "./active-entity";
-import { createList, List } from "glow.js/components";
+import { createList, List } from "@xania/glow.js/components";
 import { fetchJson } from "../../core";
 import { UrlHelper } from "../../../mvc.js/router/url-helper";
 import {
   ListMutationType,
   pushItem,
-} from "glow.js/components/list/list-mutation";
-import { State } from "mutabl.js";
+} from "@xania/glow.js/components/list/list-mutation";
+import { State } from "@xania/mutabl.js";
 
 const rider = { label: "Rider International", value: "rider" };
 const alfa = { label: "Alfa Pro IT", value: "alfa" };

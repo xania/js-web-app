@@ -1,15 +1,18 @@
-import { tpl } from "glow.js";
-import { Fragment } from "glow.js/lib/fragment";
-import Css from "glow.js/components/css";
+import { tpl } from "@xania/glow.js";
+import { Fragment } from "@xania/glow.js/lib/fragment";
+import Css from "@xania/glow.js/components/css";
 import "./menu-card.scss";
-import { ViewContext } from "mvc.js/router";
-import { createList } from "glow.js/components";
+import { ViewContext } from "@xania/mvc.js/router";
+import { createList } from "@xania/glow.js/components";
 import TextField from "../../../components/text-field";
 import { Order, OrderOption } from "./order";
 import { checkout } from "./checkout";
 import { ShoppingCartSummary } from "./shopping-cart-summary";
-import { pushItem, removeItem } from "glow.js/components/list/list-mutation";
-import { State, Store } from "mutabl.js";
+import {
+  pushItem,
+  removeItem,
+} from "@xania/glow.js/components/list/list-mutation";
+import { State, Store } from "@xania/mutabl.js";
 
 function option(title: string): ProductOption {
   return {

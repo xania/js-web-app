@@ -1,5 +1,5 @@
-import { IDriver } from "glow.js";
-import { Expression } from "mutabl.js";
+import { IDriver } from "@xania/glow.js";
+import { Expression } from "@xania/mutabl.js";
 import { Order } from "./order";
 
 interface SummaryOptions {

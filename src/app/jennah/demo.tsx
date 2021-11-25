@@ -1,5 +1,5 @@
-import { Fragment } from "glow.js/lib/fragment";
-import tpl from "../../../glow.js";
+import { Fragment } from "@xania/glow.js/lib/fragment";
+import tpl from "@xania/glow.js";
 
 export default function DemoComponent() {
   return {

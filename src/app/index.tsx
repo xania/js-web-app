@@ -1,21 +1,21 @@
-import { tpl } from "glow.js";
-import { IActionContext, IAction } from "mvc.js";
-import { Fragment } from "glow.js/lib/fragment";
-import { RouterOutlet } from "mvc.js/outlet";
+import { tpl } from "@xania/glow.js";
+import { IActionContext, IAction } from "@xania/mvc.js";
+import { Fragment } from "@xania/glow.js/lib/fragment";
+import { RouterOutlet } from "@xania/mvc.js/outlet";
 import { MDCList } from "@material/list";
 import { MDCDrawer } from "@material/drawer";
 import { MDCTopAppBar } from "@material/top-app-bar";
-import { isDomNode } from "glow.js/lib/dom";
+import { isDomNode } from "@xania/glow.js/lib/dom";
 import { Login } from "../login";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
-import { LinkListener } from "mvc.js/router/link";
+import { LinkListener } from "@xania/mvc.js/router/link";
 import {
   createBrowser,
   createRouter,
   RouteInput,
   ViewContext,
-} from "mvc.js/router";
+} from "@xania/mvc.js/router";
 
 import "./style.scss";
 import { AgentsPlanning } from "./agents-planning";
