@@ -1,7 +1,4 @@
-import tpl from "@xania/glow.js";
-import Css from "@xania/glow.js/components/css";
-import If from "@xania/glow.js/components/if";
-import { Fragment } from "@xania/glow.js/lib/fragment";
+import tpl, { Css, If, Fragment } from "@xania/glow.js";
 import { RouterComponent } from "@xania/mvc.js/router";
 import TimeTable, {
   TimeTableData,

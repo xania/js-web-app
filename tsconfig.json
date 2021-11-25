@@ -14,6 +14,14 @@
     "esModuleInterop": true,
     "typeRoots": ["./types", "./node_modules/@types"],
     "declaration": true,
-    "declarationDir": "./dist/types"
+    "declarationDir": "./dist/types",
+    "paths": {
+      "@xania/glow.js": ["./glow.js/lib/index.ts"],
+      "@xania/glow.js/*": ["./glow.js/*"],
+      "@xania/mutabl.js": ["./mutabl.js/lib/index.ts"],
+      "@xania/mutabl.js/*": ["./mutabl.js/*"],
+      "@xania/mvc.js": ["./mvc.js/index.ts"],
+      "@xania/mvc.js/*": ["./mvc.js/*"]
+    }
   }
 }

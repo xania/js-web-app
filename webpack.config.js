@@ -1,6 +1,7 @@
 const fspath = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TsConfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 module.exports = (env, argv) => {
   const isDevelopment = !argv.mode || argv.mode === "development";
@@ -100,7 +101,10 @@ function buildConfig(isDevelopment) {
       ],
     },
     resolve: {
-      extensions: [".tsx", ".ts", ".js", ".scss", ".css"],
+      extensions: [".ts", ".tsx", ".js", ".scss", ".css"],
+      alias: {
+        "@xania": fspath.resolve(__dirname),
+      },
     },
     output: {
       filename: "[name]-[chunkhash:8].js",

@@ -1,8 +1,5 @@
-import tpl from "@xania/glow.js";
-import { List } from "@xania/glow.js/components";
-import If from "@xania/glow.js/components/if";
-import { Store } from "@xania/mutabl.js";
-import { Expression } from "@xania/mutabl.js/lib/observable.js";
+import tpl, { List, If } from "@xania/glow.js";
+import { Store, Expression } from "@xania/mutabl.js";
 import "./style.scss";
 
 export const timeUnit = 15;
