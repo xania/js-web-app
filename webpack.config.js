@@ -102,9 +102,6 @@ function buildConfig(isDevelopment) {
     },
     resolve: {
       extensions: [".ts", ".tsx", ".js", ".scss", ".css"],
-      alias: {
-        "@xania": fspath.resolve(__dirname),
-      },
     },
     output: {
       filename: "[name]-[chunkhash:8].js",
