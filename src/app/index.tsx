@@ -24,6 +24,7 @@ import { Invoices } from "./invoices/index";
 import { UrlHelper } from "../../mvc.js/router/url-helper";
 import { MainMenuCard } from "./jennah/menu-card/main";
 import DemoComponent from "./jennah/demo";
+import Benchmark from "./benchmark/app";
 
 function TopBar() {
   return (
@@ -142,6 +143,10 @@ export default function App() {
     { path: [], component: MainMenuCard },
     { path: ["admin"], component: AdminComponent },
     { path: ["jennah", "demo"], component: DemoComponent },
+    {
+      path: ["benchmark"],
+      component: Benchmark,
+    },
   ]);
   return (
     <Fragment>
