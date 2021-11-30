@@ -4,8 +4,8 @@ import { TableStore, DataRow } from "./table-store";
 import * as jsx from "@xania/glow.js/lib/jsx/index";
 import { factory as tpl } from "@xania/glow.js/lib/jsx/index";
 import * as Rx from "rxjs";
-import { Expression, State, Store } from "@xania/mutabl.js";
-import { createList } from "./create-list";
+import { Expression, State } from "@xania/mutabl.js";
+import { createList } from "@xania/glow.js/lib/jsx/create-list";
 
 interface JumbotronProps {
   store: TableStore;
