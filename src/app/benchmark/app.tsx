@@ -1,7 +1,11 @@
-import tpl, { render, createList } from "@xania/glow.js";
-import { Store } from "@xania/mutabl.js";
+import * as glow from "@xania/glow.js";
 import { RouterComponent } from "@xania/mvc.js/router";
-import { TableStore, Row } from "./table-store";
+import { TableStore, DataRow } from "./table-store";
+import * as jsx from "@xania/glow.js/lib/jsx/index";
+import { factory as tpl } from "@xania/glow.js/lib/jsx/index";
+import * as Rx from "rxjs";
+import { Expression, State, Store } from "@xania/mutabl.js";
+import { createList } from "./create-list";
 
 interface JumbotronProps {
   store: TableStore;
@@ -84,27 +88,30 @@ function Jumbotron(props: JumbotronProps) {
   );
 }
 
-interface RowProps {
-  label: string;
-  id: number;
+export default function Benchmark(): RouterComponent {
+  return {
+    view: Adapter(),
+  };
 }
 
-export default function Benchmark(): RouterComponent {
-  return <Container />;
+function Adapter() {
+  return {
+    render(driver: glow.DomDriver) {
+      const { target } = driver as any;
+      jsx.render(target, <Container />);
+    },
+  };
 }
 
 function Container() {
-  const rows = createList({ value: [] });
-  var store = new TableStore(rows);
+  // const rows = glow.createList({ value: [] });
+  const rows = createList<Expression<DataRow>>();
+  const store = new TableStore(rows);
   return (
     <div class="container">
       <Jumbotron store={store} />
       <table class="table table-hover table-striped test-data">
-        <tbody>
-          {rows.map((row) => (
-            <Row id={row.id} label={row.label} />
-          ))}
-        </tbody>
+        <tbody>{rows.map(<Row />)}</tbody>
       </table>
       <span
         class="preloadicon glyphicon glyphicon-remove"
@@ -114,12 +121,12 @@ function Container() {
   );
 }
 
-function Row(props: RowProps) {
+function Row() {
   return (
     <tr>
-      <td class="col-md-1">{props.id}</td>
+      <td class="col-md-1">{(row) => row.property("id")}</td>
       <td class="col-md-4">
-        <a class="lbl">{props.label}</a>
+        <a class="lbl">{(row) => row.property("label")}</a>
       </td>
       <td class="col-md-1">
         <a class="remove">
@@ -132,4 +139,31 @@ function Row(props: RowProps) {
       <td class="col-md-6"></td>
     </tr>
   );
+}
+
+interface InputProps<T> {
+  value: State<T>;
+}
+
+function Input<T>(props: InputProps<T>) {
+  const tpl = jsx.factory;
+  const { value } = props;
+  return <input value={value} keyup={onKeyUp} />;
+
+  function onKeyUp({ target }) {
+    value.update(target.value);
+  }
+}
+
+function CurrentTime() {
+  return new Rx.Observable((observer) => {
+    observer.next(new Date().toLocaleTimeString());
+    const intervalId = setInterval(
+      () => observer.next(new Date().toLocaleTimeString()),
+      1000
+    );
+    return function () {
+      clearInterval(intervalId);
+    };
+  });
 }

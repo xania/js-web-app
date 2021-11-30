@@ -1,6 +1,7 @@
-import { ListMutation } from "@xania/glow.js";
+import { ListMutation, ListMutationType } from "@xania/glow.js";
+import { Expression, Store } from "@xania/mutabl.js";
 
-export interface Row {
+export interface DataRow {
   id: number;
   label: string;
 }
@@ -63,21 +64,27 @@ var nouns = [
 
 export class TableStore {
   private counter = 1;
-  constructor(private list: { add(mut: ListMutation<Row>): any }) {}
+  constructor(
+    private list: { add(mut: ListMutation<Expression<DataRow>>): any }
+  ) {}
+
+  private data: Store<DataRow>[] = [];
 
   private appendRows(count: number) {
     let { counter } = this;
     for (let i = 0; i < count; i++) {
+      var row = createRow(
+        counter++,
+        adjectives[_random(adjectives.length)] +
+          " " +
+          colours[_random(colours.length)] +
+          " " +
+          nouns[_random(nouns.length)]
+      );
+      this.data.push(row);
       this.list.add({
         type: 0 /* push */,
-        values: createRow(
-          counter++,
-          adjectives[_random(adjectives.length)] +
-            " " +
-            colours[_random(colours.length)] +
-            " " +
-            nouns[_random(nouns.length)]
-        ),
+        values: row,
       });
     }
     this.counter = counter;
@@ -91,16 +98,32 @@ export class TableStore {
   append1000Rows = (): void => {
     this.appendRows(1000);
   };
-  updateEvery10thRow = (): void => {};
-  clear = (): void => {};
-  swapRows = (): void => {};
+  updateEvery10thRow = (): void => {
+    const { length } = this.data;
+    for (let i = 9; i < length; i += 10) {
+      this.data[i].property("label").update((prev) => prev + " !!!");
+    }
+  };
+  clear = (): void => {
+    this.list.add({
+      type: ListMutationType.CLEAR,
+    });
+    this.counter = 1;
+  };
+  swapRows = (): void => {
+    // this.add({
+    //   type: ListMutationType.SWAP,
+    //   index1: 1,
+    //   index2: 2,
+    // });
+  };
 }
 
 function createRow(id: number, label: string) {
-  return {
+  return new Store<DataRow>({
     id,
     label,
-  };
+  });
 }
 
 function _random(max) {

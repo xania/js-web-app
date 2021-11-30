@@ -13,6 +13,16 @@ module.exports = (env, argv) => {
       mode: "development",
       devtool: "inline-source-map",
     };
+  } else {
+    return {
+      ...config,
+      optimization: {
+        splitChunks: {
+          chunks: "all",
+          name: false,
+        },
+      },
+    };
   }
   return config;
 };
@@ -106,12 +116,6 @@ function buildConfig(isDevelopment) {
     output: {
       filename: "[name]-[chunkhash:8].js",
       path: fspath.resolve(__dirname, "dist"),
-    },
-    optimization: {
-      splitChunks: {
-        chunks: "all",
-        name: false,
-      },
     },
     plugins: [
       new MiniCssExtractPlugin({
