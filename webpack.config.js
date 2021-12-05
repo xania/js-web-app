@@ -52,6 +52,10 @@ function buildConfig(isDevelopment) {
           exclude: /node_modules/,
         },
         {
+          test: /\.css$/,
+          use: [{ loader: "style-loader" }, { loader: "css-loader" }],
+        },
+        {
           test: /\.s[ac]ss$/i,
           use: [
             {

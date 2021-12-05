@@ -7,6 +7,8 @@ import * as Rx from "rxjs";
 import { Expression, State } from "@xania/mutabl.js";
 import { createList } from "@xania/glow.js/lib/jsx/create-list";
 
+import "./css/currentStyle.css";
+
 interface JumbotronProps {
   store: TableStore;
 }
