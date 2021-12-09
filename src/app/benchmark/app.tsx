@@ -4,8 +4,9 @@ import { TableStore, DataRow } from "./table-store";
 import * as jsx from "@xania/glow.js/lib/jsx/index";
 import { factory as tpl } from "@xania/glow.js/lib/jsx/index";
 import * as Rx from "rxjs";
-import { Expression, State } from "@xania/mutabl.js";
-import { createList } from "@xania/glow.js/lib/jsx/create-list";
+import * as Ro from "rxjs/operators";
+import { Expression, State, Store } from "@xania/mutabl.js";
+import { createList, RowContext } from "@xania/glow.js/lib/jsx/create-list";
 
 import "./css/currentStyle.css";
 
@@ -113,7 +114,7 @@ function Container() {
     <div class="container">
       <Jumbotron store={store} />
       <table class="table table-hover table-striped test-data">
-        <tbody>{rows.map(<Row />)}</tbody>
+        <tbody>{rows.map((context) => Row(context, store.select))}</tbody>
       </table>
       <span
         class="preloadicon glyphicon glyphicon-remove"
@@ -123,15 +124,18 @@ function Container() {
   );
 }
 
-function Row() {
+function Row(
+  context: RowContext<Expression<DataRow>>,
+  select: (row: Expression<DataRow>) => any
+) {
   return (
-    <tr>
-      <td class="col-md-1">{(row) => row.property("id")}</td>
-      <td class="col-md-4">
-        <a class="lbl">{(row) => row.property("label")}</a>
+    <tr class={context.get((row) => row.property("className"))}>
+      <td class="col-md-1">{context.get((row) => row.property("id"))}</td>
+      <td class="col-md-4" click={context.call(select)}>
+        <a class="lbl">{context.get((row) => row.property("label"))}</a>
       </td>
       <td class="col-md-1">
-        <a class="remove">
+        <a class="remove" click={context.remove}>
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"

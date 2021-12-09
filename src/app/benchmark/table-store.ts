@@ -4,6 +4,7 @@ import { Expression, Store } from "@xania/mutabl.js";
 export interface DataRow {
   id: number;
   label: string;
+  className?: string;
 }
 
 var adjectives = [
@@ -70,6 +71,21 @@ export class TableStore {
 
   private data: Store<DataRow>[] = [];
 
+  selected?: typeof this.data[number];
+
+  select = (row: typeof this.selected) => {
+    const { selected } = this;
+    if (selected !== row) {
+      if (selected) {
+        selected.property("className").update(null);
+      }
+      if (row) {
+        row.property("className").update("danger");
+      }
+      this.selected = row;
+    }
+  };
+
   private appendRows(count: number) {
     let { counter } = this;
     for (let i = 0; i < count; i++) {
@@ -111,11 +127,13 @@ export class TableStore {
     this.counter = 1;
   };
   swapRows = (): void => {
-    // this.add({
-    //   type: ListMutationType.SWAP,
-    //   index1: 1,
-    //   index2: 2,
-    // });
+    if (this.data.length > 998) {
+      const x = this.data[998];
+      const y = this.data[1];
+      const tmp = x.value;
+      x.update(y.value);
+      y.update(tmp);
+    }
   };
 }
 
