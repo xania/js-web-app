@@ -4,8 +4,7 @@ import { TableStore, DataRow } from "./table-store";
 import * as jsx from "@xania/glow.js/lib/jsx/index";
 import { factory as tpl } from "@xania/glow.js/lib/jsx/index";
 import * as Rx from "rxjs";
-import * as Ro from "rxjs/operators";
-import { Expression, State, Store } from "@xania/mutabl.js";
+import { Expression, State } from "@xania/mutabl.js";
 import { createList, RowContext } from "@xania/glow.js/lib/jsx/create-list";
 
 import "./css/currentStyle.css";
