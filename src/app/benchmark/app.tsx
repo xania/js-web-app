@@ -128,21 +128,23 @@ function Row(
   select: (row: Expression<DataRow>) => any
 ) {
   return (
-    <tr class={context.property("className")}>
-      <td class="col-md-1">{context.property("id")}</td>
-      <td class="col-md-4" click={context.call(select)}>
-        <a class="lbl">{context.property("label")}</a>
-      </td>
-      <td class="col-md-1">
-        <a class="remove" click={context.remove}>
-          <span
-            class="remove glyphicon glyphicon-remove"
-            aria-hidden="true"
-          ></span>
-        </a>
-      </td>
-      <td class="col-md-6"></td>
-    </tr>
+    <>
+      <tr class={context.property("className")}>
+        <td class="col-md-1">{context.property("id")}</td>
+        <td class="col-md-4" click={context.call(select)}>
+          <a class="lbl">{context.property("label")}</a>
+        </td>
+        <td class="col-md-1">
+          <a class="remove" click={context.remove}>
+            <span
+              class="remove glyphicon glyphicon-remove"
+              aria-hidden="true"
+            ></span>
+          </a>
+        </td>
+        <td class="col-md-6"></td>
+      </tr>
+    </>
   );
 }
 
