@@ -1,5 +1,5 @@
 import { ListMutation, ListMutationType } from "@xania/glow.js";
-import { Expression, Store } from "@xania/mutabl.js";
+import { asProxy, Expression, Store } from "@xania/mutabl.js";
 
 export interface DataRow {
   id: number;
@@ -100,7 +100,7 @@ export class TableStore {
       this.data.push(row);
       this.list.add({
         type: 0 /* push */,
-        values: row,
+        values: asProxy(row),
       });
     }
     this.counter = counter;
