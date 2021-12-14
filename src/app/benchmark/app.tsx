@@ -129,10 +129,10 @@ function Row(
 ) {
   return (
     <>
-      <tr class={context.property("className")}>
-        <td class="col-md-1">{context.property("id")}</td>
+      <tr>
+        <td class="col-md-1">{context.property("value.id")}</td>
         <td class="col-md-4" click={context.call(select)}>
-          <a class="lbl">{context.property("label")}</a>
+          <a class="lbl">{context.property("value.label")}</a>
         </td>
         <td class="col-md-1">
           <a class="remove" click={context.remove}>
