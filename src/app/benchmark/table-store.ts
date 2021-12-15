@@ -85,7 +85,7 @@ export class TableStore {
   };
 
   private appendRows(count: number) {
-    let { counter } = this;
+    let { counter, data, list } = this;
     for (let i = 0; i < count; i++) {
       var row = {
         id: new Store(counter++),
@@ -97,12 +97,16 @@ export class TableStore {
             nouns[_random(nouns.length)]
         ),
       };
-      this.data.push(row);
-      this.list.add({
-        type: 0 /* push */,
-        values: row,
-      });
+      data.push(row);
     }
+
+    list.add({
+      type: ListMutationType.PUSH_MANY,
+      items: data,
+      start: data.length - count,
+      count,
+    });
+
     this.counter = counter;
   }
   create1000Rows = (): void => {
