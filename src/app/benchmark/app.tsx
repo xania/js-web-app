@@ -110,15 +110,17 @@ function Container() {
   const rows = createList<DataRow>();
   const store = new TableStore(rows);
   return (
-    <div class="container">
-      <Jumbotron store={store} />
-      <table class="table table-hover table-striped test-data">
-        <tbody>{rows.map((context) => Row(context, store.select))}</tbody>
-      </table>
-      <span
-        class="preloadicon glyphicon glyphicon-remove"
-        aria-hidden="true"
-      ></span>
+    <div id="main">
+      <div class="container">
+        <Jumbotron store={store} />
+        <table class="table table-hover table-striped test-data">
+          <tbody>{rows.map((context) => Row(context, store.select))}</tbody>
+        </table>
+        <span
+          class="preloadicon glyphicon glyphicon-remove"
+          aria-hidden="true"
+        ></span>
+      </div>
     </div>
   );
 }
