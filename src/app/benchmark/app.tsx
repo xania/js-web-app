@@ -107,7 +107,7 @@ function Adapter() {
 
 function Container() {
   // const rows = glow.createList({ value: [] });
-  const rows = createList<Expression<DataRow>>();
+  const rows = createList<DataRow>();
   const store = new TableStore(rows);
   return (
     <div class="container">
@@ -123,10 +123,7 @@ function Container() {
   );
 }
 
-function Row(
-  context: RowContext<Expression<DataRow>>,
-  select: (row: Expression<DataRow>) => any
-) {
+function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
   return (
     <>
       <tr>

@@ -2,9 +2,9 @@ import { ListMutation, ListMutationType } from "@xania/glow.js";
 import { asProxy, Expression, Store } from "@xania/mutabl.js";
 
 export interface DataRow {
-  id: number;
-  label: string;
-  className?: string;
+  id: Store<number>;
+  label: Store<string>;
+  className?: Store<string>;
 }
 
 var adjectives = [
@@ -65,15 +65,13 @@ var nouns = [
 
 export class TableStore {
   private counter = 1;
-  constructor(
-    private list: { add(mut: ListMutation<Expression<DataRow>>): any }
-  ) {}
+  constructor(private list: { add(mut: ListMutation<DataRow>): any }) {}
 
-  private data: Store<DataRow>[] = [];
+  private data: DataRow[] = [];
 
-  selected?: typeof this.data[number];
+  selected?: any;
 
-  select = (row: typeof this.selected) => {
+  select = (row: any) => {
     const { selected } = this;
     if (selected !== row) {
       if (selected) {
@@ -89,18 +87,20 @@ export class TableStore {
   private appendRows(count: number) {
     let { counter } = this;
     for (let i = 0; i < count; i++) {
-      var row = createRow(
-        counter++,
-        adjectives[_random(adjectives.length)] +
-          " " +
-          colours[_random(colours.length)] +
-          " " +
-          nouns[_random(nouns.length)]
-      );
+      var row = {
+        id: new Store(counter++),
+        label: new Store(
+          adjectives[_random(adjectives.length)] +
+            " " +
+            colours[_random(colours.length)] +
+            " " +
+            nouns[_random(nouns.length)]
+        ),
+      };
       this.data.push(row);
       this.list.add({
         type: 0 /* push */,
-        values: asProxy(row),
+        values: row,
       });
     }
     this.counter = counter;
@@ -117,7 +117,7 @@ export class TableStore {
   updateEvery10thRow = (): void => {
     const { length } = this.data;
     for (let i = 9; i < length; i += 10) {
-      this.data[i].property("label").update((prev) => prev + " !!!");
+      this.data[i].label.update((prev) => prev + " !!!");
     }
   };
   clear = (): void => {
@@ -130,18 +130,11 @@ export class TableStore {
     if (this.data.length > 998) {
       const x = this.data[998];
       const y = this.data[1];
-      const tmp = x.value;
-      x.update(y.value);
-      y.update(tmp);
+      // const tmp = x.value;
+      // x.update(y.value);
+      // y.update(tmp);
     }
   };
-}
-
-function createRow(id: number, label: string) {
-  return new Store<DataRow>({
-    id,
-    label,
-  });
 }
 
 function _random(max) {
