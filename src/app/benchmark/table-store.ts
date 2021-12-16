@@ -96,6 +96,7 @@ export class TableStore {
             " " +
             nouns[_random(nouns.length)]
         ),
+        className: new Store(counter % 4 === 0 ? "danger" : null),
       };
       data.push(row);
     }

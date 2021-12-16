@@ -106,7 +106,6 @@ function Adapter() {
 }
 
 function Container() {
-  // const rows = glow.createList({ value: [] });
   const rows = createList<DataRow>();
   const store = new TableStore(rows);
   return (
@@ -127,23 +126,21 @@ function Container() {
 
 function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
   return (
-    <>
-      <tr>
-        <td class="col-md-1">{context.property("id")}</td>
-        <td class="col-md-4" click={context.call(select)}>
-          <a class="lbl">{context.property("label")}</a>
-        </td>
-        <td class="col-md-1">
-          <a class="remove" click={context.remove}>
-            <span
-              class="remove glyphicon glyphicon-remove"
-              aria-hidden="true"
-            ></span>
-          </a>
-        </td>
-        <td class="col-md-6"></td>
-      </tr>
-    </>
+    <tr class={context.property("className")}>
+      <td class="col-md-1">{context.property("id")}</td>
+      <td class="col-md-4" click={context.call(select)}>
+        <a class="lbl">{context.property("label")}</a>
+      </td>
+      <td class="col-md-1">
+        <a class="remove" click={context.remove}>
+          <span
+            class="remove glyphicon glyphicon-remove"
+            aria-hidden="true"
+          ></span>
+        </a>
+      </td>
+      <td class="col-md-6"></td>
+    </tr>
   );
 }
 
