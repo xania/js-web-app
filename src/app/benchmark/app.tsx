@@ -127,7 +127,7 @@ function Container() {
 function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
   return (
     <tr class={context.property("className")}>
-      <td class="col-md-1">{context.property("id")}</td>
+      <td class="col-md-1">{context.property("id").async()}</td>
       <td class="col-md-4" click={context.call(select)}>
         <a class="lbl">{context.property("label")}</a>
       </td>
