@@ -1,10 +1,10 @@
 import { ListMutation, ListMutationType } from "@xania/glow.js";
-import { asProxy, Expression, Store } from "@xania/mutabl.js";
+import { State } from "./state";
 
 export interface DataRow {
-  id: Store<number>;
-  label: Store<string>;
-  className?: Store<string>;
+  id: State<number>;
+  label: State<string>;
+  className?: State<string>;
 }
 
 var adjectives = [
@@ -88,15 +88,15 @@ export class TableStore {
     let { counter, data, list } = this;
     for (let i = 0; i < count; i++) {
       var row = {
-        id: new Store(counter++),
-        label: new Store(
+        id: new State(counter++),
+        label: new State(
           adjectives[_random(adjectives.length)] +
             " " +
             colours[_random(colours.length)] +
             " " +
             nouns[_random(nouns.length)]
         ),
-        className: new Store(counter % 4 === 0 ? "danger" : null),
+        className: new State(counter % 4 === 0 ? "danger" : null),
       };
       data.push(row);
     }

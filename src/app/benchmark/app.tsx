@@ -4,7 +4,6 @@ import { TableStore, DataRow } from "./table-store";
 import * as jsx from "@xania/glow.js/lib/jsx/index";
 import { factory as tpl } from "@xania/glow.js/lib/jsx/index";
 import * as Rx from "rxjs";
-import { Expression, State } from "@xania/mutabl.js";
 import { createList, RowContext } from "@xania/glow.js/lib/jsx/create-list";
 
 import "./css/currentStyle.css";
@@ -144,19 +143,19 @@ function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
   );
 }
 
-interface InputProps<T> {
-  value: State<T>;
-}
+// interface InputProps<T> {
+//   value: State<T>;
+// }
 
-function Input<T>(props: InputProps<T>) {
-  const tpl = jsx.factory;
-  const { value } = props;
-  return <input value={value} keyup={onKeyUp} />;
+// function Input<T>(props: InputProps<T>) {
+//   const tpl = jsx.factory;
+//   const { value } = props;
+//   return <input value={value} keyup={onKeyUp} />;
 
-  function onKeyUp({ target }) {
-    value.update(target.value);
-  }
-}
+//   function onKeyUp({ target }) {
+//     value.update(target.value);
+//   }
+// }
 
 function CurrentTime() {
   return new Rx.Observable((observer) => {
