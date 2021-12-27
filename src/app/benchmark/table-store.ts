@@ -1,5 +1,5 @@
 import { ListMutation, ListMutationType } from "@xania/glow.js";
-import { State } from "./state";
+import { State } from "@xania/glow.js";
 
 export interface DataRow {
   id: State<number>;
@@ -96,7 +96,7 @@ export class TableStore {
             " " +
             nouns[_random(nouns.length)]
         ),
-        className: new State(counter % 4 === 0 ? "danger" : null),
+        className: new State(null),
       };
       data.push(row);
     }
