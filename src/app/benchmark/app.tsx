@@ -125,13 +125,13 @@ function Container() {
 
 function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
   return (
-    <tr class={context.property("className").async()}>
+    <tr class={context.property("className")} data_id={context.property("id")}>
       <td class="col-md-1">{context.property("id")}</td>
-      <td class="col-md-4" click={context.call(select)}>
+      <td class="col-md-4">
         <a class="lbl">{context.property("label")}</a>
       </td>
       <td class="col-md-1">
-        <a class="remove" click={context.remove}>
+        <a class="remove">
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"
