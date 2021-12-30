@@ -156,16 +156,3 @@ function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
 //     value.update(target.value);
 //   }
 // }
-
-function CurrentTime() {
-  return new Rx.Observable((observer) => {
-    observer.next(new Date().toLocaleTimeString());
-    const intervalId = setInterval(
-      () => observer.next(new Date().toLocaleTimeString()),
-      1000
-    );
-    return function () {
-      clearInterval(intervalId);
-    };
-  });
-}
