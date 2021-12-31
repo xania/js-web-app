@@ -14,11 +14,26 @@ interface JumbotronProps {
 
 function Jumbotron(props: JumbotronProps) {
   const { store } = props;
+
+  function run(counter = 5) {
+    store.create10000Rows();
+    setTimeout(() => {
+      if (counter) {
+        store.clear();
+        setTimeout(() => run(counter - 1), 200);
+      }
+    }, 200);
+  }
   return (
     <div class="jumbotron">
       <div class="row">
         <div class="col-md-6">
-          <h1>XaniaJS-"keyed"</h1>
+          <h1>
+            XaniaJS-"keyed"
+            <button class="btn btn-danger" click={run}>
+              run
+            </button>
+          </h1>
         </div>
         <div class="col-md-6">
           <div class="row">
@@ -128,10 +143,12 @@ function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
     <tr class={context.property("className")} data_id={context.property("id")}>
       <td class="col-md-1">{context.property("id")}</td>
       <td class="col-md-4">
-        <a class="lbl">{context.property("label")}</a>
+        <a class="lbl" click={context.call(select)}>
+          {context.property("label")}
+        </a>
       </td>
       <td class="col-md-1">
-        <a class="remove">
+        <a class="remove" click={context.remove}>
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"
