@@ -83,6 +83,13 @@ export class TableStore {
     }
   };
 
+  delete = ({ values }) => {
+    this.list.add({
+      type: ListMutationType.REMOVE,
+      item: values,
+    });
+  };
+
   private appendRows(count: number) {
     let { counter, data, list } = this;
     for (let i = 0; i < count; i++) {
@@ -132,11 +139,16 @@ export class TableStore {
   };
   swapRows = (): void => {
     if (this.data.length > 998) {
-      const x = this.data[998];
-      const y = this.data[1];
-      // const tmp = x.value;
-      // x.update(y.value);
-      // y.update(tmp);
+      this.list.add({
+        type: ListMutationType.MOVE,
+        from: 1,
+        to: 998,
+      });
+      this.list.add({
+        type: ListMutationType.MOVE,
+        from: 999,
+        to: 1,
+      });
     }
   };
 }

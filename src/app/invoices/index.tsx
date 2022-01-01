@@ -83,7 +83,7 @@ export function InvoiceComponent(): RouterComponent {
               <button
                 click={() =>
                   lines.add({
-                    type: ListMutationType.REMOVE,
+                    type: ListMutationType.REMOVE_AT,
                     index: lines.length - 1,
                   })
                 }

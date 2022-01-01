@@ -127,7 +127,7 @@ function Container() {
       <div class="container">
         <Jumbotron store={store} />
         <table class="table table-hover table-striped test-data">
-          <tbody>{rows.map((context) => Row(context, store.select))}</tbody>
+          <tbody>{rows.map((context) => Row(context, store))}</tbody>
         </table>
         <span
           class="preloadicon glyphicon glyphicon-remove"
@@ -138,17 +138,17 @@ function Container() {
   );
 }
 
-function Row(context: RowContext<DataRow>, select: (row: DataRow) => any) {
+function Row(context: RowContext<DataRow>, store: TableStore) {
   return (
     <tr class={context.property("className")} data_id={context.property("id")}>
       <td class="col-md-1">{context.property("id")}</td>
       <td class="col-md-4">
-        <a class="lbl" click={context.call(select)}>
+        <a class="lbl" click={context.call(store.select)}>
           {context.property("label")}
         </a>
       </td>
       <td class="col-md-1">
-        <a class="remove" click={context.remove}>
+        <a class="remove" click={store.delete}>
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"

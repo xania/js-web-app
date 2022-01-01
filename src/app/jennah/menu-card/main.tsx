@@ -8,7 +8,7 @@ import { checkout } from "./checkout";
 import { ShoppingCartSummary } from "./shopping-cart-summary";
 import {
   pushItem,
-  removeItem,
+  removeItemAt,
 } from "@xania/glow.js/components/list/list-mutation";
 import { State, Store } from "@xania/mutabl.js";
 
@@ -301,7 +301,7 @@ export function MainMenuCard() {
   function decrementOrder(order: State<Order>, index: () => number) {
     if (order.count > 1) {
       order.count.update((c) => c - 1);
-    } else ordersList.add(removeItem(index()));
+    } else ordersList.add(removeItemAt(index()));
   }
 
   function incrementOrder(order: State<Order>) {
