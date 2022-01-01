@@ -68,16 +68,16 @@ export class TableStore {
 
   private data: DataRow[] = [];
 
-  selected?: any;
+  selected?: DataRow;
 
-  select = (row: any) => {
+  select = (row: DataRow) => {
     const { selected } = this;
     if (selected !== row) {
       if (selected) {
-        selected.property("className").update(null);
+        selected.className.update(() => null);
       }
       if (row) {
-        row.property("className").update("danger");
+        row.className.update(() => "danger");
       }
       this.selected = row;
     }
