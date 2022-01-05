@@ -140,14 +140,9 @@ export class TableStore {
   swapRows = (): void => {
     if (this.data.length > 998) {
       this.list.add({
-        type: ListMutationType.MOVE,
-        from: 1,
-        to: 998,
-      });
-      this.list.add({
-        type: ListMutationType.MOVE,
-        from: 999,
-        to: 1,
+        type: ListMutationType.SWAP,
+        index1: 1,
+        index2: 4,
       });
     }
   };
