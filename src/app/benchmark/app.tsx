@@ -1,10 +1,8 @@
-import * as glow from "@xania/glow.js";
+import { DomDriver } from "@xania/glow.js";
 import { RouterComponent } from "@xania/mvc.js/router";
 import { TableStore, DataRow } from "./table-store";
-import * as jsx from "@xania/glow.js/lib/jsx/index";
-import { factory as tpl } from "@xania/glow.js/lib/jsx/index";
-import * as Rx from "rxjs";
-import { createList, RowContext } from "@xania/glow.js/lib/jsx/create-list";
+import * as jsx from "@xania/view";
+import { RowContext, factory as tpl, createContainer } from "@xania/view";
 
 import "./css/currentStyle.css";
 
@@ -112,7 +110,7 @@ export default function Benchmark(): RouterComponent {
 
 function Adapter() {
   return {
-    render(driver: glow.DomDriver) {
+    render(driver: DomDriver) {
       const { target } = driver as any;
       jsx.render(target, <Container />);
     },
@@ -120,7 +118,7 @@ function Adapter() {
 }
 
 function Container() {
-  const rows = createList<DataRow>();
+  const rows = createContainer<DataRow>();
   const store = new TableStore(rows);
   return (
     <div id="main">

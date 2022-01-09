@@ -1,4 +1,4 @@
-import { State, ListMutation, ListMutationType } from "@xania/glow.js";
+import { State, ViewContainer } from "@xania/view";
 
 export interface DataRow {
   id: number;
@@ -64,7 +64,7 @@ var nouns = [
 
 export class TableStore {
   private counter = 1;
-  constructor(private list: { add(mut: ListMutation<DataRow>): any }) {}
+  constructor(private container: ViewContainer<DataRow>) {}
 
   private data: DataRow[] = [];
 
@@ -84,14 +84,11 @@ export class TableStore {
   };
 
   delete = ({ values }) => {
-    this.list.add({
-      type: ListMutationType.REMOVE,
-      item: values,
-    });
+    this.container.remove(values);
   };
 
   private appendRows(count: number) {
-    let { counter, data, list } = this;
+    let { counter, data, container } = this;
     for (let i = 0; i < count; i++) {
       var row = {
         id: counter++,
@@ -107,19 +104,15 @@ export class TableStore {
       data.push(row);
     }
 
-    list.add({
-      type: ListMutationType.PUSH_MANY,
-      items: data,
-      start: data.length - count,
-      count,
-    });
-
+    container.push(data, data.length - count, count);
     this.counter = counter;
   }
   create1000Rows = (): void => {
+    this.clear();
     this.appendRows(1000);
   };
   create10000Rows = (): void => {
+    this.clear();
     this.appendRows(10000);
   };
   append1000Rows = (): void => {
@@ -127,23 +120,18 @@ export class TableStore {
   };
   updateEvery10thRow = (): void => {
     const { length } = this.data;
-    for (let i = 9; i < length; i += 10) {
+    for (let i = 0; i < length; i += 10) {
       this.data[i].label.update((prev) => prev + " !!!");
     }
   };
   clear = (): void => {
-    this.list.add({
-      type: ListMutationType.CLEAR,
-    });
-    this.counter = 1;
+    this.container.clear();
+    this.data = [];
+    this.select(null);
   };
   swapRows = (): void => {
     if (this.data.length > 998) {
-      this.list.add({
-        type: ListMutationType.SWAP,
-        index1: 1,
-        index2: 4,
-      });
+      this.container.swap(1, 4);
     }
   };
 }

@@ -7,3 +7,6 @@
 [submodule "mutabl.js"]
 	path = mutabl.js
 	url = https://github.com/xania/mutabl.js.git
+[submodule "view"]
+	path = view
+	url = https://github.com/xania/view.git

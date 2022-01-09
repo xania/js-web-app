@@ -12,6 +12,7 @@
     "jsxFragmentFactory": "null",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./",
   }
 }
