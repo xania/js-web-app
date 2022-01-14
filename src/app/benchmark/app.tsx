@@ -2,7 +2,7 @@ import { DomDriver } from "@xania/glow.js";
 import { RouterComponent } from "@xania/mvc.js/router";
 import { TableStore, DataRow } from "./table-store";
 import * as jsx from "@xania/view";
-import { RowContext, factory as tpl, createContainer } from "@xania/view";
+import { factory as tpl, createContainer, property, call } from "@xania/view";
 
 import "./css/currentStyle.css";
 
@@ -125,7 +125,7 @@ function Container() {
       <div class="container">
         <Jumbotron store={store} />
         <table class="table table-hover table-striped test-data">
-          <tbody>{rows.map((context) => Row(context, store))}</tbody>
+          <tbody>{rows.map(Row(store))}</tbody>
         </table>
         <span
           class="preloadicon glyphicon glyphicon-remove"
@@ -136,17 +136,17 @@ function Container() {
   );
 }
 
-function Row(context: RowContext<DataRow>, store: TableStore) {
+function Row(store: TableStore) {
   return (
-    <tr class={context.property("className")} data_id={context.property("id")}>
-      <td class="col-md-1">{context.property("id")}</td>
+    <tr class={property("className")}>
+      <td class="col-md-1">{property("id")}</td>
       <td class="col-md-4">
-        <a class="lbl" click={context.call(store.select)}>
-          {context.property("label")}
+        <a class="lbl" click={call(store.select)}>
+          {property("label")}
         </a>
       </td>
       <td class="col-md-1">
-        <a class="remove" click={store.delete}>
+        <a class="remove" click={call(store.delete)}>
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"

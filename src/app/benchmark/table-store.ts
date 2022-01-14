@@ -1,9 +1,9 @@
-import { State, ViewContainer } from "@xania/view";
+import { ViewContext, State, ViewContainer } from "@xania/view";
 
 export interface DataRow {
   id: number;
-  label: State<string>;
-  className?: State<string>;
+  label: string;
+  className?: string;
 }
 
 var adjectives = [
@@ -66,31 +66,32 @@ export class TableStore {
   private counter = 1;
   constructor(private container: ViewContainer<DataRow>) {}
 
-  private data: DataRow[] = [];
-
   selected?: DataRow;
 
-  select = (row: DataRow) => {
+  select = (context: ViewContext<DataRow>) => {
+    const row = context?.values;
     const { selected } = this;
     if (selected !== row) {
       if (selected) {
-        selected.className.update(() => null);
+        // this.container.update()
+        // selected.className.update(() => null);
       }
       if (row) {
-        row.className.update(() => "danger");
+        // row.className.update(() => "danger");
       }
       this.selected = row;
     }
   };
 
-  delete = ({ values }) => {
-    this.container.remove(values);
+  delete = (context: ViewContext<DataRow>) => {
+    this.container.remove(context);
   };
 
   private appendRows(count: number) {
-    let { counter, data, container } = this;
+    let { counter, container } = this;
+    const data = new Array(count);
     for (let i = 0; i < count; i++) {
-      var row = {
+      data[i] = {
         id: counter++,
         label: new State(
           adjectives[_random(adjectives.length)] +
@@ -101,10 +102,9 @@ export class TableStore {
         ),
         className: new State(null),
       };
-      data.push(row);
     }
 
-    container.push(data, data.length - count, count);
+    container.push(data);
     this.counter = counter;
   }
   create1000Rows = (): void => {
@@ -119,18 +119,19 @@ export class TableStore {
     this.appendRows(1000);
   };
   updateEvery10thRow = (): void => {
-    const { length } = this.data;
+    const { container } = this;
+    const length = container.length;
+
     for (let i = 0; i < length; i += 10) {
-      this.data[i].label.update((prev) => prev + " !!!");
+      container.updateAt(i, (row) => (row.label += " !!!"));
     }
   };
   clear = (): void => {
     this.container.clear();
-    this.data = [];
     this.select(null);
   };
   swapRows = (): void => {
-    if (this.data.length > 998) {
+    if (this.container.length > 4) {
       this.container.swap(1, 4);
     }
   };
