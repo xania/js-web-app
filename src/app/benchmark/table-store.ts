@@ -66,25 +66,22 @@ export class TableStore {
   private counter = 1;
   constructor(private container: ViewContainer<DataRow>) {}
 
-  selected?: DataRow;
+  selected: Node;
 
-  select = (context: ViewContext<DataRow>) => {
-    const row = context?.values;
-    const { selected } = this;
-    if (selected !== row) {
+  select = (context: ViewContext) => {
+    const { selected, container } = this;
+    const node = context.node;
+    if (selected !== node) {
       if (selected) {
-        // this.container.update()
-        // selected.className.update(() => null);
+        container.updateAt(selected["rowIndex"], "className", () => null);
       }
-      if (row) {
-        // row.className.update(() => "danger");
-      }
-      this.selected = row;
+      this.selected = node;
+      container.updateAt(node["rowIndex"], "className", () => "danger");
     }
   };
 
-  delete = (context: ViewContext<DataRow>) => {
-    this.container.remove(context);
+  delete = (context: ViewContext) => {
+    this.container.removeAt(context.node["rowIndex"]);
   };
 
   private appendRows(count: number) {
@@ -123,12 +120,12 @@ export class TableStore {
     const length = container.length;
 
     for (let i = 0; i < length; i += 10) {
-      container.updateAt(i, (row) => (row.label += " !!!"));
+      container.updateAt(i, "label", (value) => value + " !!!");
     }
   };
   clear = (): void => {
     this.container.clear();
-    this.select(null);
+    this.selected = null;
   };
   swapRows = (): void => {
     if (this.container.length > 4) {
