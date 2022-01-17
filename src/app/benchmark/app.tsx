@@ -2,7 +2,7 @@ import { DomDriver } from "@xania/glow.js";
 import { RouterComponent } from "@xania/mvc.js/router";
 import { TableStore, DataRow } from "./table-store";
 import * as jsx from "@xania/view";
-import { factory as tpl, createContainer, property, call } from "@xania/view";
+import { factory as tpl, createContainer, property } from "@xania/view";
 
 import "./css/currentStyle.css";
 
@@ -141,12 +141,12 @@ function Row(store: TableStore) {
     <tr class={property("className")}>
       <td class="col-md-1">{property("id")}</td>
       <td class="col-md-4">
-        <a class="lbl" click={call(store.select)}>
+        <a class="lbl" click={store.select}>
           {property("label")}
         </a>
       </td>
       <td class="col-md-1">
-        <a class="remove" click={call(store.delete)}>
+        <a class="remove" click={store.delete}>
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"

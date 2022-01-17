@@ -72,7 +72,7 @@ export class TableStore {
     const { selected, container } = this;
     const node = context.node;
     if (selected !== node) {
-      if (selected) {
+      if (selected?.parentNode) {
         container.updateAt(selected["rowIndex"], "className", () => null);
       }
       this.selected = node;
