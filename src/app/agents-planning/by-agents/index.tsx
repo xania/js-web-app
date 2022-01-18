@@ -1,4 +1,4 @@
-import tpl, { If, Fragment } from "@xania/glow.js";
+import jsx, { If, Fragment } from "@xania/glow.js";
 import TimeTable, {
   TimeTableData,
   timeUnit,

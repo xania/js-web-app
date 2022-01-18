@@ -9,7 +9,7 @@
 // import { Store } from "../../../mutabl.js";
 // import If from "@xania/glow.js/components/if";
 
-// import tpl from "@xania/glow.js";
+// import jsx from "@xania/glow.js";
 // import {
 //     Blur,
 //     Event,

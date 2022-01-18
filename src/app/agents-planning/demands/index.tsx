@@ -1,4 +1,4 @@
-import tpl from "@xania/glow.js";
+import jsx from "@xania/glow.js";
 import { Fragment } from "@xania/glow.js/lib/fragment";
 import TimeTable, { TimeTableData } from "../../../components/time-table";
 import { fetchDemands, Position } from "../services/planning";

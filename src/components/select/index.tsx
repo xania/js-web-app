@@ -1,4 +1,4 @@
-import tpl from "@xania/glow.js";
+import jsx from "@xania/glow.js";
 import { State } from "../../../mutabl.js";
 import { MDCSelect } from "@material/select";
 import { MDCRipple } from "@material/ripple";

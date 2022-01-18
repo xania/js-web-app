@@ -1,5 +1,5 @@
 import { MDCMenuSurface } from "@material/menu-surface";
-import tpl from "@xania/glow.js";
+import jsx from "@xania/glow.js";
 import { DateAdapter } from "../core/date-time/date-adapter";
 import TextField from "../text-field";
 import "./style.scss";

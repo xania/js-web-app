@@ -1,4 +1,4 @@
-import { tpl } from "@xania/glow.js";
+import { tpl as jsx } from "@xania/glow.js";
 import { IActionContext, IAction } from "@xania/mvc.js";
 import { Fragment } from "@xania/glow.js/lib/fragment";
 import { RouterOutlet } from "@xania/mvc.js/outlet";

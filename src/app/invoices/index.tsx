@@ -1,4 +1,4 @@
-import tpl from "@xania/glow.js";
+import jsx from "@xania/glow.js";
 import { RouterComponent, ViewContext } from "@xania/mvc.js/router";
 import { RouterPage } from "..";
 import Select from "../../components/select";

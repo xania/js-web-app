@@ -1,8 +1,7 @@
 import { DomDriver } from "@xania/glow.js";
 import { RouterComponent } from "@xania/mvc.js/router";
 import { TableStore, DataRow } from "./table-store";
-import * as jsx from "@xania/view";
-import { factory as tpl, createContainer, property } from "@xania/view";
+import { jsx, createContainer, property, render } from "@xania/view";
 
 import "./css/currentStyle.css";
 
@@ -112,7 +111,7 @@ function Adapter() {
   return {
     render(driver: DomDriver) {
       const { target } = driver as any;
-      jsx.render(target, <Container />);
+      render(target, <Container />);
     },
   };
 }

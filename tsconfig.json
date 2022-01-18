@@ -8,11 +8,11 @@
     "lib": ["es2017", "DOM"],
     "target": "es6",
     "jsx": "react",
-    "jsxFactory": "tpl",
+    "jsxFactory": "jsx",
     "jsxFragmentFactory": "null",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "baseUrl": "./",
+    "baseUrl": "./"
   }
 }

@@ -1,4 +1,4 @@
-import tpl, { Fragment, Css } from "@xania/glow.js";
+import jsx, { Fragment, Css } from "@xania/glow.js";
 import "./menu-card.scss";
 import { ViewContext } from "@xania/mvc.js/router";
 import { createList } from "@xania/glow.js/components";

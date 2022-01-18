@@ -1,4 +1,4 @@
-import tpl from "@xania/glow.js";
+import jsx from "@xania/glow.js";
 import { MDCTextField } from "@material/textfield";
 
 interface LoginProps {

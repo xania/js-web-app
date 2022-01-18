@@ -1,4 +1,4 @@
-import tpl, { List, If } from "@xania/glow.js";
+import jsx, { List, If } from "@xania/glow.js";
 import { Store, Expression } from "@xania/mutabl.js";
 import "./style.scss";
 

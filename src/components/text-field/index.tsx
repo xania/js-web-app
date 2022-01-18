@@ -1,4 +1,4 @@
-import tpl from "@xania/glow.js";
+import jsx from "@xania/glow.js";
 import "./style.scss";
 import { MDCTextField } from "@material/textfield";
 import { State } from "../../../mutabl.js";

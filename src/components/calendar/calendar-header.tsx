@@ -1,4 +1,4 @@
-// import tpl from "@xania/glow.js";
+// import jsx from "@xania/glow.js";
 // import MatCalendar, { CurrentView } from ".";
 // import { Store } from "../../../mutabl.js";
 // import { DateAdapter } from "../core/date-time/date-adapter";
