@@ -6,6 +6,7 @@ interface LoginProps {
 }
 export function Login(props: LoginProps) {
   const { click } = props;
+  type dd = HTMLDivElement["style"];
   return (
     <div class="login-card-container">
       <section class="login-card mdc-elevation--z3">
@@ -18,7 +19,7 @@ export function Login(props: LoginProps) {
           </div>
         </main>
         <div class="login-card-toolbar">
-          <a tabindex="-1" href="./forgot" class="forgot-password">
+          <a tabIndex={-1} href="./forgot" class="forgot-password">
             {/* forgot password */}
           </a>
           <button

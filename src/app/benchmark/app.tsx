@@ -12,7 +12,7 @@ interface JumbotronProps {
 function Jumbotron(props: JumbotronProps) {
   const { store } = props;
 
-  function run(counter = 5) {
+  function run(e, counter = 5) {
     store.create10000Rows();
     setTimeout(() => {
       if (counter) {
@@ -137,7 +137,7 @@ function Container() {
 
 function Row(store: TableStore) {
   return (
-    <tr class={property("className")}>
+    <tr className={property("className")}>
       <td class="col-md-1">{property("id")}</td>
       <td class="col-md-4">
         <a class="lbl" click={store.select}>

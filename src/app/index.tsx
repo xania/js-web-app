@@ -18,8 +18,6 @@ import {
 } from "@xania/mvc.js/router";
 
 import "./style.scss";
-import { AgentsPlanning } from "./agents-planning";
-import { Employees } from "./employees";
 import { Invoices } from "./invoices/index";
 import { UrlHelper } from "../../mvc.js/router/url-helper";
 import { MainMenuCard } from "./jennah/menu-card/main";
@@ -73,7 +71,7 @@ function Aside(props: AsideProps) {
       ]}
     >
       <div class="mdc-drawer__content">
-        <nav class="mdc-list" tabindex="0">
+        <nav class="mdc-list" tabIndex={0}>
           <hr class="mdc-list-divider" />
           <MainLink
             text="Employees"
@@ -122,14 +120,6 @@ export function RouterPage(props, children: any) {
 
 function adminRoutes() {
   return [
-    {
-      path: ["agents-plannig"],
-      component: AgentsPlanning,
-    },
-    {
-      path: ["employees"],
-      component: Employees,
-    },
     {
       path: ["invoices"],
       component: Invoices,

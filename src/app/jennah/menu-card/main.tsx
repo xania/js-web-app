@@ -244,7 +244,9 @@ function productViewFactory(product: Product, onSelect: PushOrderEventHandler) {
         <div>
           <select
             name={o.title}
-            change={(e) => selection.push({ title: e.target.value, price: 1 })}
+            change={(e) =>
+              selection.push({ title: e.event.target["value"], price: 1 })
+            }
           >
             <option value="">[ Selecteer {o.title} ]</option>
             {products.map((p) => (
@@ -435,7 +437,7 @@ function ProductList(options: ProductListOptions & ProductEvents) {
         product.description ? (
           <a
             class="mdc-list-item router-link mdc-list--two-line"
-            tabindex="0"
+            tabIndex={0}
             click={() => options.onSelect(product)}
             // href={"/jennah/" + productPath(product).join("/")}
           >
@@ -452,7 +454,7 @@ function ProductList(options: ProductListOptions & ProductEvents) {
         ) : (
           <a
             class="mdc-list-item router-link"
-            tabindex="0"
+            tabIndex={0}
             click={() => options.onSelect(product)}
           >
             <span class="mdc-list-item__ripple"></span>

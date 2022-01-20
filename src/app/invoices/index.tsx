@@ -122,7 +122,7 @@ export function InvoiceComponent(): RouterComponent {
                 <input
                   type="date"
                   value={entity.values.date}
-                  change={(evt) => entity.values.date.update(evt.target.value)}
+                  change={(evt) => entity.values.date.update(evt.node["value"])}
                 />
               </div>
               <hr />

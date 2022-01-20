@@ -1,4 +1,4 @@
-import { ViewContext, State, ViewContainer } from "@xania/view";
+import { State, ViewContainer } from "@xania/view";
 
 export interface DataRow {
   id: number;
@@ -66,11 +66,11 @@ export class TableStore {
   private counter = 1;
   constructor(private container: ViewContainer<DataRow>) {}
 
-  selected: Node;
+  selected?: Node;
 
-  select = (context: ViewContext) => {
+  select = (e: JSX.EventContext<MouseEvent>) => {
     const { selected, container } = this;
-    const node = context.node;
+    const node = e.node;
     if (selected !== node) {
       if (selected?.parentNode) {
         container.updateAt(selected["rowIndex"], "className", () => null);
@@ -80,8 +80,8 @@ export class TableStore {
     }
   };
 
-  delete = (context: ViewContext) => {
-    this.container.removeAt(context.node["rowIndex"]);
+  delete = (e: JSX.EventContext<MouseEvent>) => {
+    this.container.removeAt(e.node["rowIndex"]);
   };
 
   private appendRows(count: number) {
@@ -90,20 +90,20 @@ export class TableStore {
     for (let i = 0; i < count; i++) {
       data[i] = {
         id: counter++,
-        label: new State(
+        label:
           adjectives[_random(adjectives.length)] +
-            " " +
-            colours[_random(colours.length)] +
-            " " +
-            nouns[_random(nouns.length)]
-        ),
-        className: new State(null),
+          " " +
+          colours[_random(colours.length)] +
+          " " +
+          nouns[_random(nouns.length)],
+        className: null,
       };
     }
 
     container.push(data);
     this.counter = counter;
   }
+
   create1000Rows = (): void => {
     this.clear();
     this.appendRows(1000);
@@ -115,6 +115,7 @@ export class TableStore {
   append1000Rows = (): void => {
     this.appendRows(1000);
   };
+
   updateEvery10thRow = (): void => {
     const { container } = this;
     const length = container.length;

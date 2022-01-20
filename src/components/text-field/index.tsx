@@ -8,10 +8,10 @@ interface TransformStreamDefaultControllerCallback<O> {
 }
 
 interface KeyboardEventHandler {
-  (ev: KeyboardEvent): void;
+  (ev: JSX.EventContext<KeyboardEvent>): void;
 }
 interface MouseEventHandler {
-  (ev: MouseEvent): void;
+  (ev: JSX.EventContext<MouseEvent>): void;
 }
 
 interface InputEvents {
