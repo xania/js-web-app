@@ -5,7 +5,7 @@ import { RouterOutlet } from "@xania/mvc.js/outlet";
 import { MDCList } from "@material/list";
 import { MDCDrawer } from "@material/drawer";
 import { MDCTopAppBar } from "@material/top-app-bar";
-import { isDomNode } from "@xania/glow.js/lib/dom";
+import { DomDriver, isDomNode } from "@xania/glow.js/lib/dom";
 import { Login } from "../login";
 import * as Rx from "rxjs";
 import * as Ro from "rxjs/operators";
@@ -14,6 +14,7 @@ import {
   createBrowser,
   createRouter,
   RouteInput,
+  RouterComponent,
   ViewContext,
 } from "@xania/mvc.js/router";
 
@@ -23,6 +24,8 @@ import { UrlHelper } from "../../mvc.js/router/url-helper";
 import { MainMenuCard } from "./jennah/menu-card/main";
 import DemoComponent from "./jennah/demo";
 import Benchmark from "./benchmark/app";
+import * as view from "@xania/view";
+import * as demo from "./demo";
 
 function TopBar() {
   return (
@@ -137,6 +140,10 @@ export default function App() {
       path: ["benchmark"],
       component: Benchmark,
     },
+    {
+      path: ["demo"],
+      component: () => Adapter(<demo.App />),
+    },
   ]);
   return (
     <Fragment>
@@ -144,6 +151,17 @@ export default function App() {
       <RouterOutlet router={router} />
     </Fragment>
   );
+}
+
+function Adapter(template: JSX.Element): RouterComponent {
+  return {
+    view: {
+      render(driver: DomDriver) {
+        const { target } = driver as any;
+        view.render(target, template);
+      },
+    },
+  };
 }
 
 function AdminComponent() {

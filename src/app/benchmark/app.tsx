@@ -12,12 +12,12 @@ interface JumbotronProps {
 function Jumbotron(props: JumbotronProps) {
   const { store } = props;
 
-  function run(e, counter = 5) {
+  function run(e, counter = 7) {
     store.create10000Rows();
     setTimeout(() => {
       if (counter) {
         store.clear();
-        setTimeout(() => run(counter - 1), 200);
+        setTimeout(() => run(e, counter - 1), 200);
       }
     }, 200);
   }
