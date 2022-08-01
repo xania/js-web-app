@@ -1,9 +1,7 @@
-import { DomDriver } from "@xania/glow.js";
-import { RouterComponent } from "@xania/mvc.js/router";
 import { TableStore, DataRow } from "./table-store";
-import { jsx, createContainer, property, render } from "@xania/view";
-
-import "./css/currentStyle.css";
+import { createContainer, render, useContext } from "@xania/view";
+import * as view from "@xania/view";
+const jsx = view.jsx.createElement;
 
 interface JumbotronProps {
   store: TableStore;
@@ -12,12 +10,12 @@ interface JumbotronProps {
 function Jumbotron(props: JumbotronProps) {
   const { store } = props;
 
-  function run(e, counter = 7) {
+  function run(counter = 7) {
     store.create10000Rows();
     setTimeout(() => {
       if (counter) {
         store.clear();
-        setTimeout(() => run(e, counter - 1), 200);
+        setTimeout(() => run(counter - 1), 200);
       }
     }, 200);
   }
@@ -25,12 +23,7 @@ function Jumbotron(props: JumbotronProps) {
     <div class="jumbotron">
       <div class="row">
         <div class="col-md-6">
-          <h1>
-            XaniaJS-"keyed"
-            <button class="btn btn-danger" click={run}>
-              run
-            </button>
-          </h1>
+          <h1>XaniaJS-"keyed"</h1>
         </div>
         <div class="col-md-6">
           <div class="row">
@@ -101,21 +94,6 @@ function Jumbotron(props: JumbotronProps) {
   );
 }
 
-export default function Benchmark(): RouterComponent {
-  return {
-    view: Adapter(),
-  };
-}
-
-function Adapter() {
-  return {
-    render(driver: DomDriver) {
-      const { target } = driver as any;
-      render(target, <Container />);
-    },
-  };
-}
-
 function Container() {
   const rows = createContainer<DataRow>();
   const store = new TableStore(rows);
@@ -136,12 +114,13 @@ function Container() {
 }
 
 function Row(store: TableStore) {
+  const $ = useContext<DataRow>();
   return (
-    <tr className={property("className")}>
-      <td class="col-md-1">{property("id")}</td>
+    <tr className={$("className")}>
+      <td class="col-md-1">{$("id")}</td>
       <td class="col-md-4">
         <a class="lbl" click={store.select}>
-          {property("label")}
+          {$("label")}
         </a>
       </td>
       <td class="col-md-1">
@@ -157,16 +136,5 @@ function Row(store: TableStore) {
   );
 }
 
-// interface InputProps<T> {
-//   value: State<T>;
-// }
-
-// function Input<T>(props: InputProps<T>) {
-//   const tpl = jsx.factory;
-//   const { value } = props;
-//   return <input value={value} keyup={onKeyUp} />;
-
-//   function onKeyUp({ target }) {
-//     value.update(target.value);
-//   }
-// }
+const main = document.getElementById("main");
+render(<Container />, main);

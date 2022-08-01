@@ -1,4 +1,5 @@
-import { State, ViewContainer } from "@xania/view";
+import { ViewContainer } from "@xania/view";
+// import type { JSX } from "@xania/view/types/jsx";
 
 export interface DataRow {
   id: number;
@@ -66,21 +67,33 @@ export class TableStore {
   private counter = 1;
   constructor(private container: ViewContainer<DataRow>) {}
 
-  selected?: Node;
+  selected?: Node | null | undefined;
 
-  select = (e: JSX.EventContext<MouseEvent>) => {
+  select = (e: { node: Node }) => {
     const { selected, container } = this;
     const node = e.node;
     if (selected !== node) {
-      if (selected?.parentNode) {
-        container.updateAt(selected["rowIndex"], "className", () => null);
-      }
+      const newIndex = node["rowIndex"];
+
+      const oldIndex = selected?.parentNode ? selected["rowIndex"] : -1;
+      container.update("className", (row, idx) => {
+        switch (idx) {
+          case oldIndex:
+            row["className"] = null;
+            return true;
+          case newIndex:
+            row["className"] = "danger";
+            return true;
+          default:
+            return false;
+        }
+      });
+
       this.selected = node;
-      container.updateAt(node["rowIndex"], "className", () => "danger");
     }
   };
 
-  delete = (e: JSX.EventContext<MouseEvent>) => {
+  delete = (e: { node: Node }) => {
     this.container.removeAt(e.node["rowIndex"]);
   };
 
@@ -106,23 +119,26 @@ export class TableStore {
 
   create1000Rows = (): void => {
     this.clear();
-    this.appendRows(1000);
+    this.appendRows(2);
   };
   create10000Rows = (): void => {
     this.clear();
     this.appendRows(10000);
   };
   append1000Rows = (): void => {
-    this.appendRows(1000);
+    this.appendRows(2);
   };
 
   updateEvery10thRow = (): void => {
     const { container } = this;
-    const length = container.length;
 
-    for (let i = 0; i < length; i += 10) {
-      container.updateAt(i, "label", (value) => value + " !!!");
-    }
+    container.update("label", (row, idx) => {
+      if (idx % 10 === 0) {
+        row.label += " !!!";
+        return true;
+      }
+      return false;
+    });
   };
   clear = (): void => {
     this.container.clear();

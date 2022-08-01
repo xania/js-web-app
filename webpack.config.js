@@ -1,20 +1,19 @@
 const fspath = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TsConfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 module.exports = (env, argv) => {
   const isDevelopment = !argv.mode || argv.mode === "development";
-  const config = buildConfig(isDevelopment);
+  const configs = [buildBenchmarkConfig(isDevelopment)];
   if (isDevelopment) {
     console.log("development: " + isDevelopment);
-    return {
+    return configs.map((config) => ({
       ...config,
       mode: "development",
       devtool: "inline-source-map",
-    };
+    }));
   } else {
-    return {
+    return configs.map((config) => ({
       ...config,
       optimization: {
         splitChunks: {
@@ -22,12 +21,11 @@ module.exports = (env, argv) => {
           name: false,
         },
       },
-    };
+    }));
   }
-  return config;
 };
 
-function buildConfig(isDevelopment) {
+function buildMainConfig(isDevelopment) {
   return {
     target: "web",
     entry: ["./src/index.ts"],
@@ -132,6 +130,25 @@ function buildConfig(isDevelopment) {
       new HtmlWebpackPlugin({
         template: fspath.resolve(__dirname, "./index.html"),
         inject: true,
+      }),
+      new HtmlWebpackPlugin({
+        template: fspath.resolve(__dirname, "./benchmark.html"),
+        inject: true,
+        filename: "benchmark.html",
+      }),
+    ],
+  };
+}
+
+function buildBenchmarkConfig(isDevelopment) {
+  return {
+    ...buildMainConfig(isDevelopment),
+    entry: ["./src/app/benchmark/index.tsx"],
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: fspath.resolve(__dirname, "./benchmark.html"),
+        inject: true,
+        filename: "benchmark.html",
       }),
     ],
   };
