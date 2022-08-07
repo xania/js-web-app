@@ -10,15 +10,6 @@ interface JumbotronProps {
 function Jumbotron(props: JumbotronProps) {
   const { store } = props;
 
-  function run(counter = 7) {
-    store.create10000Rows();
-    setTimeout(() => {
-      if (counter) {
-        store.clear();
-        setTimeout(() => run(counter - 1), 200);
-      }
-    }, 200);
-  }
   return (
     <div class="jumbotron">
       <div class="row">
@@ -94,7 +85,7 @@ function Jumbotron(props: JumbotronProps) {
   );
 }
 
-function Container() {
+function App() {
   const rows = createContainer<DataRow>();
   const store = new TableStore(rows);
   return (
@@ -113,7 +104,7 @@ function Container() {
   );
 }
 
-function Row(store: TableStore) {
+function Row(store: { select({ node: Node }); delete({ node: Node }) }) {
   const $ = useContext<DataRow>();
   return (
     <tr className={$("className")}>
@@ -137,4 +128,4 @@ function Row(store: TableStore) {
 }
 
 const main = document.getElementById("main");
-render(<Container />, main);
+render(<App />, main);

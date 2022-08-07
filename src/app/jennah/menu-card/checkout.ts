@@ -16,7 +16,8 @@ export async function checkout(options: CheckoutOptions) {
   await postReceipt(OrderTarget.Kitchen, orders);
 
   function postReceipt(target: OrderTarget, orders: Order[]) {
-    if (!Array.isArray(orders) || orders.length === 0) return Promise.resolve();
+    if (!(orders instanceof Array) || orders.length === 0)
+      return Promise.resolve();
     const receipt = {
       isActive: true,
       date: new Date(),

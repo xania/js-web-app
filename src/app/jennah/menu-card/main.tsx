@@ -742,5 +742,5 @@ function Tile(options: TileOptions & ProductEvents) {
 }
 
 function hasAny(arr?: unknown[]) {
-  return Array.isArray(arr) && arr.length > 0;
+  return arr instanceof Array && arr.length > 0;
 }

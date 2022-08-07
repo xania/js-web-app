@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = (env, argv) => {
   const isDevelopment = !argv.mode || argv.mode === "development";
-  const configs = [buildBenchmarkConfig(isDevelopment)];
+  const configs = [buildMainConfig(isDevelopment)];
   if (isDevelopment) {
     console.log("development: " + isDevelopment);
     return configs.map((config) => ({
@@ -27,6 +27,7 @@ module.exports = (env, argv) => {
 
 function buildMainConfig(isDevelopment) {
   return {
+    name: "main",
     target: "web",
     entry: ["./src/index.ts"],
     mode: isDevelopment ? "development" : "production",
@@ -130,11 +131,6 @@ function buildMainConfig(isDevelopment) {
       new HtmlWebpackPlugin({
         template: fspath.resolve(__dirname, "./index.html"),
         inject: true,
-      }),
-      new HtmlWebpackPlugin({
-        template: fspath.resolve(__dirname, "./benchmark.html"),
-        inject: true,
-        filename: "benchmark.html",
       }),
     ],
   };

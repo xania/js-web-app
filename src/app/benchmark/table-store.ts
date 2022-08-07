@@ -74,20 +74,18 @@ export class TableStore {
     const node = e.node;
     if (selected !== node) {
       const newIndex = node["rowIndex"];
+      container.update(
+        (row) => ((row.className = "danger"), "className"),
+        newIndex
+      );
 
-      const oldIndex = selected?.parentNode ? selected["rowIndex"] : -1;
-      container.update("className", (row, idx) => {
-        switch (idx) {
-          case oldIndex:
-            row["className"] = null;
-            return true;
-          case newIndex:
-            row["className"] = "danger";
-            return true;
-          default:
-            return false;
-        }
-      });
+      if (selected?.parentNode) {
+        const oldIndex = selected["rowIndex"];
+        container.update(
+          (row) => ((row.className = null), "className"),
+          oldIndex
+        );
+      }
 
       this.selected = node;
     }
@@ -98,7 +96,7 @@ export class TableStore {
   };
 
   private appendRows(count: number) {
-    let { counter, container } = this;
+    let { counter, container: view } = this;
     const data = new Array(count);
     for (let i = 0; i < count; i++) {
       data[i] = {
@@ -113,7 +111,7 @@ export class TableStore {
       };
     }
 
-    container.push(data);
+    view.push(data);
     this.counter = counter;
   }
 
@@ -130,14 +128,13 @@ export class TableStore {
   };
 
   updateEvery10thRow = (): void => {
-    const { container } = this;
+    const { container: view } = this;
 
-    container.update("label", (row, idx) => {
+    view.update((row, idx) => {
       if (idx % 10 === 0) {
         row.label += " !!!";
-        return true;
+        return "label";
       }
-      return false;
     });
   };
   clear = (): void => {
