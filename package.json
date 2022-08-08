@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "start": "npx webpack serve --mode=development",
-    "build": "npx webpack --mode=production",
+    "start": "npx vite",
+    "build": "npx vite --mode=production",
     "clean": "npx rimraf dist"
   },
   "keywords": [],
