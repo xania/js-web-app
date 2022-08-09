@@ -74,21 +74,16 @@ export class TableStore {
     const node = e.node;
     if (selected !== node) {
       const newIndex = node["rowIndex"];
-      container.update(
-        (row) => ((row.className = "danger"), "className"),
-        newIndex
-      );
-
-      if (selected?.parentNode) {
-        const oldIndex = selected["rowIndex"];
-        container.update(
-          (row) => ((row.className = null), "className"),
-          oldIndex
-        );
-      }
-
-      this.selected = node;
+      container.update((rows) => {
+        rows[newIndex].className = "danger";
+        if (selected?.parentNode) {
+          const oldIndex = selected["rowIndex"];
+          rows[oldIndex].className = null;
+        }
+      });
     }
+
+    this.selected = node;
   };
 
   delete = (e: { node: Node }) => {
@@ -130,10 +125,9 @@ export class TableStore {
   updateEvery10thRow = (): void => {
     const { container: view } = this;
 
-    view.update((row, idx) => {
-      if (idx % 10 === 0) {
-        row.label += " !!!";
-        return "label";
+    view.update((rows) => {
+      for (let i = 0; i < rows.length; i += 10) {
+        rows[i].label += " !!!";
       }
     });
   };

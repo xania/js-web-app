@@ -93,7 +93,7 @@ function App() {
       <div class="container">
         <Jumbotron store={store} />
         <table class="table table-hover table-striped test-data">
-          <tbody>{rows.map(Row(store))}</tbody>
+          <tbody>{rows.map(<Row {...store} />)}</tbody>
         </table>
         <span
           class="preloadicon glyphicon glyphicon-remove"
@@ -104,18 +104,24 @@ function App() {
   );
 }
 
-function Row(store: { select({ node: Node }); delete({ node: Node }) }) {
+interface RowProps {
+  select({ node: Node });
+  delete({ node: Node });
+}
+
+function Row(props: RowProps) {
   const $ = useContext<DataRow>();
+
   return (
-    <tr className={$("className")}>
+    <tr className={$(`className`)}>
       <td class="col-md-1">{$("id")}</td>
       <td class="col-md-4">
-        <a class="lbl" click={store.select}>
+        <a class="lbl" click={props.select}>
           {$("label")}
         </a>
       </td>
       <td class="col-md-1">
-        <a class="remove" click={store.delete}>
+        <a class="remove" click={props.delete}>
           <span
             class="remove glyphicon glyphicon-remove"
             aria-hidden="true"
