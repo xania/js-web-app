@@ -15,6 +15,7 @@ function Jumbotron(props: JumbotronProps) {
       <div class="row">
         <div class="col-md-6">
           <h1>XaniaJS-"keyed"</h1>
+          <button click={store.run}>run</button>
         </div>
         <div class="col-md-6">
           <div class="row">

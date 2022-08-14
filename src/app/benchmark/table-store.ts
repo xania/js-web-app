@@ -69,6 +69,22 @@ export class TableStore {
 
   selected?: Node | null | undefined;
 
+  run = () => {
+    const { container } = this;
+    step(0);
+    function step(idx: number) {
+      if (idx < container.length) {
+        container.update((rows) => {
+          rows[idx].className = "danger";
+          if (idx > 0) rows[idx - 1].className = null;
+        });
+        setTimeout(function () {
+          step(idx + 1);
+        }, 20);
+      }
+    }
+  };
+
   select = (e: { node: Node }) => {
     const { selected, container } = this;
     const node = e.node;
