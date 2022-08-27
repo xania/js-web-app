@@ -1,7 +1,6 @@
 import { TableStore } from "./table-store";
 import { render } from "@xania/view";
-import * as view from "@xania/view";
-const jsx = view.jsx.createElement;
+import { createElement as jsx } from "@xania/view";
 
 interface JumbotronProps {
   store: TableStore;

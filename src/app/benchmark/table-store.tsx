@@ -1,6 +1,5 @@
 import { createView, useContext, View } from "@xania/view";
-import * as xv from "@xania/view";
-const jsx = xv.jsx.createElement;
+import { createElement as jsx } from "@xania/view";
 
 export interface DataRow {
   id: number;
@@ -95,7 +94,7 @@ export class TableStore {
   };
 
   select = (e: { values: DataRow }) => {
-    const { selected, view: container, data } = this;
+    const { selected, view, data } = this;
     const values = e.values;
     if (selected !== values) {
       const newValues = values;
@@ -103,7 +102,7 @@ export class TableStore {
       if (selected) {
         selected.className = null;
       }
-      container.update(data);
+      view.update(data);
     }
 
     this.selected = values;
@@ -117,7 +116,7 @@ export class TableStore {
   };
 
   private appendRows(count: number) {
-    let { counter, view: container, data } = this;
+    let { counter, view, data } = this;
     const offset = data.length;
     for (let i = offset, len = offset + count; i < len; i++) {
       data[i] = {
@@ -132,7 +131,7 @@ export class TableStore {
       };
     }
 
-    container.update(data);
+    view.update(data);
     this.counter = counter;
   }
 
@@ -149,12 +148,12 @@ export class TableStore {
   };
 
   updateEvery10thRow = (): void => {
-    const { view: container, data } = this;
+    const { view, data } = this;
 
     for (let i = 0; i < data.length; i += 10) {
       data[i].label += " !!!";
     }
-    container.update(data);
+    view.update(data);
   };
   clear = (): void => {
     this.view.clear();

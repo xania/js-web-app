@@ -1,13 +1,12 @@
 {
   "editor.tabSize": 2,
-  "json.schemas": [
-    {
-      "fileMatch": ["/package.json"],
-      "url": "https://json.schemastore.org/package",
-      "schema": true
-    }
-  ],
+  "json.schemas": [{
+    "fileMatch": ["/package.json"],
+    "url": "https://json.schemastore.org/package",
+    "schema": true
+  }],
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.enabled": false
 }

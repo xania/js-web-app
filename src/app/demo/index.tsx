@@ -1,4 +1,4 @@
-import { jsx } from "@xania/view";
+import { createElement as jsx } from "@xania/view";
 
 export function App() {
   return (
